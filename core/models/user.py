@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from ..models import BaseModel
 
 
-__all__ = ['User']
+__all__ = ['User', 'Like']
 
 
 class UserManager(BaseUserManager):
@@ -95,6 +95,7 @@ class User(
     date_joined = models.DateTimeField(
         default=timezone.now, verbose_name=_('date joined')
     )
+    likes = models.ManyToManyField('core.Entry', related_name='users', through='core.Like', blank=True)
 
     objects = UserManager()
 
@@ -104,3 +105,16 @@ class User(
 
     def __str__(self):
         return self.username
+
+
+class Like(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username + 'likes' + str(self.entry.id)
+
+    class Meta:
+        unique_together = [
+            ('user', 'entry')
+        ]

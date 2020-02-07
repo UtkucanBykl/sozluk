@@ -10,6 +10,5 @@ __all__ = ['create_token']
 @receiver(post_save, sender=get_user_model())
 def create_token(sender, instance, *args, **kwargs):
     if kwargs['created']:
-        print('dddd')
         Token.objects.create(user=instance)
 
