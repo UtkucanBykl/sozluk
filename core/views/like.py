@@ -12,7 +12,6 @@ class LikeListCreateAPIView(ListCreateAPIView):
     serializer_class = LikeSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     authentication_classes = (TokenAuthentication,)
-    model = Like
 
     def get_queryset(self):
-        return Like.objects.filter(user=self.request.user).actives()
+        return Like.objects.filter(user=self.request.user).actives().select_related('entry', 'user')

@@ -15,8 +15,8 @@ class RegisterView(CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.create(request.data)
-        return Response({'status': 'success'}, status=status.HTTP_201_CREATED)
+        data = serializer.create(request.data)
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class LoginView(APIView):
@@ -26,5 +26,5 @@ class LoginView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.login(request.data)
-        return Response({'status': 'success'}, status=status.HTTP_200_OK)
+        data = serializer.login(request.data)
+        return Response(data, status=status.HTTP_200_OK)

@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate
 
 from rest_framework import serializers
 
+from ..serializers import UserSerializer
 
 User = get_user_model()
 
@@ -43,7 +44,7 @@ class RegisterSerializer(serializers.Serializer):
             password=make_password(validated_data['password']),
             email=validated_data['email']
         )
-        return True #Todo UserSerializer ile değişecek
+        return UserSerializer(user, many=False).data
 
 
 class LoginSerializer(serializers.Serializer):
@@ -53,7 +54,7 @@ class LoginSerializer(serializers.Serializer):
     def login(self, attrs):
         user = authenticate(username=attrs.get('username'), password=attrs.get('password'))
         if user is not None:
-            return attrs #Todo UserSerializer ile değişecek
+            return UserSerializer(user, many=False).data
         raise serializers.ValidationError('Username or password incorrect')
 
 
