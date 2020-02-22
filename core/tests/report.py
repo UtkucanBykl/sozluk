@@ -6,6 +6,9 @@ from django.urls import reverse_lazy
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
+from ..models import Report
+
+
 User = get_user_model()
 
 
@@ -33,3 +36,20 @@ class ReportTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.post(url, data)
         self.assertEqual(response.data['to_user_detail']['username'], 'utku1')
+
+    def test_get_reports(self):
+        data = {
+            'from_user': self.user,
+            'to_user': self.user1,
+            'content': 'bad words',
+            'report_type': 'toxic',
+        }
+        url = reverse_lazy('core:report-list-create')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        Report.objects.create(
+        **data
+        )
+        response = self.client.get(url)
+        self.assertEqual(
+            response.data[0]['to_user_detail']['username'], 'utku1'
+        )
