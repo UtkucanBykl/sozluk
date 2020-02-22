@@ -4,8 +4,9 @@ __all__ = ['IsOwnerOrReadOnly']
 
 
 class IsOwnerOrReadOnly(BasePermission):
-    message = "You must be the owner of this object."
+    message = "You must be owner of this object."
     safe_methods = ['GET']
+    field = 'user'
 
     def has_object_permission(self, request, view, obj):
         if request.method in self.safe_methods:
