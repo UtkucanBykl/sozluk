@@ -1,4 +1,4 @@
-
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -41,6 +41,7 @@ class UserManager(BaseUserManager):
         }
 
         user = self.model(**user_create_fields)
+        password = make_password(password)
         user.set_password(password)
         user.save(using=self._db)
         return user
