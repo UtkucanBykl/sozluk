@@ -52,4 +52,3 @@ class ReportTest(APITestCase):
         response = self.client.get(url)
         self.assertEqual(
             response.data[0]['to_user_detail']['username'], 'utku1'
-        )
