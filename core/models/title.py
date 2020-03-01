@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.search import SearchVector
 from django.db import models
 from django.db.models import Count, Q
 
@@ -33,6 +34,9 @@ class TitleQuerySet(BaseModelQuery):
             entries__user=user, entries__is_deleted=False
         )
 
+    def full_text_search(self, value):
+        return self.annotate(full_text=SearchVector('title')).filter(full_text=value)
+
 
 class TitleManager(BaseManager):
     def get_queryset(self):
@@ -46,6 +50,9 @@ class TitleManager(BaseManager):
 
     def have_user_entries(self, user):
         return self.get_queryset().have_user_entries(user)
+
+    def full_text_search(self, value):
+        return self.get_queryset().full_text_search(value)
 
 
 class Title(BaseModel):

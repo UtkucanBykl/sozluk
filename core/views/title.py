@@ -33,4 +33,6 @@ class TitleListCreateAPIView(ListCreateAPIView):
         qs = super().get_queryset()
         if self.request.GET.get('today'):
             qs = qs.active_today()
+        if self.request.GET.get('full_text'):
+            qs = qs.full_text_search(self.request.GET.get('full_text'))
         return qs
