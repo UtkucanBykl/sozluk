@@ -1,1 +1,1 @@
-web: gunicorn sozluk.wsgi
+web: gunicorn config.wsgi
