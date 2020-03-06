@@ -41,7 +41,6 @@ class UserManager(BaseUserManager):
         }
 
         user = self.model(**user_create_fields)
-        password = make_password(password)
         user.set_password(password)
         user.save(using=self._db)
         return user
