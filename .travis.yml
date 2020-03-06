@@ -1,5 +1,7 @@
 
 language: python
+services:
+  - postgresql
 python:
   - "3.7"
 install:
