@@ -15,7 +15,7 @@ class TitleTestCase(APITestCase):
     def setUp(self):
         self.category = Category.objects.create(name='Category')
         self.title1 = Title.objects.create(
-            title='Test',
+            title='Testtttt',
             category=self.category
         )
         self.user = User.objects.create(
@@ -34,6 +34,13 @@ class TitleTestCase(APITestCase):
         url = f'{base_url}?category=Cat'
         response = self.client.get(url)
         serializer = TitleSerializer(Title.objects.filter(category__name__iexact='Cat'), many=True)
+        self.assertEqual(response.data, serializer.data)
+
+    def test_get_title_with_full_text(self):
+        base_url = reverse_lazy('core:title-list-create')
+        url = f'{base_url}?full_text=Testtttt'
+        response = self.client.get(url)
+        serializer = TitleSerializer(Title.objects.filter(title__icontains='Te'), many=True)
         self.assertEqual(response.data, serializer.data)
 
     def test_get_title_query(self):
@@ -58,6 +65,5 @@ class TitleTestCase(APITestCase):
         data = {
             'title': 'Test'
         }
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 401)
