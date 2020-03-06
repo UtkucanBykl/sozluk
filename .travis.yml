@@ -4,6 +4,8 @@ python:
   - "3.7"
 install:
   - pip install -r requirements.txt
+before_script:
+  - psql -c "CREATE DATABASE mydb;" -U postgres
 script: python manage.py test
 after_failure: chmod +x telegram_message.sh && export STATU='Fail' && .telegram_message.sh
 after_success: chmod +x telegram_message.sh && export STATU='Success' && ./telegram_message.sh && codecov
