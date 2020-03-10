@@ -20,5 +20,8 @@
         "test": "python manage.py test"
       }
     }
+  },
+  "scripts": {
+    "postdeploy": "python manage.py create_basic_admin"
   }
 }
