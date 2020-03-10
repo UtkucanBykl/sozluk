@@ -12,6 +12,9 @@
     },
     "DJANGO_ENV": {
       "value": "heroku"
+    },
+    "BASIC_USER_PASS": {
+      "value": "randomtestpassword.123"
     }
   },
   "environments": {
