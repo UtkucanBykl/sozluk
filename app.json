@@ -1,0 +1,30 @@
+{
+  "name": "Sozluk",
+  "description": "Learn and teach your hobbies.",
+  "image": "heroku/python",
+  "repository": "https://github.com/UtkucanBykl/sozluk",
+  "keywords": ["python", "django" ],
+  "addons": [ "heroku-postgresql" ],
+  "env": {
+    "SECRET_KEY": {
+      "description": "The secret key for the Django application.",
+      "generator": "secret"
+    },
+    "DJANGO_ENV": {
+      "value": "heroku"
+    },
+    "BASIC_USER_PASS": {
+      "value": "randomtestpassword.123"
+    }
+  },
+  "environments": {
+    "test": {
+      "scripts": {
+        "test": "python manage.py test"
+      }
+    }
+  },
+  "scripts": {
+    "postdeploy": "python manage.py create_basic_admin"
+  }
+}
