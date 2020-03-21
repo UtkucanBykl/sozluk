@@ -12,6 +12,7 @@ urlpatterns = [
     path('entries/<int:id>', EntryRetrieveUpdateDestroyAPIView.as_view(), name='entry-retrieve-update-delete'),
     path('likes/', LikeListCreateAPIView.as_view(), name='like-list-create'),
     path('follows/', FollowListCreateAPIView.as_view(), name='follow-list-create'),
-    path('reports/', ReportListCreateAPIView.as_view(), name='report-list-create')
+    path('reports/', ReportListCreateAPIView.as_view(), name='report-list-create'),
+    path('notifications/', NotificationListAPIView.as_view(), name='notification-list')
 
 ]
