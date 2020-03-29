@@ -25,6 +25,7 @@ class Notification(BaseModel):
     entry = models.ForeignKey(Entry, blank=True, null=True, on_delete=models.CASCADE)
     message = models.CharField(max_length=140)
     redirect = models.URLField(blank=True, null=True, max_length=500)
+    is_open = models.BooleanField(default=False)
 
     def __str__(self):
         return self.message
