@@ -4,7 +4,7 @@
   "image": "heroku/python",
   "repository": "https://github.com/UtkucanBykl/sozluk",
   "keywords": ["python", "django" ],
-  "addons": [ "heroku-postgresql" ],
+  "addons": [ "heroku-postgresql", "heroku-redis"],
   "env": {
     "SECRET_KEY": {
       "description": "The secret key for the Django application.",
@@ -25,6 +25,6 @@
     }
   },
   "scripts": {
-    "postdeploy": "python manage.py create_basic_admin && python manage.py rundramatiq &"
+    "postdeploy": "python manage.py create_basic_admin"
   }
 }
