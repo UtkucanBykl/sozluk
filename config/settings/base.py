@@ -130,7 +130,7 @@ REST_FRAMEWORK = {
     ]
 }
 
-DRAMATIQ_REDIS_URL = os.onviron.get("REDIS_URL", "redis://127.0.0.1:6379/0")
+DRAMATIQ_REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/0")
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
     "OPTIONS": {
