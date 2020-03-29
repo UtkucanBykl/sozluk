@@ -15,7 +15,7 @@ class Command(createsuperuser.Command):
         password = os.environ.get('BASIC_USER_PASS', '123')
         try:
             user = User.objects.create_superuser(
-                username='test123', email='test@test.com', first_name='utku', last_name='can'
+                username='testadmin', email='testadmin@test.com', first_name='utku', last_name='can'
                 )
             user.set_password(password)
             user.save()
