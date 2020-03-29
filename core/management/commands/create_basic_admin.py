@@ -21,4 +21,4 @@ class Command(createsuperuser.Command):
             user.save()
             print('Superuser created')
         except:
-            pass
+            print('Superuser already exists')
