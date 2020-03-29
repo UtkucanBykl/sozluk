@@ -25,6 +25,6 @@
     }
   },
   "scripts": {
-    "postdeploy": "python manage.py create_basic_admin && python manage.py rundramatiq "
+    "postdeploy": "python manage.py create_basic_admin && python manage.py rundramatiq &"
   }
 }
