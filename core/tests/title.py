@@ -67,3 +67,12 @@ class TitleTestCase(APITestCase):
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 401)
+
+    def test_follow(self):
+        url = reverse_lazy('core:follow-list-create')
+        data = {
+            'title': self.title1.id
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, 201)

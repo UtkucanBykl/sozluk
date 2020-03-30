@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from ..models import Notification, Entry
+from ..models import Notification, Entry, Title
 from ..serializers import UserSerializer, EntrySerializer
 
 
@@ -16,9 +16,11 @@ class NotificationSerializer(serializers.ModelSerializer):
     from_user_detail = UserSerializer(source='from_user', many=False, read_only=True, required=False)
     entry = serializers.PrimaryKeyRelatedField(queryset=Entry.objects.filter(), allow_null=True, allow_empty=True)
     from_user = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(), allow_null=True, allow_empty=True)
+    title = serializers.PrimaryKeyRelatedField(queryset=Title.objects.filter(), allow_null=True, allow_empty=True)
 
     class Meta:
         model = Notification
         fields = (
-            'entry', 'created_at', 'entry_detail', 'to_user', 'from_user_detail', 'message', 'notification_type', 'from_user'
+            'entry', 'title', 'created_at', 'entry_detail', 'to_user', 'from_user_detail', 'message',
+            'notification_type', 'from_user'
         )

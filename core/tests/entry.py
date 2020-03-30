@@ -93,11 +93,3 @@ class EntryTestCase(APITestCase):
         serializer = LikeSerializer(Like.objects.filter(user=self.user), many=True)
         self.assertEqual(response.data, serializer.data)
 
-    def test_follow(self):
-        url = reverse_lazy('core:follow-list-create')
-        data = {
-            'entry': self.entry.pk
-        }
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, 201)
