@@ -24,5 +24,10 @@ class EntrySerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         save_return = super().save(**kwargs)
-        create_notification_info.send(self.validated_data.get('title').id, self.validated_data.get('user').id)
+        title = self.validated_data.get('title')
+        user = self.validated_data.get('user')
+        if hasattr(title, 'id') and hasattr(user, 'id'):
+            title_id = title.id
+            user_id = user.id
+            create_notification_info.send(title_id, user_id)
         return save_return
