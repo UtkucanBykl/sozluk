@@ -10,7 +10,7 @@ __all__ = ['Follow']
 
 class Follow(BaseModel):
     user = models.ForeignKey(User, related_name='follow', on_delete=models.CASCADE)
-    entry = models.ForeignKey('core.Entry', related_name='follow', on_delete=models.CASCADE)
+    title = models.ForeignKey('core.Title', related_name='follow', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.user.username} follow {self.entry.content}'
+        return f'{self.user.username} follow {self.title.title}'

@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from ..models import BaseModel, Entry
+from ..models import BaseModel, Entry, Title
 
 __all__ = ['Notification']
 
@@ -23,6 +23,7 @@ class Notification(BaseModel):
     to_user = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
     from_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     entry = models.ForeignKey(Entry, blank=True, null=True, on_delete=models.CASCADE)
+    title = models.ForeignKey(Title, blank=True, null=True, on_delete=models.CASCADE)
     message = models.CharField(max_length=140)
     redirect = models.URLField(blank=True, null=True, max_length=500)
     is_open = models.BooleanField(default=False)

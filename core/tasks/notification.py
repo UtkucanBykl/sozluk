@@ -1,10 +1,10 @@
 import dramatiq
 from django.contrib.auth import get_user_model
 
-from ..models import Notification, Entry
+from ..models import Notification, Entry, Title
 
 
-__all__ = ['create_notification_like']
+__all__ = ['create_notification_like', 'create_notification_info']
 
 
 User = get_user_model()
@@ -13,7 +13,6 @@ User = get_user_model()
 @dramatiq.actor
 def create_notification_like(from_user_id, entry_id):
     try:
-        print('dd')
         from_user = User.objects.get(id=from_user_id)
         entry = Entry.objects.get(id=entry_id)
         to_user = entry.user
@@ -26,5 +25,21 @@ def create_notification_like(from_user_id, entry_id):
             notification_type='like'
         )
 
+    except BaseException as e:
+        print(str(e))
+
+
+@dramatiq.actor
+def create_notification_info(title_id, user_id):
+    try:
+        title = Title.objects.get(id=title_id)
+        message = f'{title.title} başlığına yeni bir entry girildi.'
+        for user in title.followers.exclude(id=user_id):
+            Notification.objects.create(
+                to_user=user,
+                title=title,
+                message=message,
+                notification_type='info'
+            )
     except BaseException as e:
         print(str(e))
