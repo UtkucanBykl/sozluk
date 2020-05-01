@@ -92,4 +92,3 @@ class EntryTestCase(APITestCase):
         response = self.client.get(url)
         serializer = LikeSerializer(Like.objects.filter(user=self.user), many=True)
         self.assertEqual(response.data, serializer.data)
-
