@@ -96,7 +96,8 @@ class User(
         default=timezone.now, verbose_name=_('date joined')
     )
     likes = models.ManyToManyField('core.Entry', related_name='users', through='core.Like', blank=True)
-    follows = models.ManyToManyField('core.Title', related_name='followers', through='core.Follow', blank=True)
+    title_follows = models.ManyToManyField('core.Title', related_name='followers', through='core.TitleFollow', blank=True)
+    user_follows = models.ManyToManyField('self', symmetrical=False, through='core.UserFollow', blank=True)
 
     objects = UserManager()
 

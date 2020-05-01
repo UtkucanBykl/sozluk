@@ -69,7 +69,7 @@ class TitleTestCase(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_follow(self):
-        url = reverse_lazy('core:follow-list-create')
+        url = reverse_lazy('core:title-follow-list-create')
         data = {
             'title': self.title1.id
         }

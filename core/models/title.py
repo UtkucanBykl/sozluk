@@ -80,7 +80,7 @@ class Entry(BaseModel):
     user = models.ForeignKey(User, related_name='entries', on_delete=models.CASCADE, blank=True, null=True)
     content = models.TextField(max_length=500)
     is_important = models.BooleanField(default=False)
-
+    last_vote_time = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.content

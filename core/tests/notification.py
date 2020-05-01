@@ -25,7 +25,7 @@ class NotificationTest(APITestCase):
         )
         self.token = Token.objects.get(user=self.user).key
         self.notification = Notification.objects.create(
-            to_user=self.user, from_user=self.user1, message='Hello', notification_type='info'
+            sender_user=self.user1, receiver_user=self.user, message='Hello', notification_type='info'
         )
 
     def test_get_notification(self):
@@ -33,5 +33,5 @@ class NotificationTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.get(url)
         self.assertEqual(
-            response.data['results'][0]['from_user_detail']['username'], 'utku1'
+            response.data['results'][0]['receiver_user_detail']['username'], 'utku'
         )

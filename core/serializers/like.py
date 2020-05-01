@@ -1,3 +1,6 @@
+from django.utils import timezone
+from django.db import transaction
+
 from rest_framework import serializers
 
 from ..models import Like
@@ -23,4 +26,7 @@ class LikeSerializer(serializers.ModelSerializer):
             entry_id = entry.id
             user_id = user.id
             create_notification_like.send(user_id, entry_id)
+            with transaction.atomic():
+                entry.last_vote_time = timezone.now()
+                entry.save()
         return save_return

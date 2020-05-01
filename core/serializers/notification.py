@@ -12,15 +12,15 @@ User = get_user_model()
 
 class NotificationSerializer(serializers.ModelSerializer):
     entry_detail = EntrySerializer(source='entry', many=False, read_only=True)
-    to_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    from_user_detail = UserSerializer(source='from_user', many=False, read_only=True, required=False)
+    sender_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    receiver_user_detail = UserSerializer(source='receiver_user', many=False, read_only=True, required=False)
     entry = serializers.PrimaryKeyRelatedField(queryset=Entry.objects.filter(), allow_null=True, allow_empty=True)
-    from_user = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(), allow_null=True, allow_empty=True)
+    receiver_user = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(), allow_null=True, allow_empty=True)
     title = serializers.PrimaryKeyRelatedField(queryset=Title.objects.filter(), allow_null=True, allow_empty=True)
 
     class Meta:
         model = Notification
         fields = (
-            'entry', 'title', 'created_at', 'entry_detail', 'to_user', 'from_user_detail', 'message',
-            'notification_type', 'from_user'
+            'entry', 'title', 'created_at', 'entry_detail', 'sender_user', 'receiver_user_detail', 'message',
+            'notification_type', 'receiver_user'
         )
