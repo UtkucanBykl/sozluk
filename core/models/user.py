@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from ..models import BaseModel
 
 
-__all__ = ['User', 'Like']
+__all__ = ['User', 'Like', 'Dislike']
 
 
 class UserManager(BaseUserManager):
@@ -95,8 +95,16 @@ class User(
     date_joined = models.DateTimeField(
         default=timezone.now, verbose_name=_('date joined')
     )
+<<<<<<< Updated upstream
     likes = models.ManyToManyField('core.Entry', related_name='users', through='core.Like', blank=True)
     follows = models.ManyToManyField('core.Title', related_name='followers', through='core.Follow', blank=True)
+=======
+    likes = models.ManyToManyField('core.Entry', related_name='like_users', through='core.Like', blank=True)
+    title_follows = models.ManyToManyField('core.Title', related_name='followers', through='core.TitleFollow', blank=True)
+    user_follows = models.ManyToManyField('self', symmetrical=False, through='core.UserFollow', blank=True)
+    dislikes = models.ManyToManyField('core.Entry', related_name='dislike_users', through='core.Dislike', blank=True)
+    point = models.IntegerField(default=0)
+>>>>>>> Stashed changes
 
     objects = UserManager()
 
@@ -109,6 +117,18 @@ class User(
 
 
 class Like(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username + 'likes' + str(self.entry.id)
+
+    class Meta:
+        unique_together = [
+            ('user', 'entry')
+        ]
+
+class Dislike(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True)
 

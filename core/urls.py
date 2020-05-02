@@ -13,6 +13,12 @@ urlpatterns = [
     path('likes/', LikeListCreateAPIView.as_view(), name='like-list-create'),
     path('follows/', FollowListCreateAPIView.as_view(), name='follow-list-create'),
     path('reports/', ReportListCreateAPIView.as_view(), name='report-list-create'),
+<<<<<<< Updated upstream
     path('notifications/', NotificationListAPIView.as_view(), name='notification-list')
+=======
+    path('notifications/', NotificationListAPIView.as_view(), name='notification-list'),
+    path('users/follows/', UserFollowListCreateAPIView.as_view(), name='user-follow-list-create'),
+    path('dislikes/', DislikeListCreateAPIView.as_view(), name='dislike-list-create'),
+>>>>>>> Stashed changes
 
 ]

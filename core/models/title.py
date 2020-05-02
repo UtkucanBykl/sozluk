@@ -33,6 +33,21 @@ class TitleQuerySet(BaseModelQuery):
         return self.filter(
             entries__user=user, entries__is_deleted=False
         )
+<<<<<<< Updated upstream
+=======
+    
+    def today_entry_counts(self):
+        t = timezone.localtime(timezone.now())
+        return self.annotate(publish_entry_count=Count('entries',
+                                    filter=Q(entries__status='publish',
+                                             entries__is_deleted=False,
+                                             entries__updated_at__day=t.day,
+                                             entries__updated_at__year=t.year,
+                                             entries__updated_at__month=t.month,
+                                             ),
+                                             distinct=True
+                                    ))
+>>>>>>> Stashed changes
 
     def full_text_search(self, value):
         return self.annotate(full_text=SearchVector('title')).filter(full_text=value)

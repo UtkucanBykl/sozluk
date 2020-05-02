@@ -76,3 +76,21 @@ class TitleTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 201)
+<<<<<<< Updated upstream
+=======
+
+    def test_have_user_entries_title(self):
+        Entry.objects.create(
+            title=self.title1,
+            user=self.user,
+            content='ddd'
+
+        )
+        Entry.objects.create(
+            title=self.title1,
+            user=self.user,
+            content='ddd'
+
+        )
+        self.assertEquals(2, Title.objects.have_user_entries(self.user).count())
+>>>>>>> Stashed changes

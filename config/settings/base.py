@@ -26,6 +26,7 @@ SECRET_KEY = 'cgt3_nt^4v-a^aaykqa01ex$zejvyi)k7k=y@b%s=qnc8v=i!g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TEST = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -144,3 +145,18 @@ DRAMATIQ_BROKER = {
         "django_dramatiq.middleware.DbConnectionsMiddleware",
     ]
 }
+
+if TEST:
+    DRAMATIQ_BROKER = {
+    "BROKER": "dramatiq.brokers.stub.StubBroker",
+    "OPTIONS": {},
+    "MIDDLEWARE": [
+        "dramatiq.middleware.AgeLimit",
+        "dramatiq.middleware.TimeLimit",
+        "dramatiq.middleware.Callbacks",
+        "dramatiq.middleware.Pipelines",
+        "dramatiq.middleware.Retries",
+        "django_dramatiq.middleware.AdminMiddleware",
+        "django_dramatiq.middleware.DbConnectionsMiddleware",
+    ]
+    }
