@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchVector
@@ -19,22 +19,12 @@ class TitleQuerySet(BaseModelQuery):
                            entries__status='publish', is_deleted=False).distinct()
 
     def order_points(self):
-        publish_entry_count = Count('entries',
-                                    filter=Q(status='publish',
-                                             updated_at__day=datetime.datetime.now().day,
-                                             is_deleted=False
-                                             )
-                                    )
-        return self.annotate(
-            entry_count=publish_entry_count
-        ).order_by('-is_bold', '-entry_count')
+        return self.today_entry_counts().order_by('-is_bold', '-today_entry_counts')
 
     def have_user_entries(self, user):
         return self.filter(
             entries__user=user, entries__is_deleted=False
         )
-<<<<<<< Updated upstream
-=======
     
     def today_entry_counts(self):
         t = timezone.localtime(timezone.now())
@@ -47,7 +37,6 @@ class TitleQuerySet(BaseModelQuery):
                                              ),
                                              distinct=True
                                     ))
->>>>>>> Stashed changes
 
     def full_text_search(self, value):
         return self.annotate(full_text=SearchVector('title')).filter(full_text=value)
@@ -59,6 +48,9 @@ class TitleManager(BaseManager):
 
     def active_today(self):
         return self.get_queryset().active_today()
+
+    def today_entry_counts(self):
+        return self.get_queryset().today_entry_counts()
 
     def order_by_entry_count(self):
         return self.get_queryset().order_points()
@@ -88,7 +80,7 @@ class Entry(BaseModel):
     user = models.ForeignKey(User, related_name='entries', on_delete=models.CASCADE, blank=True, null=True)
     content = models.TextField(max_length=500)
     is_important = models.BooleanField(default=False)
-
+    last_vote_time = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.content
