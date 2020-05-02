@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import make_password
 from django.urls import reverse_lazy
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
-from ..models import Title, Category
+from ..models import Title, Category, Entry
 from ..serializers import TitleSerializer
 
 __all__ = ['TitleTestCase']
@@ -69,10 +69,25 @@ class TitleTestCase(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_follow(self):
-        url = reverse_lazy('core:follow-list-create')
+        url = reverse_lazy('core:title-follow-list-create')
         data = {
             'title': self.title1.id
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 201)
+
+    def test_have_user_entries_title(self):
+        Entry.objects.create(
+            title=self.title1,
+            user=self.user,
+            content='ddd'
+
+        )
+        Entry.objects.create(
+            title=self.title1,
+            user=self.user,
+            content='ddd'
+
+        )
+        self.assertEquals(1, Title.objects.have_user_entries(self.user).count())
