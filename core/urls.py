@@ -13,6 +13,7 @@ urlpatterns = [
     path('likes/', LikeListCreateAPIView.as_view(), name='like-list-create'),
     path('titles/follows/', TitleFollowListCreateAPIView.as_view(), name='title-follow-list-create'),
     path('reports/', ReportListCreateAPIView.as_view(), name='report-list-create'),
-    path('notifications/', NotificationListAPIView.as_view(), name='notification-list')
+    path('notifications/', NotificationListAPIView.as_view(), name='notification-list'),
+    path('users/follows/', UserFollowListCreateAPIView.as_view(), name='user-follow-list-create')
 
 ]
