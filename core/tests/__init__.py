@@ -3,3 +3,4 @@ from .title import *
 from .entry import *
 from .report import *
 from .notification import *
+from .dramatiq import *

@@ -90,4 +90,4 @@ class TitleTestCase(APITestCase):
             content='ddd'
 
         )
-        self.assertEquals(1, Title.objects.have_user_entries(self.user).count())
+        self.assertEquals(2, Title.objects.have_user_entries(self.user).count())

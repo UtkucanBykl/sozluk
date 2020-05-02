@@ -14,6 +14,8 @@ urlpatterns = [
     path('titles/follows/', TitleFollowListCreateAPIView.as_view(), name='title-follow-list-create'),
     path('reports/', ReportListCreateAPIView.as_view(), name='report-list-create'),
     path('notifications/', NotificationListAPIView.as_view(), name='notification-list'),
-    path('users/follows/', UserFollowListCreateAPIView.as_view(), name='user-follow-list-create')
+    path('users/follows/', UserFollowListCreateAPIView.as_view(), name='user-follow-list-create'),
+    path('dislikes/', DislikeListCreateAPIView.as_view(), name='dislike-list-create'),
+
 
 ]

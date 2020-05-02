@@ -85,6 +85,15 @@ class EntryTestCase(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 201)
 
+    def test_dislike(self):
+        url = reverse_lazy('core:dislike-list-create')
+        data = {
+            "entry": self.entry.pk
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.post(url, data)
+        self.assertEqual(201, response.status_code)
+
     def test_like_list(self):
         Like.objects.create(user=self.user, entry=self.entry)
         url = reverse_lazy('core:like-list-create')

@@ -24,7 +24,7 @@ class TitleQuerySet(BaseModelQuery):
     def have_user_entries(self, user):
         return self.filter(
             entries__user=user, entries__is_deleted=False
-        ).distinct()
+        )
     
     def today_entry_counts(self):
         t = timezone.localtime(timezone.now())
