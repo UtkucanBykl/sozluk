@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.db import models
 
 
-__all__ = ['BaseModel', 'BaseManager', 'BaseModelQuery']
+__all__ = ['BaseModel', 'BaseManager', 'BaseModelQuery', 'BaseModelWithDelete']
 
 
 class BaseModelQuery(models.QuerySet):
@@ -21,6 +21,14 @@ class BaseManager(models.Manager):
 
     def actives(self):
         return self.get_queryset().actives()
+
+
+class BaseModelWithDelete(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
 
 
 class BaseModel(models.Model):

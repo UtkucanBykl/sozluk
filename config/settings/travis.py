@@ -3,6 +3,9 @@ from .base import *
 
 SECRET_KEY = 'x'
 
+ALLOWED_HOSTS = ["*"]
+DEBUG = True
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',

@@ -7,7 +7,7 @@ from django.contrib.auth.models import (
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from ..models import BaseModel
+from ..models import BaseModel, BaseModelWithDelete
 
 
 __all__ = ['User', 'Like', 'Dislike']
@@ -112,7 +112,7 @@ class User(
         return self.username
 
 
-class Like(BaseModel):
+class Like(BaseModelWithDelete):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True)
 
@@ -124,7 +124,8 @@ class Like(BaseModel):
             ('user', 'entry')
         ]
 
-class Dislike(BaseModel):
+
+class Dislike(BaseModelWithDelete):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True)
 
