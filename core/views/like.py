@@ -18,7 +18,7 @@ class LikeListCreateAPIView(ListCreateAPIView):
     http_method_names = ['post', 'put', 'get', 'delete']
 
     def get_queryset(self):
-        return Like.objects.filter(user=self.request.user).actives().select_related('entry', 'user')
+        return Like.objects.filter(user=self.request.user).select_related('entry', 'user')
 
 
 class DislikeListCreateAPIView(ListCreateAPIView):
@@ -28,4 +28,4 @@ class DislikeListCreateAPIView(ListCreateAPIView):
     http_method_names = ['post', 'put', 'get', 'delete']
 
     def get_queryset(self):
-        return Dislike.objects.filter(user=self.request.user).actives().select_related('entry', 'user')
+        return Dislike.objects.filter(user=self.request.user).select_related('entry', 'user')

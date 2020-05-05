@@ -1,3 +1,4 @@
+import datetime
 from django.utils import timezone
 
 from django.contrib.auth import get_user_model
@@ -15,22 +16,23 @@ User = get_user_model()
 
 class TitleQuerySet(BaseModelQuery):
     def active_today(self):
-        return self.filter(entries__updated_at__day=datetime.datetime.now().day,
-                           entries__status='publish', is_deleted=False).distinct()
+        t = timezone.localtime(timezone.now())
+        return self.filter(entries__updated_at__day=t.day, entries__updated_at__year=t.year,
+                           entries__updated_at__month=t.month,
+                           entries__status='publish').distinct()
 
     def order_points(self):
         return self.today_entry_counts().order_by('-is_bold', '-today_entry_counts')
 
     def have_user_entries(self, user):
         return self.filter(
-            entries__user=user, entries__is_deleted=False
+            entries__user=user, entries__status='publish'
         )
     
     def today_entry_counts(self):
         t = timezone.localtime(timezone.now())
         return self.annotate(publish_entry_count=Count('entries',
                                     filter=Q(entries__status='publish',
-                                             entries__is_deleted=False,
                                              entries__updated_at__day=t.day,
                                              entries__updated_at__year=t.year,
                                              entries__updated_at__month=t.month,
