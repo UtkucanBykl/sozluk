@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from ..models import Entry, Title, Like
+from ..models import Entry, Title, Like, Notification
 from ..serializers import LikeSerializer
 
 __all__ = ['EntryTestCase']

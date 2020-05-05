@@ -8,7 +8,6 @@ from ..serializers import EntrySerializer
 
 from ..tasks import create_notification_like, update_user_points, create_notification_dislike
 
-
 __all__ = ['LikeSerializer', 'DislikeSerializer']
 
 
@@ -56,4 +55,3 @@ class DislikeSerializer(serializers.ModelSerializer):
                 entry.last_vote_time = timezone.now()
                 entry.save()
         return save_return
-

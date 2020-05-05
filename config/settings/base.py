@@ -42,7 +42,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-INSTALLED_APPS += ['django_dramatiq', 'core', 'rest_framework', 'rest_framework.authtoken', 'django_filters']
+INSTALLED_APPS += [
+    'django_dramatiq',
+    'core',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'django_filters',
+    'drf_yasg'
+]
 
 AUTH_USER_MODEL = 'core.User'
 
