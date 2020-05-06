@@ -28,3 +28,4 @@ watchdog-gevent==0.1.0
 whitenoise==5.0.1
 zipp==3.1.0
 drf-yasg==1.17.1
+django-cors-headers==3.2.1

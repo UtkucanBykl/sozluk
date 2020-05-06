@@ -46,7 +46,8 @@ INSTALLED_APPS += [
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
-    'drf_yasg'
+    'drf_yasg',
+    'corsheaders'
 ]
 
 AUTH_USER_MODEL = 'core.User'
@@ -55,6 +56,7 @@ AUTH_USER_MODEL = 'core.User'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
