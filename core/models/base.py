@@ -9,7 +9,7 @@ class BaseModelQuery(models.QuerySet):
     def delete(self, hard=False):
         if hard:
             return super().delete()
-        return super().update(is_deleted=True, deleted_at=timezone.now())
+        return super().update(status='deleted', deleted_at=timezone.now())
 
     def actives(self):
         return self.filter(status='publish')
@@ -36,14 +36,14 @@ class BaseModel(models.Model):
 
     stages = (
         ('draft', 'draft'),
-        ('publish', 'publish')
+        ('publish', 'publish'),
+        ('deleted', 'deleted')
     )
 
     status = models.CharField(choices=stages, default='publish', max_length=25)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(blank=True, null=True)
-    is_deleted = models.BooleanField(default=False)
 
     objects = BaseManager()
 
@@ -60,7 +60,7 @@ class BaseModel(models.Model):
             instance=self
         )
 
-        self.is_deleted = True
+        self.status = 'deleted'
         self.deleted_at = timezone.now()
 
         self.save()

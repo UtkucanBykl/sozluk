@@ -1,16 +1,17 @@
 from django.contrib import admin
+from .base import BaseAdmin
 
-from ..models import  Title, Entry
+from ..models import Title, Entry
 
 __all__ = ['TitleAdmin', 'EntryAdmin']
 
 
 
 @admin.register(Title)
-class TitleAdmin(admin.ModelAdmin):
+class TitleAdmin(BaseAdmin):
     pass
 
 
 @admin.register(Entry)
-class EntryAdmin(admin.ModelAdmin):
+class EntryAdmin(BaseAdmin):
     pass
