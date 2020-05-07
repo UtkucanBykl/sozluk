@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from ..models import Entry
 from ..serializers import TitleSerializer, UserSerializer
@@ -31,3 +32,8 @@ class EntrySerializer(serializers.ModelSerializer):
             user_id = user.id
             create_notification_info.send(title_id, user_id)
         return save_return
+
+    def validate(self, attrs):
+        if not attrs.get('title').can_write:
+            raise ValidationError('This title has not permission for write by users')
+        return super().validate(attrs)

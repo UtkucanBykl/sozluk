@@ -70,6 +70,7 @@ class Title(BaseModel):
     is_bold = models.BooleanField(default=False)
     can_write = models.BooleanField(default=True)
     category = models.ForeignKey('core.Category', null=True, blank=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, null=True, blank=True, related_name='titles', on_delete=models.SET_NULL)
 
     objects = TitleManager()
 

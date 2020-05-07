@@ -18,6 +18,10 @@ class EntryTestCase(APITestCase):
         self.title1 = Title.objects.create(
             title='Test'
         )
+        self.title_cant_write = Title.objects.create(
+            title='Testttt',
+            can_write=False
+        )
         self.user = User.objects.create(
             username='Utku', email='utku@can.com', password=make_password('1234')
         )
@@ -45,6 +49,16 @@ class EntryTestCase(APITestCase):
         response = self.client.post(url, data)
         
         self.assertEqual(response.status_code, 201)
+
+    def test_create_entry_with_error(self):
+        url = reverse_lazy('core:entry-list-create')
+        data = {
+            'title': self.title_cant_write.id,
+            'content': 'aaaaa'
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.post(url, data)
+        self.assertIsNotNone(response.data.get('non_field_errors'))
 
     def test_update_entry_with_auth(self):
         url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id':self.entry.id})
