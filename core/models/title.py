@@ -17,25 +17,25 @@ User = get_user_model()
 class TitleQuerySet(BaseModelQuery):
     def active_today(self):
         t = timezone.localtime(timezone.now())
-        return self.filter(entries__updated_at__day=t.day, entries__updated_at__year=t.year,
-                           entries__updated_at__month=t.month,
-                           entries__status='publish').distinct()
+        return self.filter(entry__updated_at__day=t.day, entry__updated_at__year=t.year,
+                           entry__updated_at__month=t.month,
+                           entry__status='publish').distinct()
 
     def order_points(self):
         return self.today_entry_counts().order_by('-is_bold', '-today_entry_counts')
 
     def have_user_entries(self, user):
         return self.filter(
-            entries__user=user, entries__status='publish'
+            entry__user=user, entry__status='publish'
         )
     
     def today_entry_counts(self):
         t = timezone.localtime(timezone.now())
-        return self.annotate(publish_entry_count=Count('entries',
-                                    filter=Q(entries__status='publish',
-                                             entries__updated_at__day=t.day,
-                                             entries__updated_at__year=t.year,
-                                             entries__updated_at__month=t.month,
+        return self.annotate(publish_entry_count=Count('entry',
+                                    filter=Q(entry__status='publish',
+                                             entry__updated_at__day=t.day,
+                                             entry__updated_at__year=t.year,
+                                             entry__updated_at__month=t.month,
                                              ),
                                              distinct=True
                                     ))
@@ -69,8 +69,10 @@ class Title(BaseModel):
     display_order = models.IntegerField(default=0)
     is_bold = models.BooleanField(default=False)
     can_write = models.BooleanField(default=True)
-    category = models.ForeignKey('core.Category', null=True, blank=True, on_delete=models.SET_NULL)
-    user = models.ForeignKey(User, null=True, blank=True, related_name='titles', on_delete=models.SET_NULL)
+    category = models.ForeignKey('core.Category', null=True, blank=True, on_delete=models.SET_NULL,
+                                 related_name='titles', related_query_name='title')
+    user = models.ForeignKey(User, null=True, blank=True, related_name='titles', on_delete=models.SET_NULL,
+                             related_query_name='title')
 
     objects = TitleManager()
 
@@ -79,7 +81,8 @@ class Title(BaseModel):
 
 
 class Entry(BaseModel):
-    title = models.ForeignKey('core.Title', related_name='entries', on_delete=models.CASCADE)
+    title = models.ForeignKey('core.Title', related_name='entries', on_delete=models.CASCADE,
+                              related_query_name='entry')
     user = models.ForeignKey(User, related_name='entries', on_delete=models.CASCADE, blank=True, null=True)
     content = models.TextField(max_length=500)
     is_important = models.BooleanField(default=False)
