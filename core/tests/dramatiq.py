@@ -33,4 +33,3 @@ class TaskTestCase(DramatiqTestCase):
         self.broker.join(queue.queue_name)
         self.worker.join()
         self.assertEqual(User.objects.first().point, 5)
-        
