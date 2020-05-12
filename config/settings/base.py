@@ -135,7 +135,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static_cdn', 'static_root')
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
 }
 
 DRAMATIQ_REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/0")

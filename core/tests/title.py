@@ -27,28 +27,28 @@ class TitleTestCase(APITestCase):
         url = reverse_lazy('core:title-list-create')
         response = self.client.get(url)
         serializer = TitleSerializer(Title.objects.actives(), many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data['results'], serializer.data)
 
     def test_get_title_with_query(self):
         base_url = reverse_lazy('core:title-list-create')
         url = f'{base_url}?category=Cat'
         response = self.client.get(url)
         serializer = TitleSerializer(Title.objects.filter(category__name__iexact='Cat'), many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data['results'], serializer.data)
 
     def test_get_title_with_full_text(self):
         base_url = reverse_lazy('core:title-list-create')
         url = f'{base_url}?full_text=Testtttt'
         response = self.client.get(url)
         serializer = TitleSerializer(Title.objects.filter(title__icontains='Te'), many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data['results'], serializer.data)
 
     def test_get_title_query(self):
         base_url = reverse_lazy('core:title-list-create')
         url = f'{base_url}?title=Utku'
         response = self.client.get(url)
         serializer = TitleSerializer(Title.objects.filter(title__iexact='Utku'), many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data['results'], serializer.data)
 
     def test_create_title_correct(self):
         url = reverse_lazy('core:title-list-create')

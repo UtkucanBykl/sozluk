@@ -114,4 +114,4 @@ class EntryTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.get(url)
         serializer = LikeSerializer(Like.objects.filter(user=self.user), many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data['results'], serializer.data)
