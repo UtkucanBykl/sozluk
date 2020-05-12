@@ -16,6 +16,6 @@ urlpatterns = [
     path('notifications/', NotificationListAPIView.as_view(), name='notification-list'),
     path('users/follows/', UserFollowListCreateAPIView.as_view(), name='user-follow-list-create'),
     path('dislikes/', DislikeListCreateAPIView.as_view(), name='dislike-list-create'),
-
+    path('categories/', CategoryListAPIView.as_view(), name='category-list'),
 
 ]

@@ -1,16 +1,16 @@
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, ListAPIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.filters import SearchFilter
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from ..serializers import TitleSerializer
+from ..serializers import TitleSerializer, CategorySerializer
 from ..permissions import IsOwnerOrReadOnly
-from ..models import Title
+from ..models import Title, Category
 from ..filters import TitleFilter
 
-__all__ = ['TitleRetrieveUpdateDestroyAPIView', 'TitleListCreateAPIView']
+__all__ = ['TitleRetrieveUpdateDestroyAPIView', 'TitleListCreateAPIView', 'CategoryListAPIView']
 
 
 class TitleRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
@@ -36,3 +36,9 @@ class TitleListCreateAPIView(ListCreateAPIView):
         if self.request.GET.get('full_text'):
             qs = qs.full_text_search(self.request.GET.get('full_text'))
         return qs
+
+
+class CategoryListAPIView(ListAPIView):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.actives()
+
