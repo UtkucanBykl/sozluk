@@ -25,7 +25,7 @@ class TitleListCreateAPIView(ListCreateAPIView):
     authentication_classes = (TokenAuthentication,)
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
-    queryset = Title.objects.actives()
+    queryset = Title.objects.actives().select_related('category')
     search_fields = ['title']
     filterset_class = TitleFilter
 
