@@ -137,7 +137,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 100
+    'PAGE_SIZE': 100,
+    'EXCEPTION_HANDLER': 'hipo_drf_exceptions.handler',
 }
 
 DRAMATIQ_REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/0")

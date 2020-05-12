@@ -58,7 +58,7 @@ class EntryTestCase(APITestCase):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.post(url, data)
-        self.assertIsNotNone(response.data.get('non_field_errors'))
+        self.assertIsNotNone(response.data.get('fallback_message'))
 
     def test_update_entry_with_auth(self):
         url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id':self.entry.id})
@@ -77,6 +77,7 @@ class EntryTestCase(APITestCase):
             'content': 'bbbbb'
         }
         response = self.client.patch(url, data)
+        print(response.data)
         self.assertEqual(response.status_code, 401)
 
     def test_delete_entry_with_auth(self):
