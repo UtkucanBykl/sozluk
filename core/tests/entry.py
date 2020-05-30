@@ -77,7 +77,6 @@ class EntryTestCase(APITestCase):
             'content': 'bbbbb'
         }
         response = self.client.patch(url, data)
-        print(response.data)
         self.assertEqual(response.status_code, 401)
 
     def test_delete_entry_with_auth(self):

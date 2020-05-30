@@ -30,4 +30,4 @@ zipp==3.1.0
 drf-yasg==1.17.1
 django-cors-headers==3.2.1
 hipo-drf-exceptions==0.1.5
-
+drf-recaptcha==2.0.2

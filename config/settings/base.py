@@ -47,7 +47,8 @@ INSTALLED_APPS += [
     'rest_framework.authtoken',
     'django_filters',
     'drf_yasg',
-    'corsheaders'
+    'corsheaders',
+    'drf_recaptcha'
 ]
 
 AUTH_USER_MODEL = 'core.User'
@@ -170,3 +171,6 @@ if TEST:
         "django_dramatiq.middleware.DbConnectionsMiddleware",
     ]
     }
+
+
+DRF_RECAPTCHA_SECRET_KEY = os.environ.get('DRF_RECAPTCHA')
