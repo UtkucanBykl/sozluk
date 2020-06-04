@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-
+from django.test import override_settings
 from django.contrib.auth.hashers import make_password
 from django.urls import reverse_lazy
 
@@ -22,6 +22,7 @@ class UserTest(APITestCase):
         )
         self.token = Token.objects.get(user=self.user).key
 
+    @override_settings(DRF_RECAPTCHA_TESTING=True)
     def test_register(self):
         url = reverse_lazy('core:user-register')
         data = {
@@ -29,7 +30,8 @@ class UserTest(APITestCase):
             'password': 'utkuutku',
             'confirm_password': 'utkuutku',
             'kvkk': True,
-            'email': 'dd@ddd.com'
+            'email': 'dd@ddd.com',
+            'recaptcha': 'dd'
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 201)

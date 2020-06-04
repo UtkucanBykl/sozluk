@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate
 
 from rest_framework import serializers
 
+from drf_recaptcha.fields import ReCaptchaV2Field
+
 from ..serializers import UserSerializer
 
 User = get_user_model()
@@ -17,6 +19,7 @@ class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=140)
     kvkk = serializers.BooleanField()
     confirm_password = serializers.CharField(max_length=140)
+    recaptcha = ReCaptchaV2Field()
 
     def validate(self, attrs):
         if attrs.get('confirm_password') != attrs.get('password'):
