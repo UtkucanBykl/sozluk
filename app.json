@@ -15,6 +15,9 @@
     },
     "BASIC_USER_PASS": {
       "value": "randomtestpassword.123"
+    },
+    "DRF_RECAPTCHA": {
+      "value": "test"
     }
   },
   "environments": {
