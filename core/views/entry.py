@@ -22,6 +22,10 @@ class EntryListCreateAPIView(ListCreateAPIView):
     search_fields = ['title']
     filterset_class = EntryFilter
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(title=self.kwargs.get('title_id'))
+
     def perform_create(self, serializer):
         serializer.user = self.request.user
         serializer.save()
