@@ -23,6 +23,12 @@ class EntrySerializer(serializers.ModelSerializer):
         model = Entry
         fields = ('user', 'updated_at', 'title_data', 'title', 'content', 'is_important', 'user', 'user_data')
 
+    def to_internal_value(self, data):
+        new_data = data.copy()
+        title_id = self.context['view'].kwargs.get('title_id')
+        new_data['title'] = title_id
+        return super().to_internal_value(new_data)
+
     def save(self, **kwargs):
         save_return = super().save(**kwargs)
         title = self.validated_data.get('title')
