@@ -115,7 +115,20 @@ class EntryTestCase(APITestCase):
         self.assertEqual(response.data['results'], serializer.data)
 
     def test_get_entry(self):
+        Like.objects.create(user=self.user, entry=self.entry)
         url = reverse_lazy('core:entry-list-create', kwargs={'title_id': self.title1.id})
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    def test_get_entry_without_auth(self):
+        url = reverse_lazy('core:entry-list-create', kwargs={'title_id': self.title1.id})
+        response = self.client.get(url)
+        self.assertEqual(response.data.get('results', [])[0]['is_like'], False)
+
+    def test_get_entry_with_auth_control_like(self):
+        Like.objects.create(user=self.user, entry=self.entry)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id':self.entry.id, 'title_id': self.title1.id})
+        response = self.client.get(url)
+        self.assertEqual(response.data.get('is_like'), True)

@@ -18,16 +18,20 @@ class EntrySerializer(serializers.ModelSerializer):
         queryset=User.objects.filter(),
         default=serializers.CurrentUserDefault()
     )
+    is_like = serializers.SerializerMethodField()
 
     class Meta:
         model = Entry
-        fields = ('user', 'updated_at', 'title_data', 'title', 'content', 'is_important', 'user', 'user_data')
+        fields = ('user', 'updated_at', 'title_data', 'title', 'content', 'is_important', 'user', 'user_data', 'is_like')
 
     def to_internal_value(self, data):
         new_data = data.copy()
         title_id = self.context['view'].kwargs.get('title_id')
         new_data['title'] = title_id
         return super().to_internal_value(new_data)
+
+    def to_representation(self, instance):
+        return super().to_representation(instance)
 
     def save(self, **kwargs):
         save_return = super().save(**kwargs)
@@ -43,3 +47,6 @@ class EntrySerializer(serializers.ModelSerializer):
         if not attrs.get('title').can_write:
             raise ValidationError('This title has not permission for write by users')
         return super().validate(attrs)
+
+    def get_is_like(self, obj):
+        return obj.is_like if hasattr(obj, 'is_like') else None
