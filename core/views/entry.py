@@ -24,7 +24,7 @@ class EntryListCreateAPIView(ListCreateAPIView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(title=self.kwargs.get('title_id'))
+        return qs.filter(title=self.kwargs.get('title_id')).is_user_like(self.request.user)
 
     def perform_create(self, serializer):
         serializer.user = self.request.user
@@ -39,4 +39,4 @@ class EntryRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
 
     def get_queryset(self):
-        return Entry.objects.actives().filter(id=self.kwargs.get('id'))
+        return Entry.objects.actives().filter(id=self.kwargs.get('id')).is_user_like(self.request.user)

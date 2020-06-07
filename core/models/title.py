@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchVector
 from django.db import models
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Case, When, F, Value, BooleanField
 
 from ..models import BaseModel, BaseManager, BaseModelQuery
 
@@ -64,6 +64,26 @@ class TitleManager(BaseManager):
         return self.get_queryset().full_text_search(value)
 
 
+class EntryQuerySet(BaseModelQuery):
+    def is_user_like(self, user):
+        if user.is_authenticated:
+            return self.annotate(is_like=Case(
+                When(like_users__username=user.username, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+                )
+            )
+        return self.annotate(is_like=Value(False, output_field=BooleanField()))
+
+
+class EntryManager(BaseManager):
+    def get_queryset(self):
+        return EntryQuerySet(self.model, using=self._db)
+
+    def is_user_like(self, user):
+        return self.get_queryset().is_user_like(user)
+
+
 class Title(BaseModel):
     title = models.CharField(max_length=40, unique=True)
     display_order = models.IntegerField(default=0)
@@ -87,6 +107,8 @@ class Entry(BaseModel):
     content = models.TextField(max_length=500)
     is_important = models.BooleanField(default=False)
     last_vote_time = models.DateTimeField(default=timezone.now)
+
+    objects = EntryManager()
 
     def __str__(self):
         return self.content
