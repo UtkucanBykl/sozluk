@@ -75,10 +75,10 @@ class User(
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
 
     username = models.CharField(
-        unique=True, max_length=140
+        max_length=140, unique=True
     )
     email = models.EmailField(
-        unique=True, verbose_name=_('email address')
+        verbose_name=_('email address')
     )
     first_name = models.CharField(
         max_length=255, verbose_name=_('first name')
@@ -107,6 +107,10 @@ class User(
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
+        constraints = [
+            models.UniqueConstraint(fields=['username'], name='username_unique'),
+            models.UniqueConstraint(fields=['email'], name='email_unique')
+        ]
 
     def __str__(self):
         return self.username
