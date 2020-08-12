@@ -81,10 +81,10 @@ class User(
         verbose_name=_('email address')
     )
     first_name = models.CharField(
-        max_length=255, verbose_name=_('first name')
+        max_length=255, verbose_name=_('first name'), null=True, blank=True
     )
     last_name = models.CharField(
-        max_length=255, verbose_name=_('last name')
+        max_length=255, verbose_name=_('last name'), null=True, blank=True
     )
     is_active = models.BooleanField(
         default=True, verbose_name=_('active')
