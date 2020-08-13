@@ -75,6 +75,14 @@ class EntryQuerySet(BaseModelQuery):
             )
         return self.annotate(is_like=Value(False, output_field=BooleanField()))
 
+    def count_like_and_dislike(self, order_by=False):
+        qs = self.annotate(like_count=Count('like')).annotate(dislike_count=Count('dislike'))
+        if order_by == 'like':
+            qs = qs.order_by('-like_count')
+        elif order_by == 'dislike':
+            qs = qs.order_by('-dislike')
+        return qs
+
 
 class EntryManager(BaseManager):
     def get_queryset(self):
@@ -82,6 +90,9 @@ class EntryManager(BaseManager):
 
     def is_user_like(self, user):
         return self.get_queryset().is_user_like(user)
+
+    def count_like_and_dislike(self, order_by=False):
+        return self.get_queryset().count_like_and_dislike(order_by)
 
 
 class Title(BaseModel):
