@@ -26,16 +26,6 @@ class RegisterSerializer(serializers.Serializer):
             raise serializers.ValidationError('Passwords does not match')
         return attrs
 
-    def validate_username(self, attr):
-        if User.objects.filter(username=attr).exists():
-            raise serializers.ValidationError('This username already taken')
-        return attr
-
-    def validate_email(self, attr):
-        if User.objects.filter(email=attr).exists():
-            raise serializers.ValidationError('This email already taken')
-        return attr
-
     def validate_kvkk(self, attr):
         if attr is not True:
             raise serializers.ValidationError('KVKK is have to checked')
