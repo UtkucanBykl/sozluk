@@ -118,7 +118,8 @@ class User(
 
 class Like(BaseModelWithDelete):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True)
+    entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True,
+                              related_query_name='like', related_name='likes')
 
     def __str__(self):
         return self.user.username + 'likes' + str(self.entry.id)
@@ -131,7 +132,8 @@ class Like(BaseModelWithDelete):
 
 class Dislike(BaseModelWithDelete):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True)
+    entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True,
+                              related_query_name='dislike', related_name='dislikes')
 
     def __str__(self):
         return self.user.username + 'likes' + str(self.entry.id)
