@@ -46,7 +46,7 @@ class EntrySerializer(serializers.ModelSerializer):
         model = Entry
         fields = (
             'user', 'updated_at', 'title_data', 'title', 'content', 'is_important', 'user', 'user_data', 'is_like', 'id',
-            'like_count', 'dislike_count', 'likes', 'dislikes')
+            'like_count', 'dislike_count', 'likes', 'dislikes', 'status')
 
     def to_internal_value(self, data):
         new_data = data.copy()

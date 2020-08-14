@@ -19,12 +19,14 @@ class EntryListCreateAPIView(ListCreateAPIView):
     authentication_classes = (TokenAuthentication,)
     serializer_class = EntrySerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
-    queryset = Entry.objects.actives()
     search_fields = ['title']
     filterset_class = EntryFilter
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        if self.request.user.is_authenticated and self.request.user.is_staff:
+            qs = Entry.objects.filter()
+        else:
+            qs = Entry.objects.actives()
         likes_prefetch = Prefetch('likes', Like.objects.select_related('user').filter())
         dislikes_prefetch = Prefetch('dislikes', Dislike.objects.select_related('user').filter())
 
