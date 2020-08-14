@@ -125,8 +125,8 @@ class Like(BaseModelWithDelete):
         return self.user.username + 'likes' + str(self.entry.id)
 
     class Meta:
-        unique_together = [
-            ('user', 'entry')
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'entry'], name='like_unique')
         ]
 
 
@@ -139,6 +139,6 @@ class Dislike(BaseModelWithDelete):
         return self.user.username + 'likes' + str(self.entry.id)
 
     class Meta:
-        unique_together = [
-            ('user', 'entry')
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'entry'], name='dislike_unique')
         ]
