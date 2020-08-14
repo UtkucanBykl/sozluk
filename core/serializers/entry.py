@@ -2,13 +2,31 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from ..models import Entry
+from ..models import Entry, Like, Dislike
 from ..serializers import TitleSerializer, UserSerializer
 from ..tasks import create_notification_info
 
 __all__ = ['EntrySerializer']
 
 User = get_user_model()
+
+
+class ReadOnlyLikeSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False, read_only=True)
+
+    class Meta:
+        fields = ('user',)
+        read_only_fields = fields
+        model = Like
+
+
+class ReadOnlyDislikeSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False, read_only=True)
+
+    class Meta:
+        fields = ('user',)
+        read_only_fields = fields
+        model = Dislike
 
 
 class EntrySerializer(serializers.ModelSerializer):
@@ -21,12 +39,14 @@ class EntrySerializer(serializers.ModelSerializer):
     is_like = serializers.SerializerMethodField()
     like_count = serializers.IntegerField(default=0, read_only=True)
     dislike_count = serializers.IntegerField(default=0, read_only=True)
+    likes = ReadOnlyLikeSerializer(many=True, read_only=True)
+    dislikes = ReadOnlyDislikeSerializer(many=True, read_only=True)
 
     class Meta:
         model = Entry
         fields = (
             'user', 'updated_at', 'title_data', 'title', 'content', 'is_important', 'user', 'user_data', 'is_like', 'id',
-            'like_count', 'dislike_count')
+            'like_count', 'dislike_count', 'likes', 'dislikes')
 
     def to_internal_value(self, data):
         new_data = data.copy()

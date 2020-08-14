@@ -4,7 +4,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..models import Like, Dislike
-from ..serializers import EntrySerializer
+from ..serializers import EntrySerializer, UserSerializer
 
 from ..tasks import create_notification_like, update_user_points, create_notification_dislike
 
