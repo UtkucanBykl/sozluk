@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from drf_recaptcha.fields import ReCaptchaV2Field
 
-from ..serializers import UserSerializer
+from ..serializers import LoginUserSerializer
 
 User = get_user_model()
 
@@ -26,16 +26,6 @@ class RegisterSerializer(serializers.Serializer):
             raise serializers.ValidationError('Passwords does not match')
         return attrs
 
-    def validate_username(self, attr):
-        if User.objects.filter(username=attr).exists():
-            raise serializers.ValidationError('This username already taken')
-        return attr
-
-    def validate_email(self, attr):
-        if User.objects.filter(email=attr).exists():
-            raise serializers.ValidationError('This email already taken')
-        return attr
-
     def validate_kvkk(self, attr):
         if attr is not True:
             raise serializers.ValidationError('KVKK is have to checked')
@@ -47,7 +37,7 @@ class RegisterSerializer(serializers.Serializer):
             password=make_password(validated_data['password']),
             email=validated_data['email']
         )
-        return UserSerializer(user, many=False).data
+        return LoginUserSerializer(user, many=False).data
 
 
 class LoginSerializer(serializers.Serializer):
@@ -57,7 +47,7 @@ class LoginSerializer(serializers.Serializer):
     def login(self, attrs):
         user = authenticate(username=attrs.get('username'), password=attrs.get('password'))
         if user is not None:
-            return UserSerializer(user, many=False).data
+            return LoginUserSerializer(user, many=False).data
         raise serializers.ValidationError('Username or password incorrect')
 
 

@@ -75,16 +75,16 @@ class User(
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
 
     username = models.CharField(
-        unique=True, max_length=140
+        max_length=140, unique=True
     )
     email = models.EmailField(
-        unique=True, verbose_name=_('email address')
+        verbose_name=_('email address')
     )
     first_name = models.CharField(
-        max_length=255, verbose_name=_('first name')
+        max_length=255, verbose_name=_('first name'), null=True, blank=True
     )
     last_name = models.CharField(
-        max_length=255, verbose_name=_('last name')
+        max_length=255, verbose_name=_('last name'), null=True, blank=True
     )
     is_active = models.BooleanField(
         default=True, verbose_name=_('active')
@@ -107,6 +107,10 @@ class User(
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
+        constraints = [
+            models.UniqueConstraint(fields=['username'], name='username_unique'),
+            models.UniqueConstraint(fields=['email'], name='email_unique')
+        ]
 
     def __str__(self):
         return self.username
@@ -114,7 +118,8 @@ class User(
 
 class Like(BaseModelWithDelete):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True)
+    entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True,
+                              related_query_name='like', related_name='likes')
 
     def __str__(self):
         return self.user.username + 'likes' + str(self.entry.id)
@@ -127,7 +132,8 @@ class Like(BaseModelWithDelete):
 
 class Dislike(BaseModelWithDelete):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True)
+    entry = models.ForeignKey('core.Entry', on_delete=models.CASCADE, blank=True, null=True,
+                              related_query_name='dislike', related_name='dislikes')
 
     def __str__(self):
         return self.user.username + 'likes' + str(self.entry.id)

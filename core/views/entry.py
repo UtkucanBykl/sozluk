@@ -24,7 +24,8 @@ class EntryListCreateAPIView(ListCreateAPIView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(title=self.kwargs.get('title_id')).is_user_like(self.request.user).select_related('title')
+        return qs.filter(title=self.kwargs.get('title_id')).is_user_like(
+            self.request.user).count_like_and_dislike().select_related('title').prefetch_related('likes', 'dislikes')
 
     def perform_create(self, serializer):
         serializer.user = self.request.user
