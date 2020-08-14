@@ -3,12 +3,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, DjangoModelPermissions
 
 from ..models import Entry, Like, Dislike
 from ..serializers import EntrySerializer
 from ..filters import EntryFilter
-from ..permissions import IsOwnerOrReadOnly
+from ..permissions import IsOwnerOrReadOnly, OwnModelPermission
 
 
 __all__ = ['EntryListCreateAPIView', 'EntryRetrieveUpdateDestroyAPIView']
@@ -40,11 +40,13 @@ class EntryListCreateAPIView(ListCreateAPIView):
 
 
 class EntryRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = [OwnModelPermission|IsOwnerOrReadOnly]
     authentication_classes = (TokenAuthentication,)
     serializer_class = EntrySerializer
     lookup_url_kwarg = 'id'
     lookup_field = 'id'
+    queryset = Entry.objects.actives()
 
     def get_queryset(self):
-        return Entry.objects.actives().filter(id=self.kwargs.get('id')).is_user_like(self.request.user).select_related('title')
+        qs = super().get_queryset()
+        return qs.filter(id=self.kwargs.get('id')).is_user_like(self.request.user).select_related('title')

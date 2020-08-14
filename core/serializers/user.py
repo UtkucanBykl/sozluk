@@ -8,7 +8,6 @@ __all__ = ['UserSerializer', 'LoginUserSerializer']
 User = get_user_model()
 
 
-
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'id')

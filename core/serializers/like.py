@@ -55,3 +55,4 @@ class DislikeSerializer(serializers.ModelSerializer):
                 entry.last_vote_time = timezone.now()
                 entry.save()
         return save_return
+

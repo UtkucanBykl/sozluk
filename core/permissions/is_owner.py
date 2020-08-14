@@ -1,6 +1,11 @@
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, DjangoModelPermissions
 
-__all__ = ['IsOwnerOrReadOnly']
+__all__ = ['IsOwnerOrReadOnly', 'OwnModelPermission']
+
+
+class OwnModelPermission(DjangoModelPermissions):
+    def has_object_permission(self, request, view, obj):
+        return self.has_permission(request, view)
 
 
 class IsOwnerOrReadOnly(BasePermission):
