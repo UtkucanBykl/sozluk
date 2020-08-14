@@ -114,6 +114,14 @@ class EntryTestCase(APITestCase):
         serializer = LikeSerializer(Like.objects.filter(user=self.user), many=True)
         self.assertEqual(response.data['results'], serializer.data)
 
+    def test_delete_like(self):
+        Like.objects.create(user=self.user, entry=self.entry)
+        url = reverse_lazy('core:like-delete', kwargs={'entry_id': self.entry.id})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.delete(url)
+        self.assertFalse(Like.objects.filter(user=self.user, entry=self.entry).exists())
+        self.assertEqual(response.status_code, 204)
+
     def test_get_entry(self):
         Like.objects.create(user=self.user, entry=self.entry)
         url = reverse_lazy('core:entry-list-create', kwargs={'title_id': self.title1.id})
