@@ -31,7 +31,8 @@ class EntryListCreateAPIView(ListCreateAPIView):
         dislikes_prefetch = Prefetch('dislikes', Dislike.objects.select_related('user').filter())
 
         return qs.filter(title=self.kwargs.get('title_id')).is_user_like(
-            self.request.user).count_like_and_dislike().select_related('title').prefetch_related(
+            self.request.user).is_user_dislike(self.request.user).count_like_and_dislike().select_related(
+            'title').prefetch_related(
             likes_prefetch, dislikes_prefetch)
 
     def perform_create(self, serializer):
