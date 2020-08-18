@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 
-from ..models import TitleFollow, Like, Notification
+from ..models import TitleFollow, Like, Notification, Dislike
 
 __all__ = ['UserAdmin']
 
@@ -19,6 +19,11 @@ class FollowAdmin(admin.ModelAdmin):
 
 
 @admin.register(Like)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'entry')
+
+
+@admin.register(Dislike)
 class LikeAdmin(admin.ModelAdmin):
     list_display = ('user', 'entry')
 
