@@ -50,10 +50,7 @@ class EntrySerializer(serializers.ModelSerializer):
             'like_count', 'dislike_count', 'likes', 'dislikes', 'is_dislike', 'status')
 
     def to_internal_value(self, data):
-        new_data = data.copy()
-        title_id = self.context['view'].kwargs.get('title_id')
-        new_data['title'] = title_id
-        return super().to_internal_value(new_data)
+        return super().to_internal_value(data)
 
     def to_representation(self, instance):
         return super().to_representation(instance)
@@ -69,6 +66,6 @@ class EntrySerializer(serializers.ModelSerializer):
         return save_return
 
     def validate(self, attrs):
-        if not attrs.get('title').can_write:
+        if attrs.get('title') and not attrs.get('title').can_write:
             raise ValidationError('This title has not permission for write by users')
         return super().validate(attrs)

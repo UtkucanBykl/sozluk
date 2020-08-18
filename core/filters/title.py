@@ -11,7 +11,7 @@ class TitleFilter(rest_framework.FilterSet):
     title = rest_framework.CharFilter(field_name='title', lookup_expr='iexact')
     entry_username = rest_framework.CharFilter(method='filter_by_username')
     today = rest_framework.BooleanFilter(method='get_today')
-    full_text = rest_framework.BooleanFilter('get_full_text')
+    full_text = rest_framework.CharFilter(method='get_full_text')
 
     class Meta:
         model = Title
