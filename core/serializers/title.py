@@ -13,6 +13,11 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = ('id', 'title', 'updated_at', 'is_bold', 'can_write', 'category', 'total_entry_count', 'today_entry_count')
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['category'] = CategorySerializer(instance.category, read_only=True, many=False).data
+        return data
+
 
 class CategorySerializer(serializers.ModelSerializer):
     title_count = serializers.IntegerField(default=0, read_only=True)
