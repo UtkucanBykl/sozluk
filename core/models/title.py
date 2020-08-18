@@ -49,7 +49,7 @@ class TitleQuerySet(BaseModelQuery):
 
 class TitleManager(BaseManager):
     def get_queryset(self):
-        return TitleQuerySet(self.model, using=self._db)
+        return TitleQuerySet(self.model, using=self._db).select_related('category')
 
     def active_today(self):
         return self.get_queryset().active_today()
