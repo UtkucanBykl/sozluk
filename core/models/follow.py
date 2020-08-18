@@ -9,11 +9,12 @@ __all__ = ['TitleFollow', 'UserFollow']
 
 
 class TitleFollow(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follows')
     title = models.ForeignKey('core.Title', related_name='follows', on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.user.username} follow {self.title.title}'
+
 
 class UserFollow(BaseModel):
     follower_user = models.ForeignKey(User, related_name='followings', on_delete=models.CASCADE)

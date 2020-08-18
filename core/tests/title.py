@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import make_password
 from django.urls import reverse_lazy
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
-from ..models import Title, Category, Entry
+from ..models import Title, Category, Entry, TitleFollow, UserFollow
 from ..serializers import TitleSerializer
 
 __all__ = ['TitleTestCase']
@@ -20,6 +20,9 @@ class TitleTestCase(APITestCase):
         )
         self.user = User.objects.create(
             username='Utku', email='utku@can.com', password=make_password('1234')
+        )
+        self.user2 = User.objects.create(
+            username='Utku2', email='ut2ku@can.com', password=make_password('12234')
         )
         self.token = Token.objects.get(user=self.user).key
 
@@ -76,6 +79,20 @@ class TitleTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 201)
+
+    def test_follow_delete(self):
+        TitleFollow.objects.create(user=self.user, title=self.title1)
+        url = reverse_lazy('core:title-follow-delete', kwargs={"title_id": self.title1.id})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
+
+    def test_user_follow_delete(self):
+        UserFollow.objects.create(follower_user=self.user, following_user=self.user2)
+        url = reverse_lazy('core:user-follow-delete', kwargs={"following_user_id": self.user2.id})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
 
     def test_have_user_entries_title(self):
         Entry.objects.create(

@@ -1,7 +1,7 @@
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, ListAPIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -24,18 +24,11 @@ class TitleListCreateAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     authentication_classes = (TokenAuthentication,)
     serializer_class = TitleSerializer
-    filter_backends = (DjangoFilterBackend, SearchFilter)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     queryset = Title.objects.actives().select_related('category')
     search_fields = ['title']
+    order_fields = ['created_at']
     filterset_class = TitleFilter
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        if self.request.GET.get('today'):
-            qs = qs.active_today()
-        if self.request.GET.get('full_text'):
-            qs = qs.full_text_search(self.request.GET.get('full_text'))
-        return qs
 
 
 class CategoryListAPIView(ListAPIView):

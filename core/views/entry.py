@@ -1,7 +1,7 @@
 from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, DjangoModelPermissions
 
@@ -18,8 +18,9 @@ class EntryListCreateAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     authentication_classes = (TokenAuthentication,)
     serializer_class = EntrySerializer
-    filter_backends = (DjangoFilterBackend, SearchFilter)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     search_fields = ['title']
+    ordering_fields = ['like_count', 'dislike_count', 'created_at']
     filterset_class = EntryFilter
 
     def get_queryset(self):
@@ -31,7 +32,8 @@ class EntryListCreateAPIView(ListCreateAPIView):
         dislikes_prefetch = Prefetch('dislikes', Dislike.objects.select_related('user').filter())
 
         return qs.filter(title=self.kwargs.get('title_id')).is_user_like(
-            self.request.user).count_like_and_dislike().select_related('title').prefetch_related(
+            self.request.user).is_user_dislike(self.request.user).count_like_and_dislike().select_related(
+            'title').prefetch_related(
             likes_prefetch, dislikes_prefetch)
 
     def perform_create(self, serializer):
