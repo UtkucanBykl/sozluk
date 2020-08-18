@@ -29,12 +29,12 @@ class EntryTestCase(APITestCase):
         self.entry = Entry.objects.create(
             title=self.title1, user=self.user, content='aaaaaa'
         )
-        self.entry = Entry.objects.create(
+        self.entry2 = Entry.objects.create(
             title=self.title1, user=self.user, content='aaddaaaa'
         )
 
     def test_create_entry_without_auth(self):
-        url = reverse_lazy('core:entry-list-create', kwargs={'title_id': self.title1.id})
+        url = reverse_lazy('core:entry-list-create')
         data = {
             'title': self.title1,
             'content': 'aaaaa'
@@ -43,25 +43,28 @@ class EntryTestCase(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_create_entry_with_auth(self):
-        url = reverse_lazy('core:entry-list-create', kwargs={'title_id': self.title1.id})
+        url = reverse_lazy('core:entry-list-create')
         data = {
-            'content': 'aaaaa'
+            'content': 'aaaaa',
+            'title': self.title1.pk
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
-        response = self.client.post(url, data)
+        response = self.client.post(url, data, format='json')
+        print(response.data)
         self.assertEqual(response.status_code, 201)
 
     def test_create_entry_with_error(self):
-        url = reverse_lazy('core:entry-list-create', kwargs={'title_id': self.title_cant_write.id})
+        url = reverse_lazy('core:entry-list-create')
         data = {
-            'content': 'aaaaa'
+            'content': 'aaaaa',
+            'title': self.title_cant_write
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.post(url, data)
         self.assertIsNotNone(response.data.get('fallback_message'))
 
     def test_update_entry_with_auth(self):
-        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id':self.entry.id, 'title_id': self.title1.id})
+        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id': self.entry.id})
         data = {
             'content': 'bbbbb'
         }
@@ -70,7 +73,7 @@ class EntryTestCase(APITestCase):
         self.assertEqual(response.data['content'], 'bbbbb')
 
     def test_update_entry_with_no_auth(self):
-        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id':self.entry.id, 'title_id': self.title1.id})
+        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id': self.entry.id})
         data = {
             'content': 'bbbbb'
         }
@@ -78,13 +81,13 @@ class EntryTestCase(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_delete_entry_with_auth(self):
-        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id':self.entry.id, 'title_id': self.title1.id})
+        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id': self.entry.id})
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
 
     def test_delete_entry_no_auth(self):
-        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id':self.entry.id, 'title_id': self.title1.id})
+        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id': self.entry.id})
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 401)
 
@@ -124,19 +127,19 @@ class EntryTestCase(APITestCase):
 
     def test_get_entry(self):
         Like.objects.create(user=self.user, entry=self.entry)
-        url = reverse_lazy('core:entry-list-create', kwargs={'title_id': self.title1.id})
+        url = reverse_lazy('core:entry-list-create')
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
-        response = self.client.get(url)
+        response = self.client.get(f'{url}?title={self.title1.id}')
         self.assertEqual(response.status_code, 200)
 
     def test_get_entry_without_auth(self):
-        url = reverse_lazy('core:entry-list-create', kwargs={'title_id': self.title1.id})
-        response = self.client.get(url)
+        url = reverse_lazy('core:entry-list-create')
+        response = self.client.get(f'{url}?title={self.title1.id}')
         self.assertEqual(response.data.get('results', [])[0]['is_like'], False)
 
     def test_get_entry_with_auth_control_like(self):
         Like.objects.create(user=self.user, entry=self.entry)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
-        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id':self.entry.id, 'title_id': self.title1.id})
+        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id':self.entry.id})
         response = self.client.get(url)
         self.assertEqual(response.data.get('is_like'), True)
