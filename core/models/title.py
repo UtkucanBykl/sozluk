@@ -31,7 +31,7 @@ class TitleQuerySet(BaseModelQuery):
     
     def today_entry_counts(self):
         t = timezone.localtime(timezone.now())
-        return self.annotate(publish_entry_count=Count('entry',
+        return self.annotate(today_entry_count=Count('entry',
                                     filter=Q(entry__status='publish',
                                              entry__updated_at__day=t.day,
                                              entry__updated_at__year=t.year,
@@ -39,6 +39,9 @@ class TitleQuerySet(BaseModelQuery):
                                              ),
                                              distinct=True
                                     ))
+
+    def total_entry_counts(self):
+        return self.annotate(total_entry_count=Count('entry', filter=Q(entry__status='publish'), distinct=True))
 
     def full_text_search(self, value):
         return self.annotate(full_text=SearchVector('title')).filter(full_text=value)
@@ -62,6 +65,9 @@ class TitleManager(BaseManager):
 
     def full_text_search(self, value):
         return self.get_queryset().full_text_search(value)
+
+    def total_entry_counts(self):
+        return self.get_queryset().total_entry_counts()
 
 
 class EntryQuerySet(BaseModelQuery):
@@ -106,6 +112,7 @@ class EntryManager(BaseManager):
 
     def is_user_dislike(self, user):
         return self.get_queryset().is_user_dislike(user)
+
 
 class Title(BaseModel):
     title = models.CharField(max_length=40, unique=True)

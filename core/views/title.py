@@ -1,3 +1,4 @@
+from django.db.models import Count, Q
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, ListAPIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -19,6 +20,10 @@ class TitleRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = TitleSerializer
     queryset = Title.objects.actives()
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.today_entry_counts().total_entry_counts()
+
 
 class TitleListCreateAPIView(ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -30,8 +35,16 @@ class TitleListCreateAPIView(ListCreateAPIView):
     order_fields = ['created_at']
     filterset_class = TitleFilter
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.today_entry_counts().total_entry_counts()
+
 
 class CategoryListAPIView(ListAPIView):
     serializer_class = CategorySerializer
     queryset = Category.objects.actives()
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.annotate(title_count=Count('title', filter=Q(title__status='publish'), distinct=True))
 
