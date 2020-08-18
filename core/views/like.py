@@ -31,14 +31,14 @@ class DeleteLikeAPIView(DestroyAPIView):
 
 
 class DeleteDislikeAPIView(DestroyAPIView):
-    serializer_class = LikeSerializer
+    serializer_class = DislikeSerializer
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
     http_method_names = ['delete']
     lookup_field = 'entry_id'
 
     def get_queryset(self):
-        return Like.objects.filter(user=self.request.user).select_related('entry', 'user')
+        return Dislike.objects.filter(user=self.request.user).select_related('entry', 'user')
 
 
 class DislikeListCreateAPIView(ListCreateAPIView):
