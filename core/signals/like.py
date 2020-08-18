@@ -13,7 +13,7 @@ def delete_dislike_if_it_is_there(sender, instance, *args, **kwargs):
 
 
 @receiver(post_save, sender=Dislike)
-def delete_dislike_if_it_is_there(sender, instance, *args, **kwargs):
+def delete_like_if_it_is_there(sender, instance, *args, **kwargs):
     like_obj = Like.objects.filter(user=instance.user, entry=instance.entry)
     if like_obj.exists():
         like_obj.delete()
