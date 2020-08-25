@@ -13,4 +13,4 @@ class EntryFilter(rest_framework.FilterSet):
 
     class Meta:
         model = Entry
-        fields = ('content', 'user', 'title')
+        fields = ('content', 'user', 'title', 'status')

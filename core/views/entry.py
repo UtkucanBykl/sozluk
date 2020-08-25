@@ -25,9 +25,14 @@ class EntryListCreateAPIView(ListCreateAPIView):
 
     def get_queryset(self):
         if self.request.user.is_authenticated and self.request.user.is_staff:
-            qs = Entry.objects.filter()
+            qs = Entry.objects.deletes_or_actives()
         else:
-            qs = Entry.objects.actives()
+            qs = Entry.objects.filter()
+
+        if self.request.query_params.get('status') and self.request.user.is_authenticated:
+            qs = qs.filter(status=self.request.query_params.get('status'), user=self.request.user)
+        else:
+            qs = qs.actives()
         likes_prefetch = Prefetch('likes', Like.objects.select_related('user').filter())
         dislikes_prefetch = Prefetch('dislikes', Dislike.objects.select_related('user').filter())
 
