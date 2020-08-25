@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.utils import timezone
 from django.db import models
 
@@ -14,6 +15,9 @@ class BaseModelQuery(models.QuerySet):
     def actives(self):
         return self.filter(status='publish')
 
+    def deletes_or_actives(self):
+        return self.filter(Q(status='publish')|Q(status='deleted'))
+
 
 class BaseManager(models.Manager):
     def get_queryset(self):
@@ -21,6 +25,9 @@ class BaseManager(models.Manager):
 
     def actives(self):
         return self.get_queryset().actives()
+
+    def deletes_or_actives(self):
+        return self.get_queryset().deletes_or_actives()
 
 
 class BaseModelWithDelete(models.Model):

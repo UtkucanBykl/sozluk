@@ -131,6 +131,13 @@ class Title(BaseModel):
 
 
 class Entry(BaseModel):
+    stages = (
+        ('draft', 'draft'),
+        ('publish', 'publish'),
+        ('deleted', 'deleted'),
+        ('morning', 'morning')
+    )
+    status = models.CharField(choices=stages, default='publish', max_length=25)
     title = models.ForeignKey('core.Title', related_name='entries', on_delete=models.CASCADE,
                               related_query_name='entry')
     user = models.ForeignKey(User, related_name='entries', on_delete=models.CASCADE, blank=True, null=True)
