@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: sozluk
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: sozluk_db
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379 # for redis
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: python manage.py runserver 0:8000
+    entrypoint: /app/docker/django.sh
+    restart: on-failure
+    volumes:
+      - .:/db
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    links:
+      - db:db
+      - redis:redis
+
+  worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: python manage.py rundramatiq
+    volumes:
+      - ..:/code
+    depends_on:
+      - web
+
+  backend-shell:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ..:/code
+    depends_on:
+      - web
