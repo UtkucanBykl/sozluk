@@ -47,4 +47,3 @@ class CategoryListAPIView(ListAPIView):
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.annotate(title_count=Count('title', filter=Q(title__status='publish'), distinct=True))
-
