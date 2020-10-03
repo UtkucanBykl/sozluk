@@ -43,12 +43,13 @@ INSTALLED_APPS = [
 INSTALLED_APPS += [
     'django_dramatiq',
     'core',
-    'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
     'drf_yasg',
     'corsheaders',
-    'drf_recaptcha'
+    'drf_recaptcha',
+    'rest_framework',
+
 ]
 
 AUTH_USER_MODEL = 'core.User'
@@ -156,7 +157,7 @@ REST_FRAMEWORK = {
 }
 
 
-DRAMATIQ_REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/0")
+DRAMATIQ_REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379")
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
     "OPTIONS": {

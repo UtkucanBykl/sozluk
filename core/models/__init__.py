@@ -4,3 +4,4 @@ from .title import *
 from .report import *
 from .follow import *
 from .notification import *
+from .suggested import *
