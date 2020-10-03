@@ -49,10 +49,10 @@ services:
       dockerfile: docker/Dockerfile
     entrypoint: /app/docker/django.sh
     volumes:
-      - migrations:/app/code
+      - ./local_migrations/:/opt/
     depends_on:
       - db
-      
+
 volumes:
     migrations:
         driver: local
