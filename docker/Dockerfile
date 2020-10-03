@@ -4,3 +4,4 @@ ADD . /app
 ENV DJANGO_ENV=development
 ENV REDIS_URL=redis://redis:6379
 RUN pip install -r requirements.txt
+RUN ["chmod", "+x", "/app/docker/django.sh"]
