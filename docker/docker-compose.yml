@@ -19,16 +19,16 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
+    depends_on:
+      - backend-shell
     command: python manage.py runserver 0:8000
-    entrypoint: /app/docker/django.sh
     restart: on-failure
+
     volumes:
       - .:/db
+
     ports:
       - "8000:8000"
-    depends_on:
-      - db
-      - redis
     links:
       - db:db
       - redis:redis
@@ -47,7 +47,12 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
+    entrypoint: /app/docker/django.sh
     volumes:
-      - ..:/code
+      - migrations:/app/code
     depends_on:
-      - web
+      - db
+      
+volumes:
+    migrations:
+        driver: local
