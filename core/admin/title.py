@@ -23,6 +23,6 @@ class CategoryAdmin(BaseAdmin):
 
 @admin.register(Suggested)
 class SuggestedAdmin(BaseAdmin):
-    list_select_related = ("user", "entry", "title")
+    list_select_related = ("user", "title")
     list_display = ("user", "message", "title", "suggested_type")
     list_filter = ("suggested_type", "user")
