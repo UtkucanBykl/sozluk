@@ -21,10 +21,10 @@ class Report(BaseModel):
     report_type = models.CharField(choices=report_type_choices, max_length=48)
 
     def __str__(self):
-        return self.from_user.username
+        return f"{self.from_user.username if self.from_user is not None else '-'} -> {self.to_user.username if self.to_user is not None else self.entry.content}"
 
     class Meta:
-        unique_together = [
-            ('from_user', 'to_user'),
-            ('from_user', 'entry')
+        constraints =  [
+            models.UniqueConstraint(fields=["from_user", "to_user"], name="unique_from_user_to_user"),
+            models.UniqueConstraint(fields=["from_user", "entry"], name="unique_from_user_entry")
         ]

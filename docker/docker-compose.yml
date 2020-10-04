@@ -39,7 +39,7 @@ services:
       dockerfile: docker/Dockerfile
     command: python manage.py rundramatiq
     volumes:
-      - ..:/code
+      - ..:/app
     depends_on:
       - web
 
@@ -49,7 +49,7 @@ services:
       dockerfile: docker/Dockerfile
     entrypoint: /app/docker/django.sh
     volumes:
-      - ./local_migrations/:/opt/
+      - ..:/app
     depends_on:
       - db
 
