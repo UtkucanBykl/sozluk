@@ -20,7 +20,7 @@ class LoginUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'is_active', 'is_superuser', 'is_staff', 'first_name', 'last_name', 'token',
+        fields = ('username', 'email', 'is_active', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name', 'token',
                   'groups')
 
     def get_token(self, obj):
@@ -30,4 +30,4 @@ class LoginUserSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'is_active', 'is_superuser', 'is_staff', 'first_name', 'last_name')
+        fields = ('username', 'email', 'is_active', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name')

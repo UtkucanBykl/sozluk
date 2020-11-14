@@ -86,6 +86,9 @@ class User(
     last_name = models.CharField(
         max_length=255, verbose_name=_('last name'), null=True, blank=True
     )
+    bio = models.TextField(
+        max_length=255, verbose_name=_('Bio'), null=True, blank=True
+    )
     is_active = models.BooleanField(
         default=True, verbose_name=_('active')
     )
