@@ -12,10 +12,11 @@ class TitleFilter(rest_framework.FilterSet):
     entry_username = rest_framework.CharFilter(method='filter_by_username')
     today = rest_framework.BooleanFilter(method='get_today')
     full_text = rest_framework.CharFilter(method='get_full_text')
+    followed = rest_framework.BooleanFilter(method="get_followed_title")
 
     class Meta:
         model = Title
-        fields = ('category', 'title', 'today', 'full_text')
+        fields = ('category', 'title', 'today', 'full_text', "followed")
 
     def filter_by_username(self, queryset, name, value):
         return queryset.filter(entry__user__username=value, entry__status='publish').distinct()
@@ -25,3 +26,9 @@ class TitleFilter(rest_framework.FilterSet):
 
     def get_full_text(self, queryset, name, value):
         return queryset.full_text_search(value)
+
+    def get_followed_title(self, queryset, name, value):
+        if self.request.user.is_authenticated:
+            queryset = queryset.prefetch_related("follows")
+            return queryset.filter(follows__user=self.request.user)
+        return queryset
