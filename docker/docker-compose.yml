@@ -23,10 +23,8 @@ services:
       - backend-shell
     command: python manage.py runserver 0:8000
     restart: on-failure
-
     volumes:
-      - .:/db
-
+      - ..:/app
     ports:
       - "8000:8000"
     links:
@@ -52,7 +50,3 @@ services:
       - ..:/app
     depends_on:
       - db
-
-volumes:
-    migrations:
-        driver: local
