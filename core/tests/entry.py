@@ -50,7 +50,6 @@ class EntryTestCase(APITestCase):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.post(url, data, format='json')
-        print(response.data)
         self.assertEqual(response.status_code, 201)
 
     def test_create_entry_with_error(self):

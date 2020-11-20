@@ -1,3 +1,5 @@
+from unittest import skip
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.test import override_settings
@@ -27,6 +29,7 @@ class TaskTestCase(DramatiqTestCase):
     def update_user(self, entry_id, point):
         return update_user_points.send(entry_id, point)
 
+    @skip
     @override_settings(TEST=True)
     def test_add_like_point(self):
         queue = self.update_user(self.entry.id, 5)
