@@ -95,8 +95,8 @@ class UserTest(APITestCase):
         url = reverse_lazy("core:user-update")
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         patch_data = {
-            "bio": "test"
+            "bio": "test bio"
         }
         response = self.client.patch(url, patch_data)
         self.user.refresh_from_db()
-        self.assertEqual(self.user.first_name, patch_data.get("bio"))
+        self.assertEqual(self.user.bio, patch_data.get("bio"))
