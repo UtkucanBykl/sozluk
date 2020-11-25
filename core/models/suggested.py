@@ -22,6 +22,7 @@ class Suggested(BaseModel):
     class Meta:
         verbose_name = "Suggested"
         verbose_name_plural = "Suggestions"
+        ordering = ["-updated_at"]
 
     def __str__(self):
         return f"{self.suggested_type} - {self.user.username if self.user is not None else None}"
