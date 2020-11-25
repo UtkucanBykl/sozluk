@@ -148,7 +148,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'EXCEPTION_HANDLER': 'hipo_drf_exceptions.handler',
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
-
+    "PAGE_SIZE": 33,
     'DEFAULT_PARSER_CLASSES': (
         # If you use MultiPartFormParser or FormParser, we also have a camel case version
         'djangorestframework_camel_case.parser.CamelCaseFormParser',
