@@ -8,7 +8,7 @@ from django.db.models import Count, Q, Case, When, F, Value, BooleanField
 
 from ..models import BaseModel, BaseManager, BaseModelQuery
 
-__all__ = ['Title', 'Entry', 'Category']
+__all__ = ['Title', 'Entry', 'Category', 'NotShowTitle']
 
 
 User = get_user_model()
@@ -149,6 +149,11 @@ class Entry(BaseModel):
 
     def __str__(self):
         return self.content
+
+
+class NotShowTitle(BaseModel):
+    title = models.ForeignKey('core.Title', related_name='not_show_titles', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='not_show_titles', on_delete=models.CASCADE, blank=True, null=True)
 
 
 class Category(BaseModel):
