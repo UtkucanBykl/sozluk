@@ -6,6 +6,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from django_filters.rest_framework import DjangoFilterBackend
 
+from ..pagination import StandardTitlePagination
 from ..serializers import TitleSerializer, CategorySerializer
 from ..permissions import IsOwnerOrReadOnly
 from ..models import Title, Category
@@ -34,6 +35,7 @@ class TitleListCreateAPIView(ListCreateAPIView):
     search_fields = ['title']
     order_fields = ['created_at', 'total_entry_count', 'today_entry_count']
     filterset_class = TitleFilter
+    pagination_class = StandardTitlePagination
 
     def get_queryset(self):
         qs = super().get_queryset()

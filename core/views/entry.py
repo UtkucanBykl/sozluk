@@ -6,6 +6,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, DjangoModelPermissions
 
 from ..models import Entry, Like, Dislike
+from ..pagination import StandardEntryPagination
 from ..serializers import EntrySerializer
 from ..filters import EntryFilter
 from ..permissions import IsOwnerOrReadOnly, OwnModelPermission
@@ -22,6 +23,7 @@ class EntryListCreateAPIView(ListCreateAPIView):
     search_fields = ['title']
     ordering_fields = ['like_count', 'dislike_count', 'created_at']
     filterset_class = EntryFilter
+    pagination_class = StandardEntryPagination
 
     def get_queryset(self):
         if self.request.user.is_authenticated and self.request.user.is_staff:

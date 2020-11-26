@@ -23,5 +23,7 @@ urlpatterns = [
     path('categories/', CategoryListAPIView.as_view(), name='category-list'),
     path("users/<int:id>/", UserRetrieveUpdateViewSet.as_view({"get": "retrieve"}), name="user-detail"),
     path("users/me/", UserRetrieveUpdateViewSet.as_view({"patch": "update"}), name="user-update"),
+    path("suggesteds/", SuggestedViewSet.as_view({"get": "list", "post": "create"}), name="suggested-list-create"),
+    path("suggesteds/<int:id>/", SuggestedViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}), name="suggested-retrieve-update-delete"),
 
 ]

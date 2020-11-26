@@ -12,6 +12,7 @@ class ReportListCreateAPIView(OwnerOrReadOnlyMixin, ListCreateAPIView):
     serializer_class = ReportSerializer
     authentication_classes = (TokenAuthentication,)
     field = 'to_user'
+    http_method_names = ["post"]
 
     def get_queryset(self):
         return self.request.user.send_report.all()

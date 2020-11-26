@@ -6,3 +6,4 @@ from .report import *
 from .follow import *
 from .notification import *
 from .user import *
+from .suggested import *
