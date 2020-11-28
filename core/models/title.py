@@ -155,6 +155,16 @@ class NotShowTitle(BaseModel):
     title = models.ForeignKey('core.Title', related_name='not_show_titles', on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='not_show_titles', on_delete=models.CASCADE, blank=True, null=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["title", "user"], name="now_show_title_unique"
+            )
+        ]
+
+    def __str__(self):
+        return self.title.title + " " + self.user.username
+
 
 class Category(BaseModel):
     name = models.CharField(max_length=100)

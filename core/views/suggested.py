@@ -4,6 +4,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from ..models import Suggested
 from ..serializers import SuggestedListSerializer, SuggestedCreateSerializer
+from ..permissions import IsOwnerOrReadOnly
 
 
 class SuggestedViewSet(
@@ -23,7 +24,7 @@ class SuggestedViewSet(
         if self.action in ("list", "retrieve", "create"):
             self.permission_classes = (IsAuthenticated,)
         elif self.action in ("destroy", "update"):
-            self.permission_classes = (IsAuthenticated & DjangoModelPermissions,)
+            self.permission_classes = ((IsAuthenticated & IsOwnerOrReadOnly) | DjangoModelPermissions,)
         else:
             self.permission_classes = (IsAuthenticated,)
         return super().get_permissions()
