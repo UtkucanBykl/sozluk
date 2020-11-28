@@ -4,9 +4,10 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchVector
 from django.db import models
-from django.db.models import Count, Q, Case, When, F, Value, BooleanField
+from django.db.models import Count, Q, Case, When, F, Value, BooleanField, Exists, OuterRef
 
 from ..models import BaseModel, BaseManager, BaseModelQuery
+
 
 __all__ = ['Title', 'Entry', 'Category', 'NotShowTitle']
 
@@ -46,6 +47,12 @@ class TitleQuerySet(BaseModelQuery):
     def full_text_search(self, value):
         return self.annotate(full_text=SearchVector('title')).filter(full_text=value)
 
+    def get_titles_without_not_showing(self, user):
+        if user.is_authenticated:
+            not_show_title = NotShowTitle.objects.filter(title=OuterRef('pk'), user=user)
+            return self.annotate(is_not_show=Exists(not_show_title)).filter(is_not_show=False)
+        return self.filter()
+
 
 class TitleManager(BaseManager):
     def get_queryset(self):
@@ -68,6 +75,9 @@ class TitleManager(BaseManager):
 
     def total_entry_counts(self):
         return self.get_queryset().total_entry_counts()
+
+    def get_titles_without_not_showing(self, user):
+        return self.get_queryset().get_titles_without_not_showing(user)
 
 
 class EntryQuerySet(BaseModelQuery):

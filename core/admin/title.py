@@ -1,9 +1,9 @@
 from django.contrib import admin
 from .base import BaseAdmin
 
-from ..models import Title, Entry, Category, Suggested
+from ..models import Title, Entry, Category, Suggested, NotShowTitle
 
-__all__ = ['TitleAdmin', 'EntryAdmin', 'CategoryAdmin', 'SuggestedAdmin']
+__all__ = ['TitleAdmin', 'EntryAdmin', 'CategoryAdmin', 'SuggestedAdmin', 'NotShowTitleAdmin']
 
 
 @admin.register(Title)
@@ -26,3 +26,8 @@ class SuggestedAdmin(BaseAdmin):
     list_select_related = ("user", "title")
     list_display = ("user", "message", "title", "suggested_type")
     list_filter = ("suggested_type", "user")
+
+
+@admin.register(NotShowTitle)
+class NotShowTitleAdmin(BaseAdmin):
+    pass
