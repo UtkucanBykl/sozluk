@@ -28,7 +28,7 @@ class TitleRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.today_entry_counts().total_entry_counts()
+        return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
 
 
 class TitleListCreateAPIView(ListCreateAPIView):
@@ -44,7 +44,7 @@ class TitleListCreateAPIView(ListCreateAPIView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.today_entry_counts().total_entry_counts()
+        return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
 
 
 class CategoryListAPIView(ListAPIView):
