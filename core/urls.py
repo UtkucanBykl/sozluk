@@ -25,5 +25,8 @@ urlpatterns = [
     path("users/me/", UserRetrieveUpdateViewSet.as_view({"patch": "update"}), name="user-update"),
     path("suggesteds/", SuggestedViewSet.as_view({"get": "list", "post": "create"}), name="suggested-list-create"),
     path("suggesteds/<int:id>/", SuggestedViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}), name="suggested-retrieve-update-delete"),
+    path("titles/blocks/", NotShowTitleCreateAPIView.as_view({"post": "create"}), name="block-create"),
+    path("titles/blocks/<int:title_id>/", NotShowTitleCreateAPIView.as_view({"delete": "destroy"}), name="block-delete"),
+
 
 ]

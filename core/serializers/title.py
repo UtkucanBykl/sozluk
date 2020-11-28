@@ -1,8 +1,10 @@
 from rest_framework import serializers
 
-from ..models import Title, Category
+from ..models import Title, Category, NotShowTitle
 
-__all__ = ['TitleSerializer', 'CategorySerializer']
+
+
+__all__ = ['TitleSerializer', 'CategorySerializer', 'NotShowTitleSerializer']
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -25,3 +27,11 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('id', 'name', 'display_order', 'title_count')
+
+
+class NotShowTitleSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = NotShowTitle
+        fields = ('user', 'title')
