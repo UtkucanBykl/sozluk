@@ -27,6 +27,6 @@ urlpatterns = [
     path("suggesteds/<int:id>/", SuggestedViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}), name="suggested-retrieve-update-delete"),
     path("titles/blocks/", NotShowTitleCreateAPIView.as_view({"post": "create"}), name="block-create"),
     path("titles/blocks/<int:title_id>/", NotShowTitleCreateAPIView.as_view({"delete": "destroy"}), name="block-delete"),
-
+    path("users/password/change/", ChangeUserPasswordView.as_view(), name="change-password"),
 
 ]

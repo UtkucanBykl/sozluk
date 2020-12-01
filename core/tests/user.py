@@ -9,7 +9,6 @@ from rest_framework.test import APITestCase
 
 User = get_user_model()
 
-
 __all__ = ['UserTest']
 
 
@@ -100,3 +99,13 @@ class UserTest(APITestCase):
         response = self.client.patch(url, patch_data)
         self.user.refresh_from_db()
         self.assertEqual(self.user.bio, patch_data.get("bio"))
+
+    def test_change_password(self):
+        url = reverse_lazy("core:change-password")
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        patch_data = {
+            "old_password": "utkuutku",
+            "new_password": "utku"
+        }
+        response = self.client.patch(url, patch_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
