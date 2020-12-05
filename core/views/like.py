@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from ..serializers import DislikeSerializer, LikeSerializer
 from ..models import Dislike, Like
+from ..pagination import StandardPagination
 
 
 __all__ = ['LikeListCreateAPIView', 'DislikeListCreateAPIView', 'DeleteDislikeAPIView', 'DeleteLikeAPIView']
@@ -13,6 +14,7 @@ class LikeListCreateAPIView(ListCreateAPIView):
     serializer_class = LikeSerializer
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
+    pagination_class = StandardPagination
     http_method_names = ['post', 'get', 'delete']
 
     def get_queryset(self):
@@ -45,6 +47,7 @@ class DislikeListCreateAPIView(ListCreateAPIView):
     serializer_class = DislikeSerializer
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
+    pagination_class = StandardPagination
     http_method_names = ['post', 'get', 'delete']
     lookup_field = 'entry_id'
 
