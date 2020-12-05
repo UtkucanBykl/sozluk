@@ -105,6 +105,7 @@ class User(
     user_follows = models.ManyToManyField('self', symmetrical=False, through='core.UserFollow', blank=True)
     dislikes = models.ManyToManyField('core.Entry', related_name='dislike_users', through='core.Dislike', blank=True)
     point = models.IntegerField(default=0)
+    profile_picture = models.ImageField(max_length=500, upload_to='images/', null=True, blank=True)
 
     objects = UserManager()
 

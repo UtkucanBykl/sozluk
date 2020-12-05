@@ -22,7 +22,7 @@ class LoginUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", 'username', 'email', 'is_active', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name', 'token',
-                  'groups')
+                  'groups', 'profile_picture')
 
     def get_token(self, obj):
         return Token.objects.filter(user=obj).first().key
@@ -31,7 +31,7 @@ class LoginUserSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", 'username', 'email', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name')
+        fields = ("id", 'username', 'email', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name', 'profile_picture')
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -45,7 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("bio", 'first_name', 'last_name')
+        fields = ("bio", 'first_name', 'last_name', 'profile_picture')
 
 
 class ChangePasswordSerializer(serializers.Serializer):
