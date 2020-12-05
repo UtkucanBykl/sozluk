@@ -6,6 +6,9 @@ from rest_framework import status
 
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
+from PIL import Image
+
+import io
 
 User = get_user_model()
 
@@ -109,3 +112,23 @@ class UserTest(APITestCase):
         }
         response = self.client.patch(url, patch_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_image(self):
+        file = io.BytesIO()
+        image = Image.new('RGBA', size=(100, 100), color=(155, 0, 0))
+        image.save(file, 'png')
+        file.name = 'test.png'
+        file.seek(0)
+        photo_file = file
+        url = reverse_lazy('core:user-register')
+        data = {
+            'username': 'tugay',
+            'password': 'celmeli',
+            'confirm_password': 'celmeli',
+            'kvkk': True,
+            'email': 'dd@ddd.com',
+            'recaptcha': 'dd',
+            'profile_picture': photo_file
+        }
+        response = self.client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, 201)
