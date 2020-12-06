@@ -193,3 +193,6 @@ if TEST:
 
 DRF_RECAPTCHA_SECRET_KEY = os.environ.get('DRF_RECAPTCHA')
 DRF_RECAPTCHA_TESTING = True
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

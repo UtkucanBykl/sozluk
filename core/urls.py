@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import *
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = 'core'
 
@@ -29,4 +31,4 @@ urlpatterns = [
     path("titles/blocks/<int:title_id>/", NotShowTitleCreateAPIView.as_view({"delete": "destroy"}), name="block-delete"),
     path("users/password/change/", ChangeUserPasswordView.as_view(), name="change-password"),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
