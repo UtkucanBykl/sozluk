@@ -8,6 +8,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from ..models import BaseModel, BaseModelWithDelete
+from ..utils import generate_upload_path
 
 
 __all__ = ['User', 'Like', 'Dislike']
@@ -81,13 +82,13 @@ class User(
         verbose_name=_('email address')
     )
     first_name = models.CharField(
-        max_length=255, verbose_name=_('first name'), null=True, blank=True
+        max_length=255, verbose_name=_('first name'), default="", blank=True
     )
     last_name = models.CharField(
-        max_length=255, verbose_name=_('last name'), null=True, blank=True
+        max_length=255, verbose_name=_('last name'), default="", blank=True
     )
     bio = models.TextField(
-        max_length=255, verbose_name=_('Bio'), null=True, blank=True
+        max_length=255, verbose_name=_('Bio'), default="", blank=True
     )
     show_bio = models.BooleanField(verbose_name=_("Show Bio?"), default=True)
     is_active = models.BooleanField(
@@ -105,7 +106,7 @@ class User(
     user_follows = models.ManyToManyField('self', symmetrical=False, through='core.UserFollow', blank=True)
     dislikes = models.ManyToManyField('core.Entry', related_name='dislike_users', through='core.Dislike', blank=True)
     point = models.IntegerField(default=0)
-    profile_picture = models.ImageField(max_length=500, upload_to='images/', null=True, blank=True)
+    profile_picture = models.ImageField(max_length=500, upload_to=generate_upload_path, null=True, blank=True)
 
     objects = UserManager()
 
