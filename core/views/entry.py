@@ -59,3 +59,6 @@ class EntryRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.is_user_like(self.request.user).select_related('title')
+
+    def perform_destroy(self, instance):
+        instance.delete(user=self.request.user)

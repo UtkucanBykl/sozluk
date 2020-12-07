@@ -145,7 +145,8 @@ class Entry(BaseModel):
         ('draft', 'draft'),
         ('publish', 'publish'),
         ('deleted', 'deleted'),
-        ('morning', 'morning')
+        ('morning', 'morning'),
+        ('deleted_by_admin', 'deleted by admin')
     )
     status = models.CharField(choices=stages, default='publish', max_length=25)
     title = models.ForeignKey('core.Title', related_name='entries', on_delete=models.CASCADE,
@@ -159,6 +160,19 @@ class Entry(BaseModel):
 
     def __str__(self):
         return self.content
+
+    def delete(self, user=None, hard=False):
+        if hard:
+            return super().delete()
+
+        if user.is_superuser and self.user != user:
+            self.status = 'deleted_by_admin'
+            self.deleted_at = timezone.now()
+            return self.save()
+        else:
+            self.status = 'deleted'
+            self.deleted_at = timezone.now()
+            return self.save()
 
 
 class NotShowTitle(BaseModel):
