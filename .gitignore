@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 *Darko*
-media
+config/media
 # C extensions
 *.so
 *development.py
