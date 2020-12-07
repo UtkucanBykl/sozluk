@@ -25,7 +25,11 @@ class EntryTestCase(APITestCase):
         self.user = User.objects.create(
             username='Utku', email='utku@can.com', password=make_password('1234')
         )
+        self.superuser = User.objects.create(
+            username='tugay', email='tugay@can.com', password=make_password('1234'), is_superuser=True
+        )
         self.token = Token.objects.get(user=self.user).key
+        self.token_superuser = Token.objects.get(user=self.superuser).key
         self.entry = Entry.objects.create(
             title=self.title1, user=self.user, content='aaaaaa'
         )
@@ -89,6 +93,13 @@ class EntryTestCase(APITestCase):
         url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id': self.entry.id})
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 401)
+
+    def test_delete_entry_by_admin(self):
+        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id': self.entry.id})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_superuser)
+        response = self.client.delete(url)
+        self.entry.refresh_from_db()
+        self.assertEqual(self.entry.status, 'deleted_by_admin')
 
     def test_like(self):
         url = reverse_lazy('core:like-list-create')
