@@ -11,7 +11,7 @@ from ..models import BaseModel, BaseModelWithDelete
 from ..utils import generate_upload_path
 
 
-__all__ = ['User', 'Like', 'Dislike']
+__all__ = ['User', 'Like', 'Dislike', "Block"]
 
 
 class UserManager(BaseUserManager):
@@ -147,4 +147,17 @@ class Dislike(BaseModelWithDelete):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['user', 'entry'], name='dislike_unique')
+        ]
+
+
+class Block(BaseModelWithDelete):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="block_list")
+    blocked_user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username + " " + self.blocked_user.username
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'blocked_user'], name='blockuser_unique')
         ]

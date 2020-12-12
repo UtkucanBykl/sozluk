@@ -39,7 +39,7 @@ class EntryListCreateAPIView(ListCreateAPIView):
         dislikes_prefetch = Prefetch('dislikes', Dislike.objects.select_related('user').filter())
 
         return qs.is_user_like(self.request.user).is_user_dislike(
-            self.request.user).count_like_and_dislike().select_related(
+            self.request.user).count_like_and_dislike().get_without_block_user(self.request.user).select_related(
             'title').prefetch_related(
             likes_prefetch, dislikes_prefetch)
 
@@ -58,7 +58,7 @@ class EntryRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.is_user_like(self.request.user).select_related('title')
+        return qs.is_user_like(self.request.user).get_without_block_user(self.request.user).select_related('title')
 
     def perform_destroy(self, instance):
         instance.delete(user=self.request.user)

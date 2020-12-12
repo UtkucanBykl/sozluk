@@ -4,12 +4,22 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchVector
 from django.db import models
-from django.db.models import Count, Q, Case, When, F, Value, BooleanField, Exists, OuterRef
+from django.db.models import (
+    Count,
+    Q,
+    Case,
+    When,
+    F,
+    Value,
+    BooleanField,
+    Exists,
+    OuterRef,
+)
 
-from ..models import BaseModel, BaseManager, BaseModelQuery
+from ..models import BaseModel, BaseManager, BaseModelQuery, Block
 
 
-__all__ = ['Title', 'Entry', 'Category', 'NotShowTitle']
+__all__ = ["Title", "Entry", "Category", "NotShowTitle"]
 
 
 User = get_user_model()
@@ -18,45 +28,58 @@ User = get_user_model()
 class TitleQuerySet(BaseModelQuery):
     def active_today(self):
         t = timezone.localtime(timezone.now())
-        return self.filter(entry__updated_at__day=t.day, entry__updated_at__year=t.year,
-                           entry__updated_at__month=t.month,
-                           entry__status='publish').distinct()
+        return self.filter(
+            entry__updated_at__day=t.day,
+            entry__updated_at__year=t.year,
+            entry__updated_at__month=t.month,
+            entry__status="publish",
+        ).distinct()
 
     def order_points(self):
-        return self.today_entry_counts().order_by('-is_bold', '-today_entry_counts')
+        return self.today_entry_counts().order_by("-is_bold", "-today_entry_counts")
 
     def have_user_entries(self, user):
-        return self.filter(
-            entry__user=user, entry__status='publish'
-        )
-    
+        return self.filter(entry__user=user, entry__status="publish")
+
     def today_entry_counts(self):
         t = timezone.localtime(timezone.now())
-        return self.annotate(today_entry_count=Count('entry',
-                                    filter=Q(entry__status='publish',
-                                             entry__updated_at__day=t.day,
-                                             entry__updated_at__year=t.year,
-                                             entry__updated_at__month=t.month,
-                                             ),
-                                             distinct=True
-                                    ))
+        return self.annotate(
+            today_entry_count=Count(
+                "entry",
+                filter=Q(
+                    entry__status="publish",
+                    entry__updated_at__day=t.day,
+                    entry__updated_at__year=t.year,
+                    entry__updated_at__month=t.month,
+                ),
+                distinct=True,
+            )
+        )
 
     def total_entry_counts(self):
-        return self.annotate(total_entry_count=Count('entry', filter=Q(entry__status='publish'), distinct=True))
+        return self.annotate(
+            total_entry_count=Count(
+                "entry", filter=Q(entry__status="publish"), distinct=True
+            )
+        )
 
     def full_text_search(self, value):
-        return self.annotate(full_text=SearchVector('title')).filter(full_text=value)
+        return self.annotate(full_text=SearchVector("title")).filter(full_text=value)
 
     def get_titles_without_not_showing(self, user):
         if user.is_authenticated:
-            not_show_title = NotShowTitle.objects.filter(title=OuterRef('pk'), user=user)
-            return self.annotate(is_not_show=Exists(not_show_title)).filter(is_not_show=False)
+            not_show_title = NotShowTitle.objects.filter(
+                title=OuterRef("pk"), user=user
+            )
+            return self.annotate(is_not_show=Exists(not_show_title)).filter(
+                is_not_show=False
+            )
         return self.filter()
 
 
 class TitleManager(BaseManager):
     def get_queryset(self):
-        return TitleQuerySet(self.model, using=self._db).select_related('category')
+        return TitleQuerySet(self.model, using=self._db).select_related("category")
 
     def active_today(self):
         return self.get_queryset().active_today()
@@ -83,31 +106,50 @@ class TitleManager(BaseManager):
 class EntryQuerySet(BaseModelQuery):
     def is_user_like(self, user):
         if user.is_authenticated:
-            return self.annotate(is_like=Case(
-                When(like_users__username=user.username, then=Value(True)),
-                default=Value(False),
-                output_field=BooleanField()
+            return self.annotate(
+                is_like=Case(
+                    When(like_users__username=user.username, then=Value(True)),
+                    default=Value(False),
+                    output_field=BooleanField(),
                 )
             )
         return self.annotate(is_like=Value(False, output_field=BooleanField()))
 
     def is_user_dislike(self, user):
         if user.is_authenticated:
-            return self.annotate(is_dislike=Case(
-                When(dislike_users__username=user.username, then=Value(True)),
-                default=Value(False),
-                output_field=BooleanField()
+            return self.annotate(
+                is_dislike=Case(
+                    When(dislike_users__username=user.username, then=Value(True)),
+                    default=Value(False),
+                    output_field=BooleanField(),
                 )
             )
         return self.annotate(is_like=Value(False, output_field=BooleanField()))
 
     def count_like_and_dislike(self, order_by=False):
-        qs = self.annotate(like_count=Count('like')).annotate(dislike_count=Count('dislike'))
-        if order_by == 'like':
-            qs = qs.order_by('-like_count')
-        elif order_by == 'dislike':
-            qs = qs.order_by('-dislike')
+        qs = self.annotate(like_count=Count("like")).annotate(
+            dislike_count=Count("dislike")
+        )
+        if order_by == "like":
+            qs = qs.order_by("-like_count")
+        elif order_by == "dislike":
+            qs = qs.order_by("-dislike")
         return qs
+
+    def get_without_block_user(self, user):
+        if user.is_authenticated:
+            block_user = Block.objects.filter(
+                blocked_user=OuterRef("user__pk"), user=user
+            )
+            blocked_user = Block.objects.filter(
+                blocked_user=user, user=OuterRef("user__pk")
+            )
+            return (
+                self.annotate(is_block_user=Exists(block_user))
+                .annotate(is_blocked_user=Exists(blocked_user))
+                .exclude(Q(is_block_user=True) | Q(is_blocked_user=True))
+            )
+        return self.filter()
 
 
 class EntryManager(BaseManager):
@@ -123,16 +165,31 @@ class EntryManager(BaseManager):
     def is_user_dislike(self, user):
         return self.get_queryset().is_user_dislike(user)
 
+    def get_without_block_user(self, user):
+        return self.get_queryset().get_without_block_user(user)
+
 
 class Title(BaseModel):
     title = models.CharField(max_length=40, unique=True)
     display_order = models.IntegerField(default=0)
     is_bold = models.BooleanField(default=False)
     can_write = models.BooleanField(default=True)
-    category = models.ForeignKey('core.Category', null=True, blank=True, on_delete=models.SET_NULL,
-                                 related_name='titles', related_query_name='title')
-    user = models.ForeignKey(User, null=True, blank=True, related_name='titles', on_delete=models.SET_NULL,
-                             related_query_name='title')
+    category = models.ForeignKey(
+        "core.Category",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="titles",
+        related_query_name="title",
+    )
+    user = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        related_name="titles",
+        on_delete=models.SET_NULL,
+        related_query_name="title",
+    )
 
     objects = TitleManager()
 
@@ -142,16 +199,22 @@ class Title(BaseModel):
 
 class Entry(BaseModel):
     stages = (
-        ('draft', 'draft'),
-        ('publish', 'publish'),
-        ('deleted', 'deleted'),
-        ('morning', 'morning'),
-        ('deleted_by_admin', 'deleted by admin')
+        ("draft", "draft"),
+        ("publish", "publish"),
+        ("deleted", "deleted"),
+        ("morning", "morning"),
+        ("deleted_by_admin", "deleted by admin"),
     )
-    status = models.CharField(choices=stages, default='publish', max_length=25)
-    title = models.ForeignKey('core.Title', related_name='entries', on_delete=models.CASCADE,
-                              related_query_name='entry')
-    user = models.ForeignKey(User, related_name='entries', on_delete=models.CASCADE, blank=True, null=True)
+    status = models.CharField(choices=stages, default="publish", max_length=25)
+    title = models.ForeignKey(
+        "core.Title",
+        related_name="entries",
+        on_delete=models.CASCADE,
+        related_query_name="entry",
+    )
+    user = models.ForeignKey(
+        User, related_name="entries", on_delete=models.CASCADE, blank=True, null=True
+    )
     content = models.TextField(max_length=500)
     is_important = models.BooleanField(default=False)
     last_vote_time = models.DateTimeField(default=timezone.now)
@@ -166,18 +229,27 @@ class Entry(BaseModel):
             return super().delete()
 
         if user.is_superuser and self.user != user:
-            self.status = 'deleted_by_admin'
+
+            self.status = "deleted_by_admin"
             self.deleted_at = timezone.now()
             return self.save()
         else:
-            self.status = 'deleted'
+            self.status = "deleted"
             self.deleted_at = timezone.now()
             return self.save()
 
 
 class NotShowTitle(BaseModel):
-    title = models.ForeignKey('core.Title', related_name='not_show_titles', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, related_name='not_show_titles', on_delete=models.CASCADE, blank=True, null=True)
+    title = models.ForeignKey(
+        "core.Title", related_name="not_show_titles", on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        User,
+        related_name="not_show_titles",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         constraints = [
@@ -198,4 +270,4 @@ class Category(BaseModel):
         return self.name
 
     class Meta:
-        ordering = ['-display_order']
+        ordering = ["-display_order"]
