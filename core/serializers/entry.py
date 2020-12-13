@@ -53,6 +53,8 @@ class EntrySerializer(serializers.ModelSerializer):
         data = super().to_internal_value(data)
         if data.get("status") == "publish" and self.context.get("request").user.account_type == "rookie":
             data["status"] = "publish_by_rookie"
+        if data.get("is_important") and not self.context.get("request").user.account_type in ("mod", "admin"):
+            data.pop("is_important")
         return data
 
     def to_representation(self, instance):
