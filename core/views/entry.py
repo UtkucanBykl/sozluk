@@ -1,4 +1,4 @@
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -26,15 +26,13 @@ class EntryListCreateAPIView(ListCreateAPIView):
     pagination_class = StandardEntryPagination
 
     def get_queryset(self):
-        if self.request.user.is_authenticated and self.request.user.is_staff:
-            qs = Entry.objects.deletes_or_actives()
-        else:
-            qs = Entry.objects.filter()
-
         if self.request.query_params.get('status') and self.request.user.is_authenticated:
-            qs = qs.filter(status=self.request.query_params.get('status'), user=self.request.user)
+            qs = Entry.objects.filter(status=self.request.query_params.get('status'), user=self.request.user)
+        elif self.request.user.is_authenticated and self.request.user.is_staff:
+            qs = Entry.objects.filter(Q(status='publish')|Q(status='deleted')|Q(status="publish_by_rookie"))
         else:
-            qs = qs.actives()
+            qs = Entry.objects.actives()
+
         likes_prefetch = Prefetch('likes', Like.objects.select_related('user').filter())
         dislikes_prefetch = Prefetch('dislikes', Dislike.objects.select_related('user').filter())
 
