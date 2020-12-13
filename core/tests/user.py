@@ -9,6 +9,7 @@ from rest_framework.test import APITestCase
 from PIL import Image
 
 import io
+import datetime
 
 User = get_user_model()
 
@@ -146,3 +147,27 @@ class UserTest(APITestCase):
         self.assertEqual(response.data.get("twitter_username"), "")
         self.assertEqual(response.data.get("facebook_profile"), "")
         self.assertEqual(response.data.get("account_type"), "rookie")
+
+    def test_update_user_all_variable(self):
+        url = reverse_lazy("core:user-update")
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        data = {
+            "city": "İstanbul",
+            "is_show_city": True,
+            "birth_day": "1996-12-23",
+            "is_show_birth_day": True,
+            "gender": "male",
+            "is_show_gender": True,
+            "twitter_username": "@john.doe",
+            "facebook_profile": "https://www.facebook.com/example",
+        }
+        response = self.client.patch(url, data)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.city, "İstanbul")
+        self.assertEqual(self.user.is_show_city, True)
+        self.assertEqual(self.user.birth_day, datetime.date(1996, 12, 23))
+        self.assertEqual(self.user.is_show_birth_day, True)
+        self.assertEqual(self.user.gender, "male")
+        self.assertEqual(self.user.is_show_gender, True)
+        self.assertEqual(self.user.twitter_username, "@john.doe")
+        self.assertEqual(self.user.facebook_profile, "https://www.facebook.com/example")

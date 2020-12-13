@@ -22,20 +22,20 @@ class UserRetrieveUpdateViewSet(RetrieveModelMixin, UpdateModelMixin, GenericVie
     lookup_field = "id"
 
     def get_permissions(self):
-        if self.action == "update":
+        if self.action == "partial_update":
             self.permission_classes = (IsAuthenticated,)
         else:
             self.permission_classes = (AllowAny,)
         return super().get_permissions()
 
     def get_object(self):
-        if self.action == "update":
+        if self.action == "partial_update":
             return self.request.user
         else:
             return super().get_object()
 
     def get_serializer_class(self):
-        if self.action == "update":
+        if self.action == "partial_update":
             return UserUpdateSerializer
         else:
             return UserSerializer
