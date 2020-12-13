@@ -35,7 +35,8 @@ class RegisterSerializer(serializers.Serializer):
         user = User.objects.create(
             username=validated_data['username'],
             password=make_password(validated_data['password']),
-            email=validated_data['email']
+            email=validated_data['email'],
+            account_type="rookie",
         )
         return LoginUserSerializer(user, many=False).data
 

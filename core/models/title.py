@@ -201,6 +201,7 @@ class Entry(BaseModel):
     stages = (
         ("draft", "draft"),
         ("publish", "publish"),
+        ("publish_by_rookie", "publish by rookie"),
         ("deleted", "deleted"),
         ("morning", "morning"),
         ("deleted_by_admin", "deleted by admin"),
