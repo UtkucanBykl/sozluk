@@ -132,3 +132,17 @@ class UserTest(APITestCase):
         }
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, 201)
+
+    def test_user_city_gender_birth_day(self):
+        url = reverse_lazy("core:user-detail", kwargs={"id": self.user1.id})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.get(url)
+        self.assertEqual(response.data.get("city"), "")
+        self.assertEqual(response.data.get("is_show_city"), False)
+        self.assertEqual(response.data.get("birth_day"), None)
+        self.assertEqual(response.data.get("is_show_birth_day"), False)
+        self.assertEqual(response.data.get("gender"), "uncertain")
+        self.assertEqual(response.data.get("is_show_gender"), False)
+        self.assertEqual(response.data.get("twitter_username"), "")
+        self.assertEqual(response.data.get("facebook_profile"), "")
+        self.assertEqual(response.data.get("account_type"), "rookie")

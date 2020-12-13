@@ -101,6 +101,36 @@ class User(
         default=timezone.now, verbose_name=_('date joined')
     )
 
+    city = models.CharField(
+        max_length=15, default="", blank=True, verbose_name=_('city where you live')
+    )
+    is_show_city = models.BooleanField(verbose_name=_('Everyone to see'), default=False)
+
+    birth_day = models.DateField(
+        verbose_name="Birth day", null=True, blank=True
+    )
+    is_show_birth_day = models.BooleanField(verbose_name=_('Everyone to see'), default=False)
+
+    genders = (
+        ("female", "Female"),
+        ("male", "Male"),
+        ("uncertain", "I don't want to specify.")
+    )
+    gender = models.CharField(choices=genders, default="uncertain", max_length=25)
+    is_show_gender = models.BooleanField(verbose_name=_('Everyone to see'), default=False)
+
+    twitter_username = models.CharField(max_length=255, default="")
+
+    facebook_profile = models.CharField(max_length=500, default="")
+
+    account_types = (
+        ("rookie", "Rookie"),
+        ("normal", "Normal"),
+        ("mod", "Moderator")
+    )
+    account_type = models.CharField(choices=account_types, default="rookie", max_length=25)
+
+
     likes = models.ManyToManyField('core.Entry', related_name='like_users', through='core.Like', blank=True)
     title_follows = models.ManyToManyField('core.Title', related_name='followers', through='core.TitleFollow', blank=True)
     user_follows = models.ManyToManyField('self', symmetrical=False, through='core.UserFollow', blank=True)

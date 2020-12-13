@@ -31,7 +31,9 @@ class LoginUserSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", 'username', 'email', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name', 'profile_picture')
+        fields = ("id", 'username', 'email', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name', 'profile_picture', 'city',
+                  'is_show_city', 'birth_day', 'is_show_birth_day', 'gender', 'is_show_gender', 'twitter_username',
+                  'facebook_profile', 'account_type')
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
