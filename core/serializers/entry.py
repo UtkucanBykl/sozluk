@@ -50,7 +50,10 @@ class EntrySerializer(serializers.ModelSerializer):
             'like_count', 'dislike_count', 'likes', 'dislikes', 'is_dislike', 'status')
 
     def to_internal_value(self, data):
-        return super().to_internal_value(data)
+        data = super().to_internal_value(data)
+        if data.get("status") == "publish" and self.context.get("request").user.account_type == "rookie":
+            data["status"] = "publish_by_rookie"
+        return data
 
     def to_representation(self, instance):
         return super().to_representation(instance)
