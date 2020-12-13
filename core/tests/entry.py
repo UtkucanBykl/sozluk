@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from ..models import Entry, Title, Like, Notification
+from ..models import Entry, Title, Like, Notification, Block
 from ..serializers import LikeSerializer
 
 __all__ = ['EntryTestCase']
@@ -153,3 +153,10 @@ class EntryTestCase(APITestCase):
         url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id':self.entry.id})
         response = self.client.get(url)
         self.assertEqual(response.data.get('is_like'), True)
+
+    def test_get_entry_on_block_user(self):
+        Block.objects.create(blocked_user=self.user, user=self.superuser)
+        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id': self.entry.id})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_superuser)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
