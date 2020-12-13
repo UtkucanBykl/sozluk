@@ -6,7 +6,7 @@ from ..models import Entry, Like, Dislike
 from ..serializers import TitleSerializer, UserSerializer
 from ..tasks import create_notification_info
 
-__all__ = ['EntrySerializer']
+__all__ = ['EntrySerializer', 'EntryUpdateSerializer']
 
 User = get_user_model()
 
@@ -46,8 +46,8 @@ class EntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Entry
         fields = (
-            'user', 'updated_at', 'title_data', 'title', 'content', 'is_important', 'user', 'user_data', 'is_like', 'id',
-            'like_count', 'dislike_count', 'likes', 'dislikes', 'is_dislike', 'status')
+            'user', 'updated_at', 'title_data', 'title', 'content', 'is_important', 'user', 'user_data', 'is_like',
+            'id', 'like_count', 'dislike_count', 'likes', 'dislikes', 'is_dislike', 'status')
 
     def to_internal_value(self, data):
         data = super().to_internal_value(data)
@@ -72,3 +72,17 @@ class EntrySerializer(serializers.ModelSerializer):
         if attrs.get('title') and not attrs.get('title').can_write:
             raise ValidationError('This title has not permission for write by users')
         return super().validate(attrs)
+
+
+class EntryUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Entry
+        fields = ('title', 'content', 'is_important', 'status')
+
+    def to_internal_value(self, data):
+        data = super().to_internal_value(data)
+        if data.get("status") == "publish" and self.context.get("request").user.account_type == "rookie":
+            data["status"] = "publish_by_rookie"
+        if data.get("is_important") and not self.context.get("request").user.account_type in ("mod", "admin"):
+            data.pop("is_important")
+        return data

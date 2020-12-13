@@ -1,4 +1,6 @@
 from django.db.models import Prefetch, Q
+from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
+from rest_framework.viewsets import GenericViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -7,9 +9,10 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, DjangoModelPer
 
 from ..models import Entry, Like, Dislike
 from ..pagination import StandardEntryPagination
-from ..serializers import EntrySerializer
+from ..serializers import EntrySerializer, EntryUpdateSerializer
 from ..filters import EntryFilter
 from ..permissions import IsOwnerOrReadOnly, OwnModelPermission
+
 
 
 __all__ = ['EntryListCreateAPIView', 'EntryRetrieveUpdateDestroyAPIView']
@@ -46,7 +49,7 @@ class EntryListCreateAPIView(ListCreateAPIView):
         serializer.save()
 
 
-class EntryRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+class EntryRetrieveUpdateDestroyAPIView(DestroyModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     permission_classes = [OwnModelPermission|IsOwnerOrReadOnly]
     authentication_classes = (TokenAuthentication,)
     serializer_class = EntrySerializer
@@ -56,7 +59,16 @@ class EntryRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.is_user_like(self.request.user).get_without_block_user(self.request.user).select_related('title')
+        if self.action == "retrieve":
+            return qs.is_user_like(self.request.user).get_without_block_user(self.request.user).select_related('title')
+        return qs
+
 
     def perform_destroy(self, instance):
         instance.delete(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == "partial_update":
+            return EntryUpdateSerializer
+        else:
+            return EntrySerializer
