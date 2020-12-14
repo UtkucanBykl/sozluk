@@ -75,6 +75,7 @@ class User(
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
 
+    old_id = models.PositiveIntegerField(verbose_name="Old ID", blank=True, null=True)
     username = models.CharField(
         max_length=140, unique=True
     )
@@ -145,7 +146,8 @@ class User(
         verbose_name_plural = _('users')
         constraints = [
             models.UniqueConstraint(fields=['username'], name='username_unique'),
-            models.UniqueConstraint(fields=['email'], name='email_unique')
+            models.UniqueConstraint(fields=['email'], name='email_unique'),
+            models.UniqueConstraint(fields=['old_id'], name='old_id_unique')
         ]
 
     def __str__(self):
