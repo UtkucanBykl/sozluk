@@ -55,14 +55,14 @@ class TitleQuerySet(BaseModelQuery):
                 ),
                 distinct=True,
             )
-        )
+        ).prefetch_related("entries")
 
     def total_entry_counts(self):
         return self.annotate(
             total_entry_count=Count(
                 "entry", filter=Q(entry__status="publish"), distinct=True
             )
-        )
+        ).prefetch_related("entries")
 
     def full_text_search(self, value):
         return self.annotate(full_text=SearchVector("title")).filter(full_text=value)
@@ -208,6 +208,9 @@ class Title(BaseModel):
             models.UniqueConstraint(fields=["slug"], name="slug_unique"),
             models.UniqueConstraint(fields=["old_id"], name="title_old_id_unique", condition=Q(old_id__isnull=False))
         ]
+        indexes = [
+            models.Index(fields=["status"], name="status_index")
+        ]
 
     def __str__(self):
         return self.title
@@ -248,6 +251,10 @@ class Entry(BaseModel):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["old_id"], name="entry_old_id_unique", condition=Q(old_id__isnull=False))
+        ]
+        indexes = [
+            models.Index(fields=("title", "updated_at", "status"), name="today_index"),
+            models.Index(fields=("title", "status"), name="total_index")
         ]
 
     def __str__(self):

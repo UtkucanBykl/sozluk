@@ -95,6 +95,7 @@ class Command(BaseCommand):
                 if count == 0:
                     continue
                 try:
+                    print(row)
                     data = {
                         "old_id": int(row[0]),
                         "title": Title.objects.get(old_id=int(row[1])),
