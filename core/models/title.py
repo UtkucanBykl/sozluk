@@ -227,6 +227,7 @@ class Entry(BaseModel):
         ("morning", "morning"),
         ("deleted_by_admin", "deleted by admin"),
     )
+    old_id = models.PositiveIntegerField(null=True, blank=True)
     status = models.CharField(choices=stages, default="publish", max_length=25)
     title = models.ForeignKey(
         "core.Title",
@@ -239,9 +240,15 @@ class Entry(BaseModel):
     )
     content = models.TextField(max_length=500)
     is_important = models.BooleanField(default=False)
+    is_tematik = models.BooleanField(default=False)
     last_vote_time = models.DateTimeField(default=timezone.now)
 
     objects = EntryManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["old_id"], name="entry_old_id_unique", condition=Q(old_id__isnull=False))
+        ]
 
     def __str__(self):
         return self.content

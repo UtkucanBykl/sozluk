@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand, call_command
 
 
-from ...models import Title
+from ...models import Title, Entry
 
 User = get_user_model()
 
@@ -22,7 +22,8 @@ class Command(BaseCommand):
 
         fixtures = [
             #"user",
-            "title",
+            #"title",
+            "entries",
         ]
         for fixture in fixtures:
             self.stdout.write(f"Inserting fixture '{fixture}'...")
@@ -31,6 +32,8 @@ class Command(BaseCommand):
                 self.load_users()
             elif fixture == "title":
                 self.load_titles()
+            elif fixture == "entries":
+                self.load_entries()
             else:
                 call_command(
                     "loaddata", f"{settings.FIXTURE_YAML_DIR}/{fixture}", format="yaml"
@@ -81,5 +84,27 @@ class Command(BaseCommand):
                         deleted_at=row[7] if row[7] != "NULL" else None
                     )
                     print(count)
+                except BaseException as e:
+                    print(e)
+
+    def load_entries(self):
+        with open(f"{settings.FIXTURE_DIR}/csv/entries.csv") as f:
+            Entry.objects.all().delete(hard=True)
+            reader = csv.reader(f, delimiter=',')
+            for count, row in enumerate(reader):
+                if count == 0:
+                    continue
+                try:
+                    data = {
+                        "old_id": int(row[0]),
+                        "title": Title.objects.get(old_id=int(row[1])),
+                        "user": User.objects.get(old_id=int(row[2])),
+                        "content": row[4],
+                        "created_at": row[5],
+                        "deleted_at": row[9] if row[9] != "NULL" else None,
+                        "status": "deleted" if row[13] == "1" else "publish_by_rookie" if row[22] == "1" else "publish",
+                        "is_tematik": int(row[20])
+                    }
+                    Entry.objects.create(**data)
                 except BaseException as e:
                     print(e)
