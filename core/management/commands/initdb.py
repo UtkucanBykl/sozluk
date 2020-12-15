@@ -7,6 +7,8 @@ from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand, call_command
 
 
+from ...models import Title
+
 User = get_user_model()
 
 
@@ -19,13 +21,16 @@ class Command(BaseCommand):
             return
 
         fixtures = [
-            "user"
+            #"user",
+            "title",
         ]
         for fixture in fixtures:
             self.stdout.write(f"Inserting fixture '{fixture}'...")
             print(f"{settings.FIXTURE_YAML_DIR}/{fixture}")
             if fixture == "user":
                 self.load_users()
+            elif fixture == "title":
+                self.load_titles()
             else:
                 call_command(
                     "loaddata", f"{settings.FIXTURE_YAML_DIR}/{fixture}", format="yaml"
@@ -38,7 +43,6 @@ class Command(BaseCommand):
             for count, row in enumerate(reader):
                 if count == 0:
                     continue
-                print(row[10])
                 try:
                     user = User.objects.create(
                         old_id=int(row[0]),
@@ -48,6 +52,34 @@ class Command(BaseCommand):
                         birth_day=row[10] if row[10] != "NULL" else None,
                         is_show_city=bool(row[8])
                     )
-                    print(user)
+                    print(User.objects.count())
+                    print(User.objects.last().old_id)
                 except:
                     print(row)
+
+    def load_titles(self):
+        with open(f"{settings.FIXTURE_DIR}/csv/title.csv") as f:
+            Title.objects.all().delete(hard=True)
+            reader = csv.reader(f, delimiter=',')
+            for count, row in enumerate(reader):
+                try:
+                    if count == 0:
+                        continue
+                    user = None
+                    if User.objects.filter(old_id=int(row[4])).exists():
+                        user = User.objects.filter(old_id=int(row[4])).first()
+                    status = "deleted" if row[10] == "1" else "draft" if row[14] == "1" else "publish"
+                    Title.objects.create(
+                        old_id=int(row[0]),
+                        title=row[2],
+                        user=user,
+                        created_at=row[5],
+                        updated_at=row[5],
+                        status=status,
+                        can_write=int(bool(row[12])),
+                        is_bold=int(bool(row[11])),
+                        deleted_at=row[7] if row[7] != "NULL" else None
+                    )
+                    print(count)
+                except BaseException as e:
+                    print(e)

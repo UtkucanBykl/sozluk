@@ -1,7 +1,7 @@
 from django.db.models import Count, Q
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, ListAPIView
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -41,6 +41,13 @@ class TitleListCreateAPIView(ListCreateAPIView):
     order_fields = ['created_at', 'total_entry_count', 'today_entry_count']
     filterset_class = TitleFilter
     pagination_class = StandardTitlePagination
+
+    def get_permissions(self):
+        if self.request.method == "post":
+            self.permission_classes = (TokenAuthentication,)
+        else:
+            self.permission_classes = (AllowAny,)
+        return super().get_permissions()
 
     def get_queryset(self):
         qs = super().get_queryset()

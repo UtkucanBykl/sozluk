@@ -15,6 +15,7 @@ from django.db.models import (
     Exists,
     OuterRef,
 )
+from django.utils.text import slugify
 
 from ..models import BaseModel, BaseManager, BaseModelQuery, Block
 
@@ -170,7 +171,9 @@ class EntryManager(BaseManager):
 
 
 class Title(BaseModel):
-    title = models.CharField(max_length=40, unique=True)
+    title = models.CharField(max_length=400, unique=True)
+    slug = models.SlugField(max_length=140)
+    old_id = models.PositiveIntegerField(null=True, blank=True)
     display_order = models.IntegerField(default=0)
     is_bold = models.BooleanField(default=False)
     can_write = models.BooleanField(default=True)
@@ -190,11 +193,29 @@ class Title(BaseModel):
         on_delete=models.SET_NULL,
         related_query_name="title",
     )
+    redirect = models.ForeignKey(
+        "core.Title",
+        null=True,
+        blank=True,
+        related_name="redirects",
+        on_delete=models.SET_NULL
+    )
 
     objects = TitleManager()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["slug"], name="slug_unique"),
+            models.UniqueConstraint(fields=["old_id"], name="title_old_id_unique", condition=Q(old_id__isnull=False))
+        ]
+
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        return super().save()
 
 
 class Entry(BaseModel):
