@@ -43,7 +43,7 @@ class TitleListCreateAPIView(ListCreateAPIView):
     pagination_class = StandardTitlePagination
 
     def get_permissions(self):
-        if self.request.method == "post":
+        if self.request.method.lower() == "post":
             self.permission_classes = (TokenAuthentication,)
         else:
             self.permission_classes = (AllowAny,)
