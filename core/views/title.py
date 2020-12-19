@@ -44,7 +44,7 @@ class TitleListCreateAPIView(ListCreateAPIView):
 
     def get_permissions(self):
         if self.request.method.lower() == "post":
-            self.permission_classes = (TokenAuthentication,)
+            self.permission_classes = (IsAuthenticated,)
         else:
             self.permission_classes = (AllowAny,)
         return super().get_permissions()
