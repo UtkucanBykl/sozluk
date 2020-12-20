@@ -140,10 +140,10 @@ class EntryQuerySet(BaseModelQuery):
     def get_without_block_user(self, user):
         if user.is_authenticated:
             block_user = Block.objects.filter(
-                blocked_user=OuterRef("user__pk"), user=user
+                blocked_user=OuterRef("user__pk"), user=user, is_entry=True
             )
             blocked_user = Block.objects.filter(
-                blocked_user=user, user=OuterRef("user__pk")
+                blocked_user=user, user=OuterRef("user__pk"), is_entry=True
             )
             return (
                 self.annotate(is_block_user=Exists(block_user))
