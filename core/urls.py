@@ -30,5 +30,11 @@ urlpatterns = [
     path("titles/blocks/", NotShowTitleCreateAPIView.as_view({"post": "create"}), name="block-create"),
     path("titles/blocks/<int:title_id>/", NotShowTitleCreateAPIView.as_view({"delete": "destroy"}), name="block-delete"),
     path("users/password/change/", ChangeUserPasswordView.as_view(), name="change-password"),
+    path("blocks/",
+         BlockUserViewSet.as_view({"post": "create"}),
+         name="user-block-create"),
+    path("blocks/<int:blocked_user_id>/",
+         BlockUserViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
+         name="user-block-retrieve-update-delete"),
 
 ]

@@ -186,6 +186,8 @@ class Dislike(BaseModelWithDelete):
 class Block(BaseModelWithDelete):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="block_list")
     blocked_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_message = models.BooleanField(default=True)
+    is_entry = models.BooleanField(default=True)
 
     def __str__(self):
         return self.user.username + " " + self.blocked_user.username

@@ -4,7 +4,10 @@ from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from django.core.exceptions import ValidationError
 
-__all__ = ['UserSerializer', 'LoginUserSerializer', 'UserUpdateSerializer', 'ChangePasswordSerializer']
+from ..models import Block
+
+
+__all__ = ['UserSerializer', 'LoginUserSerializer', 'UserUpdateSerializer', 'ChangePasswordSerializer', "UserBlockSerializer", "UserBlockUpdateSerializer"]
 
 User = get_user_model()
 
@@ -68,3 +71,33 @@ class ChangePasswordSerializer(serializers.Serializer):
         if not valid_password:
             raise ValidationError("Current password is wrong!")
         return old_password
+
+
+class UserBlockSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Block
+        fields = ('user', 'blocked_user', "is_message", "is_entry")
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["blocked_user"] = UserSerializer(instance.blocked_user, many=False).data
+        return data
+
+    def validate(self, attrs):
+        blocked_user = attrs.get("blocked_user")
+        if blocked_user.id == self.context.get("request").user.id:
+            raise serializers.ValidationError("Kendini engelleyemezsin.")
+        return attrs
+
+
+class UserBlockUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Block
+        fields = ("is_message", "is_entry")
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["blocked_user"] = UserSerializer(instance.blocked_user, many=False).data
+        return data
