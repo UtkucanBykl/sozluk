@@ -48,4 +48,7 @@ class UserFollowListCreateAPIView(ListCreateAPIView):
     authentication_classes = (TokenAuthentication,)
 
     def get_queryset(self):
-        return UserFollow.objects.filter(following_user=self.request.user).actives().select_related('follower_user')
+        if self.request.query_params.get('query') == "following_users":
+            return UserFollow.objects.filter(follower_user=self.request.user).actives().select_related('following_user')
+        elif self.request.query_params.get('query') == "users_who_follow":
+            return UserFollow.objects.filter(following_user=self.request.user).actives().select_related('follower_user')

@@ -24,7 +24,12 @@ class UserTest(APITestCase):
         self.user1 = User.objects.create(
             username='utku1', password=make_password('1234'), email='d1dd@ddd.com', bio="TEST", show_bio=False
         )
+        self.user2 = User.objects.create(
+            username='utku2', password=make_password('1234'), email='dddd@ddd.com', bio="TEST"
+        )
         self.token = Token.objects.get(user=self.user).key
+        self.token2 = Token.objects.get(user=self.user1).key
+        self.token3 = Token.objects.get(user=self.user2).key
 
     @override_settings(DRF_RECAPTCHA_TESTING=True)
     def test_register(self):
@@ -70,7 +75,7 @@ class UserTest(APITestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 400)
 
-    def test_follow(self):
+    def test_follow_create_and_get_following_users(self):
         url = reverse_lazy('core:user-follow-list-create')
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         data = {
@@ -78,6 +83,35 @@ class UserTest(APITestCase):
         }
         response = self.client.post(url, data)
         self.assertEqual(response.data['following_user_detail']['username'], 'utku1')
+        self.user.refresh_from_db()
+
+        url = reverse_lazy('core:user-follow-list-create') + '?query=following_users'
+        response = self.client.get(url)
+        self.assertEqual(response.data['results'][0]['following_user_detail']['username'], 'utku1')
+
+    def test_follow_create_and_get_follower_users(self):
+        url = reverse_lazy('core:user-follow-list-create')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2)
+        data = {
+            'following_user': self.user.id
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.data['following_user_detail']['username'], 'utku')
+        self.user.refresh_from_db()
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token3)
+        data = {
+            'following_user': self.user.id
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.data['following_user_detail']['username'], 'utku')
+        self.user.refresh_from_db()
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        url = reverse_lazy('core:user-follow-list-create') + '?query=users_who_follow'
+        response = self.client.get(url)
+        self.assertEqual(response.data['results'][0]['following_user_detail']['username'], 'utku')
+        self.assertEqual(response.data['results'][1]['following_user_detail']['username'], 'utku')
 
     def test_get_user(self):
         url = reverse_lazy("core:user-detail", kwargs={"id": self.user1.id})
