@@ -50,5 +50,4 @@ class UserFollowListCreateAPIView(ListCreateAPIView):
     def get_queryset(self):
         if self.request.query_params.get('query') == "following_users":
             return UserFollow.objects.filter(follower_user=self.request.user).actives().select_related('following_user')
-        elif self.request.query_params.get('query') == "users_who_follow":
-            return UserFollow.objects.filter(following_user=self.request.user).actives().select_related('follower_user')
+        return UserFollow.objects.filter(following_user=self.request.user).actives().select_related('follower_user')
