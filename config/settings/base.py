@@ -196,3 +196,7 @@ DRF_RECAPTCHA_TESTING = True
 
 MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 MEDIA_URL = '/media/'
+
+FIXTURE_DIR = os.path.join(BASE_DIR, "../fixtures")
+FIXTURE_YAML_DIR = os.path.join(BASE_DIR, "../fixtures", "yaml")
+FIXTURE_DIRS = (FIXTURE_DIR,)

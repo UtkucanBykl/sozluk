@@ -15,6 +15,7 @@ from django.db.models import (
     Exists,
     OuterRef,
 )
+from django.utils.text import slugify
 
 from ..models import BaseModel, BaseManager, BaseModelQuery, Block
 
@@ -54,14 +55,14 @@ class TitleQuerySet(BaseModelQuery):
                 ),
                 distinct=True,
             )
-        )
+        ).prefetch_related("entries")
 
     def total_entry_counts(self):
         return self.annotate(
             total_entry_count=Count(
                 "entry", filter=Q(entry__status="publish"), distinct=True
             )
-        )
+        ).prefetch_related("entries")
 
     def full_text_search(self, value):
         return self.annotate(full_text=SearchVector("title")).filter(full_text=value)
@@ -170,7 +171,9 @@ class EntryManager(BaseManager):
 
 
 class Title(BaseModel):
-    title = models.CharField(max_length=40, unique=True)
+    title = models.CharField(max_length=400, unique=True)
+    slug = models.SlugField(max_length=140)
+    old_id = models.PositiveIntegerField(null=True, blank=True)
     display_order = models.IntegerField(default=0)
     is_bold = models.BooleanField(default=False)
     can_write = models.BooleanField(default=True)
@@ -190,11 +193,32 @@ class Title(BaseModel):
         on_delete=models.SET_NULL,
         related_query_name="title",
     )
+    redirect = models.ForeignKey(
+        "core.Title",
+        null=True,
+        blank=True,
+        related_name="redirects",
+        on_delete=models.SET_NULL
+    )
 
     objects = TitleManager()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["slug"], name="slug_unique"),
+            models.UniqueConstraint(fields=["old_id"], name="title_old_id_unique", condition=Q(old_id__isnull=False))
+        ]
+        indexes = [
+            models.Index(fields=["status"], name="status_index")
+        ]
+
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        return super().save()
 
 
 class Entry(BaseModel):
@@ -206,6 +230,7 @@ class Entry(BaseModel):
         ("morning", "morning"),
         ("deleted_by_admin", "deleted by admin"),
     )
+    old_id = models.PositiveIntegerField(null=True, blank=True)
     status = models.CharField(choices=stages, default="publish", max_length=25)
     title = models.ForeignKey(
         "core.Title",
@@ -218,9 +243,19 @@ class Entry(BaseModel):
     )
     content = models.TextField(max_length=500)
     is_important = models.BooleanField(default=False)
+    is_tematik = models.BooleanField(default=False)
     last_vote_time = models.DateTimeField(default=timezone.now)
 
     objects = EntryManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["old_id"], name="entry_old_id_unique", condition=Q(old_id__isnull=False))
+        ]
+        indexes = [
+            models.Index(fields=("title", "updated_at", "status"), name="today_index"),
+            models.Index(fields=("title", "status"), name="total_index")
+        ]
 
     def __str__(self):
         return self.content

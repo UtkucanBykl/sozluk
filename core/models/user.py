@@ -5,6 +5,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from ..models import BaseModel, BaseModelWithDelete
@@ -75,6 +76,7 @@ class User(
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
 
+    old_id = models.PositiveIntegerField(verbose_name="Old ID", blank=True, null=True)
     username = models.CharField(
         max_length=140, unique=True
     )
@@ -145,7 +147,8 @@ class User(
         verbose_name_plural = _('users')
         constraints = [
             models.UniqueConstraint(fields=['username'], name='username_unique'),
-            models.UniqueConstraint(fields=['email'], name='email_unique')
+            models.UniqueConstraint(fields=['email'], name='email_unique'),
+            models.UniqueConstraint(fields=["old_id"], name="user_old_id_unique", condition=Q(old_id__isnull=False))
         ]
 
     def __str__(self):
