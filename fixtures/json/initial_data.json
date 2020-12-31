@@ -465,29 +465,5 @@
       "is_tematik": false,
       "last_vote_time": "2020-12-31T17:46:21Z"
     }
-  },
-  {
-    "model": "authtoken.token",
-    "pk": "368238e5991be3228768c00547546a7bac333158",
-    "fields": {
-      "user": 1,
-      "created": "2020-12-31T17:20:42.568Z"
-    }
-  },
-  {
-    "model": "authtoken.token",
-    "pk": "542e20379f51ebb8a184d7473846449244290615",
-    "fields": {
-      "user": 2,
-      "created": "2020-12-31T17:38:12.472Z"
-    }
-  },
-  {
-    "model": "authtoken.token",
-    "pk": "ccbd4d4f2fb5df233dfceeeb4a52f6bac7e7a4ae",
-    "fields": {
-      "user": 3,
-      "created": "2020-12-31T17:44:24.149Z"
-    }
   }
 ]
