@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 
+from .actions import clone, clone_user
 from ..models import TitleFollow, Like, Notification, Dislike, Block
 
 __all__ = ['UserAdmin']
@@ -10,6 +11,7 @@ User = get_user_model()
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
+    actions = [clone_user]
     list_display = ('username', 'email', 'status')
 
 
@@ -31,6 +33,7 @@ class LikeAdmin(admin.ModelAdmin):
 @admin.register(Notification)
 class NotoficationAdmin(admin.ModelAdmin):
     list_display = ('sender_user', 'title', 'receiver_user', 'entry', 'is_open')
+    actions = [clone]
 
 
 @admin.register(Block)
