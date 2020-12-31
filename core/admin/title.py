@@ -2,13 +2,14 @@ from django.contrib import admin
 from .base import BaseAdmin
 
 from ..models import Title, Entry, Category, Suggested, NotShowTitle
+from .actions import clone_title
 
 __all__ = ['TitleAdmin', 'EntryAdmin', 'CategoryAdmin', 'SuggestedAdmin', 'NotShowTitleAdmin']
 
 
 @admin.register(Title)
 class TitleAdmin(BaseAdmin):
-    pass
+    actions = [clone_title]
 
 
 @admin.register(Entry)
@@ -25,7 +26,7 @@ class CategoryAdmin(BaseAdmin):
 class SuggestedAdmin(BaseAdmin):
     list_select_related = ("user", "title")
     list_display = ("user", "message", "title", "suggested_type")
-    list_filter = ("suggested_type", "user")
+    list_filter = ("suggested_type",)
 
 
 @admin.register(NotShowTitle)
