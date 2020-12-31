@@ -14,7 +14,7 @@ User = get_user_model()
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('--import', help="Import data from csv")
+        parser.add_argument('total  ', help="Import data from csv")
 
     def handle(self, *args, **options):
         if settings.DEBUG is False:
