@@ -13,6 +13,9 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument('--import', help="Import data from csv")
+
     def handle(self, *args, **options):
         if settings.DEBUG is False:
             self.stderr.write(
@@ -21,10 +24,14 @@ class Command(BaseCommand):
             return
 
         fixtures = [
-            #"user",
-            #"title",
-            "entries",
+            "initial_data"
         ]
+        if options.get("import"):
+            fixtures += [
+                #"user",
+                #"title",
+                "entries",
+            ]
         for fixture in fixtures:
             self.stdout.write(f"Inserting fixture '{fixture}'...")
             print(f"{settings.FIXTURE_YAML_DIR}/{fixture}")
@@ -36,7 +43,7 @@ class Command(BaseCommand):
                 self.load_entries()
             else:
                 call_command(
-                    "loaddata", f"{settings.FIXTURE_YAML_DIR}/{fixture}", format="yaml"
+                    "loaddata", f"{settings.FIXTURE_YAML_DIR}/{fixture}.json", format="json"
                 )
 
     def load_users(self):
