@@ -1,0 +1,493 @@
+[
+  {
+    "model": "core.category",
+    "pk": 1,
+    "fields": {
+      "status": "publish",
+      "created_at": "2020-12-31T17:26:10.466Z",
+      "updated_at": "2020-12-31T17:26:10.466Z",
+      "deleted_at": null,
+      "name": "spor",
+      "display_order": 75
+    }
+  },
+  {
+    "model": "core.category",
+    "pk": 2,
+    "fields": {
+      "status": "publish",
+      "created_at": "2020-12-31T17:26:21.673Z",
+      "updated_at": "2020-12-31T17:26:21.673Z",
+      "deleted_at": null,
+      "name": "siyaset",
+      "display_order": 100
+    }
+  },
+  {
+    "model": "core.category",
+    "pk": 3,
+    "fields": {
+      "status": "publish",
+      "created_at": "2020-12-31T17:26:38.452Z",
+      "updated_at": "2020-12-31T17:26:38.452Z",
+      "deleted_at": null,
+      "name": "gündem",
+      "display_order": 50
+    }
+  },
+  {
+    "model": "core.category",
+    "pk": 4,
+    "fields": {
+      "status": "publish",
+      "created_at": "2020-12-31T17:27:48.819Z",
+      "updated_at": "2020-12-31T17:27:48.819Z",
+      "deleted_at": null,
+      "name": "kitap",
+      "display_order": 60
+    }
+  },
+  {
+    "model": "core.category",
+    "pk": 5,
+    "fields": {
+      "status": "publish",
+      "created_at": "2020-12-31T17:28:12.211Z",
+      "updated_at": "2020-12-31T17:28:12.211Z",
+      "deleted_at": null,
+      "name": "sinema",
+      "display_order": 80
+    }
+  },
+  {
+    "model": "core.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$180000$ZYXpjssSLyHH$VDJQ5CyNp2o2CeussoidzTUVaREI/P6HAIamXm5fwBY=",
+      "last_login": "2020-12-31T17:20:54.603Z",
+      "is_superuser": true,
+      "status": "publish",
+      "created_at": "2020-12-31T17:20:42.530Z",
+      "updated_at": "2020-12-31T17:20:42.620Z",
+      "deleted_at": null,
+      "old_id": null,
+      "username": "test",
+      "email": "test@test.com",
+      "first_name": "test",
+      "last_name": "test2",
+      "bio": "",
+      "show_bio": true,
+      "is_active": true,
+      "is_staff": true,
+      "date_joined": "2020-12-31T17:20:42.411Z",
+      "city": "",
+      "is_show_city": false,
+      "birth_day": null,
+      "is_show_birth_day": false,
+      "gender": "uncertain",
+      "is_show_gender": false,
+      "twitter_username": "",
+      "facebook_profile": "",
+      "account_type": "rookie",
+      "point": 0,
+      "profile_picture": "",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "core.user",
+    "pk": 2,
+    "fields": {
+      "password": "test2",
+      "last_login": null,
+      "is_superuser": false,
+      "status": "publish",
+      "created_at": "2020-12-31T17:38:12.471Z",
+      "updated_at": "2020-12-31T17:38:25.367Z",
+      "deleted_at": null,
+      "old_id": null,
+      "username": "test2",
+      "email": "test2@test.com",
+      "first_name": "tugay",
+      "last_name": "celmeli",
+      "bio": "Bu da benim biom",
+      "show_bio": true,
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2020-12-31T17:36:47Z",
+      "city": "",
+      "is_show_city": false,
+      "birth_day": null,
+      "is_show_birth_day": false,
+      "gender": "uncertain",
+      "is_show_gender": false,
+      "twitter_username": "@tugaycelmeli",
+      "facebook_profile": "www.facebook.com/tugayclml",
+      "account_type": "normal",
+      "point": 0,
+      "profile_picture": "",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "core.user",
+    "pk": 3,
+    "fields": {
+      "password": "utku",
+      "last_login": null,
+      "is_superuser": false,
+      "status": "publish",
+      "created_at": "2020-12-31T17:44:24.147Z",
+      "updated_at": "2020-12-31T17:44:24.147Z",
+      "deleted_at": null,
+      "old_id": null,
+      "username": "utku",
+      "email": "utku@test.com",
+      "first_name": "utku",
+      "last_name": "bıyıklı",
+      "bio": "Ben utku can bıyıklı. Üşengecim!!!",
+      "show_bio": true,
+      "is_active": true,
+      "is_staff": false,
+      "date_joined": "2020-12-31T17:43:28Z",
+      "city": "",
+      "is_show_city": false,
+      "birth_day": null,
+      "is_show_birth_day": false,
+      "gender": "uncertain",
+      "is_show_gender": false,
+      "twitter_username": "@utku",
+      "facebook_profile": "www.facebook.com/utku",
+      "account_type": "normal",
+      "point": 0,
+      "profile_picture": "",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "core.title",
+    "pk": 1,
+    "fields": {
+      "status": "publish",
+      "created_at": "2020-12-31T17:31:06.160Z",
+      "updated_at": "2020-12-31T17:35:42.068Z",
+      "deleted_at": null,
+      "title": "thor neden şişko",
+      "slug": "true",
+      "old_id": null,
+      "display_order": 76,
+      "is_bold": true,
+      "can_write": true,
+      "category": 5,
+      "user": 1,
+      "redirect": null
+    }
+  },
+  {
+    "model": "core.title",
+    "pk": 2,
+    "fields": {
+      "status": "publish",
+      "created_at": "2020-12-31T17:32:14.594Z",
+      "updated_at": "2020-12-31T17:35:48.036Z",
+      "deleted_at": null,
+      "title": "sayid neden angular seviyor",
+      "slug": "true2",
+      "old_id": null,
+      "display_order": 100,
+      "is_bold": false,
+      "can_write": true,
+      "category": 3,
+      "user": 1,
+      "redirect": null
+    }
+  },
+  {
+    "model": "core.title",
+    "pk": 3,
+    "fields": {
+      "status": "publish",
+      "created_at": "2020-12-31T17:32:43.039Z",
+      "updated_at": "2020-12-31T17:35:53.391Z",
+      "deleted_at": null,
+      "title": "işin garibi bende angular sevdim",
+      "slug": "true3",
+      "old_id": null,
+      "display_order": 14,
+      "is_bold": false,
+      "can_write": true,
+      "category": 2,
+      "user": 1,
+      "redirect": null
+    }
+  },
+  {
+    "model": "core.title",
+    "pk": 4,
+    "fields": {
+      "status": "publish",
+      "created_at": "2020-12-31T17:34:00.088Z",
+      "updated_at": "2020-12-31T17:36:06.738Z",
+      "deleted_at": null,
+      "title": "utku neden bu kadar üşengeç",
+      "slug": "true4",
+      "old_id": null,
+      "display_order": 25,
+      "is_bold": false,
+      "can_write": true,
+      "category": 4,
+      "user": 1,
+      "redirect": null
+    }
+  },
+  {
+    "model": "core.title",
+    "pk": 5,
+    "fields": {
+      "status": "publish",
+      "created_at": "2020-12-31T17:35:34.443Z",
+      "updated_at": "2020-12-31T17:35:34.443Z",
+      "deleted_at": null,
+      "title": "nolcak lan bu fbnin hali",
+      "slug": "true5",
+      "old_id": null,
+      "display_order": 50,
+      "is_bold": false,
+      "can_write": true,
+      "category": 1,
+      "user": 1,
+      "redirect": null
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 1,
+    "fields": {
+      "created_at": "2020-12-31T17:39:04.501Z",
+      "updated_at": "2020-12-31T17:41:54.746Z",
+      "deleted_at": null,
+      "old_id": null,
+      "status": "publish",
+      "title": 1,
+      "user": 1,
+      "content": "Thor çok içmiş yemiş ama .....",
+      "is_important": false,
+      "is_tematik": false,
+      "last_vote_time": "2020-12-31T17:38:31Z"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 2,
+    "fields": {
+      "created_at": "2020-12-31T17:39:45.160Z",
+      "updated_at": "2020-12-31T17:39:45.160Z",
+      "deleted_at": null,
+      "old_id": null,
+      "status": "publish",
+      "title": 2,
+      "user": 1,
+      "content": "valla çocuk yapıyor bağa da yardım allah razı olsun burdan emeği geçen herkesin ....",
+      "is_important": false,
+      "is_tematik": false,
+      "last_vote_time": "2020-12-31T17:39:07Z"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 3,
+    "fields": {
+      "created_at": "2020-12-31T17:41:45.906Z",
+      "updated_at": "2020-12-31T17:41:45.906Z",
+      "deleted_at": null,
+      "old_id": null,
+      "status": "publish",
+      "title": 1,
+      "user": 2,
+      "content": "thor çay içsin bence hemde bitki çayı sayid sever",
+      "is_important": false,
+      "is_tematik": false,
+      "last_vote_time": "2020-12-31T17:39:48Z"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 4,
+    "fields": {
+      "created_at": "2020-12-31T17:42:20.840Z",
+      "updated_at": "2020-12-31T17:42:20.840Z",
+      "deleted_at": null,
+      "old_id": null,
+      "status": "publish",
+      "title": 3,
+      "user": 2,
+      "content": "ya valla biraz basit geldi beklediğim kadar zor değilmiş",
+      "is_important": false,
+      "is_tematik": false,
+      "last_vote_time": "2020-12-31T17:41:58Z"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 5,
+    "fields": {
+      "created_at": "2020-12-31T17:42:44.204Z",
+      "updated_at": "2020-12-31T17:42:44.204Z",
+      "deleted_at": null,
+      "old_id": null,
+      "status": "publish",
+      "title": 3,
+      "user": 1,
+      "content": "tabi eğitmenin sayid olunca böyle oluyor",
+      "is_important": false,
+      "is_tematik": false,
+      "last_vote_time": "2020-12-31T17:42:23Z"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 6,
+    "fields": {
+      "created_at": "2020-12-31T17:43:20.555Z",
+      "updated_at": "2020-12-31T17:43:20.555Z",
+      "deleted_at": null,
+      "old_id": null,
+      "status": "publish",
+      "title": 4,
+      "user": null,
+      "content": "valla stratejik analiz ekibi olarak bunda hem fikiriz. fakat utku bunu kabullenmiyor",
+      "is_important": false,
+      "is_tematik": false,
+      "last_vote_time": "2020-12-31T17:42:48Z"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 7,
+    "fields": {
+      "created_at": "2020-12-31T17:44:51.779Z",
+      "updated_at": "2020-12-31T17:44:51.779Z",
+      "deleted_at": null,
+      "old_id": null,
+      "status": "publish",
+      "title": 4,
+      "user": 3,
+      "content": "Kim bana üşengeç dediyse o daha üşengeçtir.",
+      "is_important": false,
+      "is_tematik": false,
+      "last_vote_time": "2020-12-31T17:44:32Z"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 8,
+    "fields": {
+      "created_at": "2020-12-31T17:45:15.718Z",
+      "updated_at": "2020-12-31T17:45:15.718Z",
+      "deleted_at": null,
+      "old_id": null,
+      "status": "publish",
+      "title": 4,
+      "user": 2,
+      "content": "utkunun köy daha büyük",
+      "is_important": false,
+      "is_tematik": false,
+      "last_vote_time": "2020-12-31T17:44:56Z"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 9,
+    "fields": {
+      "created_at": "2020-12-31T17:45:34.598Z",
+      "updated_at": "2020-12-31T17:45:34.598Z",
+      "deleted_at": null,
+      "old_id": null,
+      "status": "publish",
+      "title": 5,
+      "user": 3,
+      "content": "Erol başgan istifa",
+      "is_important": false,
+      "is_tematik": false,
+      "last_vote_time": "2020-12-31T17:45:19Z"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 10,
+    "fields": {
+      "created_at": "2020-12-31T17:45:53.562Z",
+      "updated_at": "2020-12-31T17:45:53.563Z",
+      "deleted_at": null,
+      "old_id": null,
+      "status": "publish",
+      "title": 5,
+      "user": 2,
+      "content": "ali koç başkan fener şampiyon",
+      "is_important": false,
+      "is_tematik": false,
+      "last_vote_time": "2020-12-31T17:45:36Z"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 11,
+    "fields": {
+      "created_at": "2020-12-31T17:46:14.823Z",
+      "updated_at": "2020-12-31T17:46:14.823Z",
+      "deleted_at": null,
+      "old_id": null,
+      "status": "publish",
+      "title": 3,
+      "user": 3,
+      "content": "angular sevende ne biliyim ....",
+      "is_important": false,
+      "is_tematik": false,
+      "last_vote_time": "2020-12-31T17:45:55Z"
+    }
+  },
+  {
+    "model": "core.entry",
+    "pk": 12,
+    "fields": {
+      "created_at": "2020-12-31T17:46:49.087Z",
+      "updated_at": "2020-12-31T17:46:49.087Z",
+      "deleted_at": null,
+      "old_id": null,
+      "status": "publish",
+      "title": 1,
+      "user": 3,
+      "content": "marvel izleyen mi kaldı çocuk filmi olum bunlar",
+      "is_important": false,
+      "is_tematik": false,
+      "last_vote_time": "2020-12-31T17:46:21Z"
+    }
+  },
+  {
+    "model": "authtoken.token",
+    "pk": "368238e5991be3228768c00547546a7bac333158",
+    "fields": {
+      "user": 1,
+      "created": "2020-12-31T17:20:42.568Z"
+    }
+  },
+  {
+    "model": "authtoken.token",
+    "pk": "542e20379f51ebb8a184d7473846449244290615",
+    "fields": {
+      "user": 2,
+      "created": "2020-12-31T17:38:12.472Z"
+    }
+  },
+  {
+    "model": "authtoken.token",
+    "pk": "ccbd4d4f2fb5df233dfceeeb4a52f6bac7e7a4ae",
+    "fields": {
+      "user": 3,
+      "created": "2020-12-31T17:44:24.149Z"
+    }
+  }
+]
