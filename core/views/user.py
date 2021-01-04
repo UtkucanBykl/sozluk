@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework.authentication import TokenAuthentication
 
-from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin, CreateModelMixin, DestroyModelMixin
+from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin, CreateModelMixin, DestroyModelMixin, ListModelMixin
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import views
@@ -58,7 +58,7 @@ class ChangeUserPasswordView(views.APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class BlockUserViewSet(DestroyModelMixin, UpdateModelMixin, CreateModelMixin, GenericViewSet):
+class BlockUserViewSet(DestroyModelMixin, UpdateModelMixin, CreateModelMixin, ListModelMixin, GenericViewSet):
     serializer_class = UserBlockSerializer
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
