@@ -7,7 +7,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, DjangoModelPermissions
 
-from ..models import Entry, Like, Dislike
+from ..models import Entry, Like, Dislike, Favorite
 from ..pagination import StandardEntryPagination
 from ..serializers import EntrySerializer, EntryUpdateSerializer
 from ..filters import EntryFilter
@@ -24,7 +24,7 @@ class EntryListCreateAPIView(ListCreateAPIView):
     serializer_class = EntrySerializer
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     search_fields = ['title']
-    ordering_fields = ['like_count', 'dislike_count', 'created_at']
+    ordering_fields = ['like_count', 'dislike_count', 'favorite_count', 'created_at']
     filterset_class = EntryFilter
     pagination_class = StandardEntryPagination
 
@@ -38,11 +38,12 @@ class EntryListCreateAPIView(ListCreateAPIView):
 
         likes_prefetch = Prefetch('likes', Like.objects.select_related('user').filter())
         dislikes_prefetch = Prefetch('dislikes', Dislike.objects.select_related('user').filter())
+        favorite_prefetch = Prefetch('favorites', Favorite.objects.select_related('user').filter())
 
         return qs.is_user_like(self.request.user).is_user_dislike(
-            self.request.user).count_like_and_dislike().get_without_block_user(self.request.user).select_related(
+            self.request.user).count_like_and_dislike_and_favorite().get_without_block_user(self.request.user).select_related(
             'title').prefetch_related(
-            likes_prefetch, dislikes_prefetch)
+            likes_prefetch, dislikes_prefetch, favorite_prefetch)
 
     def perform_create(self, serializer):
         serializer.user = self.request.user

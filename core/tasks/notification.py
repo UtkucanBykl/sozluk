@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from ..models import Notification, Entry, Title
 
 
-__all__ = ['create_notification_like', 'create_notification_info', 'create_notification_dislike']
+__all__ = ['create_notification_like', 'create_notification_info', 'create_notification_dislike', 'create_notification_favorite']
 
 
 User = get_user_model()
@@ -59,5 +59,24 @@ def create_notification_info(title_id, user_id):
                 message=message,
                 notification_type='info'
             )
+    except BaseException as e:
+        print(str(e))
+
+
+@dramatiq.actor
+def create_notification_favorite(from_user_id, entry_id):
+    try:
+        sender_user = User.objects.get(id=from_user_id)
+        entry = Entry.objects.get(id=entry_id)
+        receiver_user = entry.user
+        message = f'{sender_user.username} adlı kullanıcı {entry.id} numaralı entrynizi favoriledi.'
+        Notification.objects.create(
+            sender_user=sender_user,
+            receiver_user=receiver_user,
+            entry=entry,
+            message=message,
+            notification_type='favorite'
+        )
+
     except BaseException as e:
         print(str(e))
