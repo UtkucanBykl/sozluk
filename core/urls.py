@@ -36,5 +36,7 @@ urlpatterns = [
     path("blocks/<int:blocked_user_id>/",
          BlockUserViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
          name="user-block-retrieve-update-delete"),
+    path('favorites/', FavoriteListCreateAPIView.as_view(), name='favorite-list-create'),
+    path('favorites/<int:entry_id>/', DeleteFavoriteAPIView.as_view(), name='favorite-delete'),
 
 ]

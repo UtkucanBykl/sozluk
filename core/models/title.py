@@ -127,14 +127,20 @@ class EntryQuerySet(BaseModelQuery):
             )
         return self.annotate(is_like=Value(False, output_field=BooleanField()))
 
-    def count_like_and_dislike(self, order_by=False):
-        qs = self.annotate(like_count=Count("like")).annotate(
+    def count_like_and_dislike_and_favorite(self, order_by=False):
+        qs = self.annotate(
+                like_count=Count("like")
+            ).annotate(
             dislike_count=Count("dislike")
-        )
+            ).annotate(
+            favorite_count=Count("favorite")
+            )
         if order_by == "like":
             qs = qs.order_by("-like_count")
         elif order_by == "dislike":
             qs = qs.order_by("-dislike")
+        elif order_by == "favorite":
+            qs = qs.order_by("-favorite")
         return qs
 
     def get_without_block_user(self, user):
@@ -160,8 +166,8 @@ class EntryManager(BaseManager):
     def is_user_like(self, user):
         return self.get_queryset().is_user_like(user)
 
-    def count_like_and_dislike(self, order_by=False):
-        return self.get_queryset().count_like_and_dislike(order_by)
+    def count_like_and_dislike_and_favorite(self, order_by=False):
+        return self.get_queryset().count_like_and_dislike_and_favorite(order_by)
 
     def is_user_dislike(self, user):
         return self.get_queryset().is_user_dislike(user)
