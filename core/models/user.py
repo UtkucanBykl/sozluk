@@ -139,6 +139,7 @@ class User(
     dislikes = models.ManyToManyField('core.Entry', related_name='dislike_users', through='core.Dislike', blank=True)
     point = models.IntegerField(default=0)
     profile_picture = models.ImageField(max_length=500, upload_to=generate_upload_path, null=True, blank=True)
+    favorites = models.ManyToManyField('core.Entry', related_name='favorite_users', through='core.Favorite', blank=True)
 
     objects = UserManager()
 
