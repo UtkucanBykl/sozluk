@@ -3,7 +3,7 @@ from rest_framework.generics import ListCreateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from ..serializers import DislikeSerializer, LikeSerializer, FavoriteSerializer
-from ..models import Dislike, Like, Favorite
+from ..models import Dislike, Like, Favorite, Entry
 from ..pagination import StandardPagination
 
 
@@ -19,6 +19,8 @@ class LikeListCreateAPIView(ListCreateAPIView):
     http_method_names = ['post', 'get', 'delete']
 
     def get_queryset(self):
+        if self.request.query_params.get('entry_id') and self.request.user.is_authenticated:
+            return Like.objects.filter(entry_id=self.request.query_params.get('entry_id')).select_related('entry', 'user')
         return Like.objects.filter(user=self.request.user).select_related('entry', 'user')
 
 
@@ -53,6 +55,8 @@ class DislikeListCreateAPIView(ListCreateAPIView):
     lookup_field = 'entry_id'
 
     def get_queryset(self):
+        if self.request.query_params.get('entry_id') and self.request.user.is_authenticated:
+            return Dislike.objects.filter(entry_id=self.request.query_params.get('entry_id')).select_related('entry', 'user')
         return Dislike.objects.filter(user=self.request.user).select_related('entry', 'user')
 
 
@@ -65,6 +69,8 @@ class FavoriteListCreateAPIView(ListCreateAPIView):
     lookup_field = 'entry_id'
 
     def get_queryset(self):
+        if self.request.query_params.get('entry_id') and self.request.user.is_authenticated:
+            return Favorite.objects.filter(entry_id=self.request.query_params.get('entry_id')).select_related('entry', 'user')
         return Favorite.objects.filter(user=self.request.user).select_related('entry', 'user')
 
 

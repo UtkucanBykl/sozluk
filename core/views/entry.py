@@ -36,14 +36,9 @@ class EntryListCreateAPIView(ListCreateAPIView):
         else:
             qs = Entry.objects.actives()
 
-        likes_prefetch = Prefetch('likes', Like.objects.select_related('user').filter())
-        dislikes_prefetch = Prefetch('dislikes', Dislike.objects.select_related('user').filter())
-        favorite_prefetch = Prefetch('favorites', Favorite.objects.select_related('user').filter())
-
         return qs.is_user_like(self.request.user).is_user_dislike(
-            self.request.user).is_user_favorite(self.request.user).count_like_and_dislike_and_favorite().get_without_block_user(self.request.user).select_related(
-            'title').prefetch_related(
-            likes_prefetch, dislikes_prefetch, favorite_prefetch)
+            self.request.user).is_user_favorite(self.request.user).count_like_and_dislike_and_favorite().\
+            get_without_block_user(self.request.user).select_related('title')
 
     def perform_create(self, serializer):
         serializer.user = self.request.user
