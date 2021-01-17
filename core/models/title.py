@@ -136,6 +136,7 @@ class EntryQuerySet(BaseModelQuery):
                     output_field=BooleanField(),
                 )
             )
+        return self.annotate(is_favorite=Value(False, output_field=BooleanField()))
 
     def count_like_and_dislike_and_favorite(self, order_by=False):
         qs = self.annotate(
