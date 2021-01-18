@@ -42,15 +42,13 @@ class EntrySerializer(serializers.ModelSerializer):
     like_count = serializers.IntegerField(default=0, read_only=True)
     dislike_count = serializers.IntegerField(default=0, read_only=True)
     favorite_count = serializers.IntegerField(default=0, read_only=True)
-    likes = ReadOnlyLikeSerializer(many=True, read_only=True)
-    dislikes = ReadOnlyDislikeSerializer(many=True, read_only=True)
+
 
     class Meta:
         model = Entry
         fields = (
             'user', 'updated_at', 'title_data', 'title', 'content', 'is_important', 'user', 'user_data', 'is_like',
-            'id', 'like_count', 'dislike_count', 'likes', 'dislikes', 'is_dislike', 'status',
-            'is_favorite', 'favorite_count')
+            'id', 'like_count', 'dislike_count', 'is_dislike', 'status', 'is_favorite', 'favorite_count')
 
     def to_internal_value(self, data):
         data = super().to_internal_value(data)
