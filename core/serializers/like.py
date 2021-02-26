@@ -4,11 +4,11 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..models import Like, Dislike, Favorite
-from ..serializers import EntrySerializer, UserSerializer
+from ..serializers import EntrySerializer, UserSerializer, UserEmotionSerializer
 
 from ..tasks import create_notification_like, update_user_points, create_notification_dislike, create_notification_favorite
 
-__all__ = ['LikeSerializer', 'DislikeSerializer', 'FavoriteSerializer']
+__all__ = ['LikeSerializer', 'DislikeSerializer', 'FavoriteSerializer', 'EntryLikeSerializer', 'EntryDislikeSerializer', 'EntryFavoriteSerializer']
 
 
 class LikeSerializer(serializers.ModelSerializer):
@@ -78,3 +78,21 @@ class FavoriteSerializer(serializers.ModelSerializer):
                 entry.last_vote_time = timezone.now()
                 entry.save()
         return save_return
+
+class EntryLikeSerializer(serializers.ModelSerializer):
+    user = UserEmotionSerializer()
+    class Meta:
+        model = Like
+        fields = ('user', 'entry')
+
+class EntryDislikeSerializer(serializers.ModelSerializer):
+    user = UserEmotionSerializer()
+    class Meta:
+        model = Dislike
+        fields = ('user', 'entry')
+
+class EntryFavoriteSerializer(serializers.ModelSerializer):
+    user = UserEmotionSerializer()
+    class Meta:
+        model = Favorite
+        fields = ('user', 'entry')

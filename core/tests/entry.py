@@ -37,6 +37,10 @@ class EntryTestCase(APITestCase):
             title=self.title1, user=self.user, content='aaddaaaa'
         )
 
+        self.Like = Like.objects.create(
+            user=self.user, entry=self.entry2
+        ) 
+
     def test_create_entry_without_auth(self):
         url = reverse_lazy('core:entry-list-create')
         data = {
@@ -109,6 +113,15 @@ class EntryTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 201)
+
+    def test_get_likes_of_entries(self):
+        url = reverse_lazy('core:like-list-create')
+        print(url)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.get(f'{url}?entry_id={self.entry2.id}')
+        print(response.data)
+        self.assertEqual(response.status_code, 200)
+        
 
     def test_dislike(self):
         url = reverse_lazy('core:dislike-list-create')
