@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from ..models import Block
 
 
-__all__ = ['UserSerializer', 'LoginUserSerializer', 'UserUpdateSerializer', 'ChangePasswordSerializer', "UserBlockSerializer", "UserBlockUpdateSerializer"]
+__all__ = ['UserSerializer', 'LoginUserSerializer', 'UserUpdateSerializer', 'ChangePasswordSerializer', "UserBlockSerializer", "UserBlockUpdateSerializer", "UserEmotionSerializer"]
 
 User = get_user_model()
 
@@ -24,7 +24,7 @@ class LoginUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", 'username', 'email', 'is_active', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name', 'token',
+        fields = ('id', 'username', 'email', 'is_active', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name', 'token',
                   'groups', 'profile_picture', "account_type")
 
     def get_token(self, obj):
@@ -34,7 +34,7 @@ class LoginUserSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", 'username', 'email', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name', 'profile_picture', 'city',
+        fields = ('id', 'username', 'email', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name', 'profile_picture', 'city',
                   'is_show_city', 'birth_day', 'is_show_birth_day', 'gender', 'is_show_gender', 'twitter_username',
                   'facebook_profile', 'account_type')
 
@@ -46,11 +46,16 @@ class UserSerializer(serializers.ModelSerializer):
             data["bio"] = ""
         return data
 
+class UserEmotionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username')
+
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("bio", 'first_name', 'last_name', 'profile_picture', 'city', 'is_show_city', 'birth_day',
+        fields = ('bio', 'first_name', 'last_name', 'profile_picture', 'city', 'is_show_city', 'birth_day',
                   'is_show_birth_day', 'gender', 'is_show_gender', 'twitter_username', 'facebook_profile')
 
 

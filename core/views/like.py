@@ -2,7 +2,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import ListCreateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from ..serializers import DislikeSerializer, LikeSerializer, FavoriteSerializer
+from ..serializers import DislikeSerializer, LikeSerializer, FavoriteSerializer, EntryLikeSerializer, EntryDislikeSerializer, EntryFavoriteSerializer
 from ..models import Dislike, Like, Favorite, Entry
 from ..pagination import StandardPagination
 
@@ -22,6 +22,11 @@ class LikeListCreateAPIView(ListCreateAPIView):
         if self.request.query_params.get('entry_id') and self.request.user.is_authenticated:
             return Like.objects.filter(entry_id=self.request.query_params.get('entry_id')).select_related('entry', 'user')
         return Like.objects.filter(user=self.request.user).select_related('entry', 'user')
+
+    def get_serializer_class(self):
+        if self.request.query_params.get('entry_id') and self.request.user.is_authenticated:
+            return EntryLikeSerializer
+        return LikeSerializer
 
 
 class DeleteLikeAPIView(DestroyAPIView):
@@ -58,6 +63,11 @@ class DislikeListCreateAPIView(ListCreateAPIView):
         if self.request.query_params.get('entry_id') and self.request.user.is_authenticated:
             return Dislike.objects.filter(entry_id=self.request.query_params.get('entry_id')).select_related('entry', 'user')
         return Dislike.objects.filter(user=self.request.user).select_related('entry', 'user')
+    
+    def get_serializer_class(self):
+        if self.request.query_params.get('entry_id') and self.request.user.is_authenticated:
+            return EntryDislikeSerializer
+        return DislikeSerializer
 
 
 class FavoriteListCreateAPIView(ListCreateAPIView):
@@ -72,6 +82,11 @@ class FavoriteListCreateAPIView(ListCreateAPIView):
         if self.request.query_params.get('entry_id') and self.request.user.is_authenticated:
             return Favorite.objects.filter(entry_id=self.request.query_params.get('entry_id')).select_related('entry', 'user')
         return Favorite.objects.filter(user=self.request.user).select_related('entry', 'user')
+    
+    def get_serializer_class(self):
+        if self.request.query_params.get('entry_id') and self.request.user.is_authenticated:
+            return EntryFavoriteSerializer
+        return FavoriteSerializer
 
 
 class DeleteFavoriteAPIView(DestroyAPIView):
