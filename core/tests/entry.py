@@ -116,10 +116,8 @@ class EntryTestCase(APITestCase):
 
     def test_get_likes_of_entries(self):
         url = reverse_lazy('core:like-list-create')
-        print(url)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.get(f'{url}?entry_id={self.entry2.id}')
-        print(response.data)
         self.assertEqual(response.status_code, 200)
         
 
