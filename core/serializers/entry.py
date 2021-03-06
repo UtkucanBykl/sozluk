@@ -48,7 +48,7 @@ class EntrySerializer(serializers.ModelSerializer):
         model = Entry
         fields = (
             'user', 'updated_at', 'title_data', 'title', 'content', 'is_important', 'user', 'user_data', 'is_like',
-            'id', 'like_count', 'dislike_count', 'is_dislike', 'status', 'is_favorite', 'favorite_count')
+            'id', 'like_count', 'dislike_count', 'is_dislike', 'status', 'is_favorite', 'favorite_count', 'is_tematik')
 
     def to_internal_value(self, data):
         data = super().to_internal_value(data)
@@ -80,7 +80,7 @@ class EntrySerializer(serializers.ModelSerializer):
 class EntryUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Entry
-        fields = ('title', 'content', 'is_important', 'status')
+        fields = ('title', 'content', 'is_important', 'status', 'is_tematik')
 
     def to_internal_value(self, data):
         data = super().to_internal_value(data)
