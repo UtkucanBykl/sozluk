@@ -34,7 +34,7 @@ class EntryTestCase(APITestCase):
             title=self.title1, user=self.user, content='aaaaaa'
         )
         self.entry2 = Entry.objects.create(
-            title=self.title1, user=self.user, content='aaddaaaa'
+            title=self.title1, user=self.user, content='aaddaaaa', is_tematik=True
         )
 
         self.Like = Like.objects.create(
@@ -171,3 +171,17 @@ class EntryTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_superuser)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
+
+    def test_get_entry_is_tematik(self):
+        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id': self.entry2.id})
+        response = self.client.get(url)
+        self.assertEqual(response.data.get('is_tematik'), True)
+
+    def test_patch_entry_is_tematik(self):
+        url = reverse_lazy('core:entry-retrieve-update-delete', kwargs={'id': self.entry2.id})
+        data = {
+            'is_tematik': False
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.patch(url, data)
+        self.assertEqual(response.data.get('is_tematik'), False)
