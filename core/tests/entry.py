@@ -5,8 +5,8 @@ from django.urls import reverse_lazy
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from ..models import Entry, Title, Like, Notification, Block
-from ..serializers import LikeSerializer
+from ..models import Entry, Title, Like, Notification, Block, Dislike, Favorite
+from ..serializers import LikeSerializer, DislikeSerializer, FavoriteSerializer
 
 __all__ = ['EntryTestCase']
 
@@ -136,6 +136,31 @@ class EntryTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.get(url)
         serializer = LikeSerializer(Like.objects.filter(user=self.user), many=True)
+        self.assertEqual(response.data['results'], serializer.data)
+
+    def test_like_list_without_auth(self):
+        Like.objects.create(user=self.user, entry=self.entry)
+        Like.objects.create(user=self.superuser, entry=self.entry)
+        url = reverse_lazy('core:like-list-create') + "?user_id=" + str(self.user.id)
+        response = self.client.get(url)
+        serializer = LikeSerializer(Like.objects.filter(user=self.user), many=True)
+        self.assertEqual(response.data['results'], serializer.data)
+        self.assertEqual(1, 1)
+
+    def test_dislike_list_without_auth(self):
+        Dislike.objects.create(user=self.user, entry=self.entry)
+        Dislike.objects.create(user=self.superuser, entry=self.entry)
+        url = reverse_lazy('core:dislike-list-create') + "?user_id=" + str(self.user.id)
+        response = self.client.get(url)
+        serializer = DislikeSerializer(Dislike.objects.filter(user=self.user), many=True)
+        self.assertEqual(response.data['results'], serializer.data)
+
+    def test_favorite_list_without_auth(self):
+        Favorite.objects.create(user=self.user, entry=self.entry)
+        Favorite.objects.create(user=self.superuser, entry=self.entry)
+        url = reverse_lazy('core:favorite-list-create') + "?user_id=" + str(self.user.id)
+        response = self.client.get(url)
+        serializer = FavoriteSerializer(Favorite.objects.filter(user=self.user), many=True)
         self.assertEqual(response.data['results'], serializer.data)
 
     def test_delete_like(self):
