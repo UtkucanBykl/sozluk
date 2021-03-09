@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from ..models import Title, Category, NotShowTitle
+from ..serializers import UserSerializer
 
 
 
@@ -10,10 +11,11 @@ __all__ = ['TitleSerializer', 'CategorySerializer', 'NotShowTitleSerializer']
 class TitleSerializer(serializers.ModelSerializer):
     total_entry_count = serializers.IntegerField(read_only=True, default=0)
     today_entry_count = serializers.IntegerField(read_only=True, default=0)
+    user = UserSerializer(many=False, read_only=True)
 
     class Meta:
         model = Title
-        fields = ('id', 'title', 'updated_at', 'is_bold', 'can_write', 'category', 'total_entry_count', 'today_entry_count', 'created_at')
+        fields = ('id', 'title', 'updated_at', 'is_bold', 'can_write', 'category', 'total_entry_count', 'today_entry_count', 'created_at', 'user')
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
