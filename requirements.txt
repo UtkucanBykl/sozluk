@@ -52,4 +52,4 @@ watchdog==0.8.3
 watchdog-gevent==0.1.0
 whitenoise==5.0.1
 zipp==3.1.0
-pillow==8.0.1
+pillow==8.1.1
