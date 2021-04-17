@@ -33,6 +33,8 @@ class EntryListCreateAPIView(ListCreateAPIView):
             qs = Entry.objects.filter(status=self.request.query_params.get('status'), user=self.request.user)
         elif self.request.user.is_authenticated and self.request.user.is_staff:
             qs = Entry.objects.filter(Q(status='publish')|Q(status='deleted')|Q(status="publish_by_rookie"))
+        elif self.request.query_params.get('user_id'):
+            qs = Entry.objects.filter(user_id=self.request.query_params.get('user_id'))
         else:
             qs = Entry.objects.actives()
 
