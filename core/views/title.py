@@ -11,11 +11,16 @@ from ..pagination import StandardTitlePagination
 from ..serializers import TitleSerializer, CategorySerializer, NotShowTitleSerializer
 
 from ..permissions import IsOwnerOrReadOnly
-from ..models import Title, Category, NotShowTitle
+from ..models import Title, Category, NotShowTitle, User
 from ..filters import TitleFilter
 
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
 from rest_framework.viewsets import GenericViewSet
+
+from rest_framework import status
+from rest_framework.response import Response
+
+from ..tasks.notification import create_notification_title_with_username
 
 __all__ = ['TitleRetrieveUpdateDestroyAPIView', 'TitleListCreateAPIView', 'CategoryListAPIView', 'NotShowTitleCreateAPIView']
 
