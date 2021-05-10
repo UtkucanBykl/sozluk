@@ -14,12 +14,14 @@ class Notification(BaseModel):
     mention = 'mention'
     info = 'info'
     favorite = 'favorite'
+    username_title = 'username_title'
     notification_types = (
         (follow, follow),
         (like, like),
         (mention, mention),
         (info, info),
-        (favorite, favorite)
+        (favorite, favorite),
+        (username_title, username_title)
     )
     notification_type = models.CharField(max_length=16, choices=notification_types, default='info')
     receiver_user = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
