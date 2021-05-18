@@ -63,6 +63,16 @@ class TitleTestCase(APITestCase):
         serializer = TitleSerializer(Title.objects.filter(title='Test1').first())
         self.assertEqual(response.data, serializer.data)
 
+    def test_title_create_with_entry(self):
+        url = reverse_lazy('core:title-create-with-entry')
+        data = {
+            'title': [{'title': 'testtetetete'}],
+            'entry': [{'content': 'aaaaaqweqweqwe'}]
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 201)
+
     def test_create_title_incorrect(self):
         url = reverse_lazy('core:title-list-create')
         data = {

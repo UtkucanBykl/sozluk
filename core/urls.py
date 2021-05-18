@@ -38,5 +38,6 @@ urlpatterns = [
          name="user-block-retrieve-update-delete"),
     path('favorites/', FavoriteListCreateAPIView.as_view(), name='favorite-list-create'),
     path('favorites/<int:entry_id>/', DeleteFavoriteAPIView.as_view(), name='favorite-delete'),
+    path('titlewithentry/', TitleWithEntryCreateAPIView.as_view(), name='title-create-with-entry'),
 
 ]
