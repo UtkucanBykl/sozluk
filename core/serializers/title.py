@@ -18,8 +18,8 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = (
-        'id', 'title', 'updated_at', 'is_bold', 'can_write', 'category', 'total_entry_count', 'today_entry_count',
-        'created_at', 'user')
+            'id', 'title', 'updated_at', 'is_bold', 'can_write', 'category', 'total_entry_count', 'today_entry_count',
+            'created_at', 'user', 'is_ukde')
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

@@ -13,8 +13,6 @@ from ..serializers import EntrySerializer, EntryUpdateSerializer
 from ..filters import EntryFilter
 from ..permissions import IsOwnerOrReadOnly, OwnModelPermission
 
-
-
 __all__ = ['EntryListCreateAPIView', 'EntryRetrieveUpdateDestroyAPIView']
 
 
@@ -32,14 +30,14 @@ class EntryListCreateAPIView(ListCreateAPIView):
         if self.request.query_params.get('status') and self.request.user.is_authenticated:
             qs = Entry.objects.filter(status=self.request.query_params.get('status'), user=self.request.user)
         elif self.request.user.is_authenticated and self.request.user.is_staff:
-            qs = Entry.objects.filter(Q(status='publish')|Q(status='deleted')|Q(status="publish_by_rookie"))
+            qs = Entry.objects.filter(Q(status='publish') | Q(status='deleted') | Q(status="publish_by_rookie"))
         elif self.request.query_params.get('user_id'):
             qs = Entry.objects.filter(user_id=self.request.query_params.get('user_id'))
         else:
             qs = Entry.objects.actives()
 
         return qs.is_user_like(self.request.user).is_user_dislike(
-            self.request.user).is_user_favorite(self.request.user).count_like_and_dislike_and_favorite().\
+            self.request.user).is_user_favorite(self.request.user).count_like_and_dislike_and_favorite(). \
             get_without_block_user(self.request.user).select_related('title')
 
     def perform_create(self, serializer):
@@ -48,7 +46,7 @@ class EntryListCreateAPIView(ListCreateAPIView):
 
 
 class EntryRetrieveUpdateDestroyAPIView(DestroyModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
-    permission_classes = [OwnModelPermission|IsOwnerOrReadOnly]
+    permission_classes = [OwnModelPermission | IsOwnerOrReadOnly]
     authentication_classes = (TokenAuthentication,)
     serializer_class = EntrySerializer
     lookup_url_kwarg = 'id'
@@ -60,7 +58,6 @@ class EntryRetrieveUpdateDestroyAPIView(DestroyModelMixin, RetrieveModelMixin, U
         if self.action == "retrieve":
             return qs.is_user_like(self.request.user).get_without_block_user(self.request.user).select_related('title')
         return qs
-
 
     def perform_destroy(self, instance):
         instance.delete(user=self.request.user)

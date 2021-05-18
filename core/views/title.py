@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 
 from ..pagination import StandardTitlePagination
-from ..serializers import TitleSerializer, CategorySerializer, NotShowTitleSerializer
+from ..serializers import TitleSerializer, CategorySerializer, NotShowTitleSerializer, EntrySerializer
 
 from ..permissions import IsOwnerOrReadOnly
 from ..models import Title, Category, NotShowTitle, User
@@ -20,9 +20,11 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework import status
 from rest_framework.response import Response
 
-from ..tasks.notification import create_notification_title_with_username
 
-__all__ = ['TitleRetrieveUpdateDestroyAPIView', 'TitleListCreateAPIView', 'CategoryListAPIView', 'NotShowTitleCreateAPIView']
+import ast
+
+__all__ = ['TitleRetrieveUpdateDestroyAPIView', 'TitleListCreateAPIView', 'CategoryListAPIView',
+           'NotShowTitleCreateAPIView', 'TitleWithEntryCreateAPIView']
 
 
 class TitleRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
@@ -57,6 +59,25 @@ class TitleListCreateAPIView(ListCreateAPIView):
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
+
+
+class TitleWithEntryCreateAPIView(ListCreateAPIView):
+    permission_classes = (IsAuthenticated, )
+    authentication_classes = (TokenAuthentication, )
+
+    def post(self, request, *args, **kwargs):
+        title_data = self.request.data.get('title', {})
+        title_serializer = TitleSerializer(data=ast.literal_eval(title_data), context=self.get_serializer_context())
+        if title_serializer.is_valid(raise_exception=True):
+            title = title_serializer.save()
+            entry_data = ast.literal_eval(self.request.data.get('entry'))
+            entry_data['title'] = title.id
+            entry_serializer = EntrySerializer(data=entry_data, context=self.get_serializer_context())
+            if entry_serializer.is_valid(raise_exception=True):
+                entry_serializer.save()
+                title.is_ukde = False
+                title_serializer.save(data=title)
+                return Response(status=status.HTTP_201_CREATED)
 
 
 class CategoryListAPIView(ListAPIView):
