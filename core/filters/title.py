@@ -16,7 +16,7 @@ class TitleFilter(rest_framework.FilterSet):
 
     class Meta:
         model = Title
-        fields = ('category', 'title', 'today', 'full_text', "followed")
+        fields = ('category', 'title', 'today', 'full_text', "followed", 'is_ukde')
 
     def filter_by_username(self, queryset, name, value):
         return queryset.filter(entry__user__username=value, entry__status='publish').distinct()
@@ -31,4 +31,9 @@ class TitleFilter(rest_framework.FilterSet):
         if self.request.user.is_authenticated:
             queryset = queryset.prefetch_related("follows")
             return queryset.filter(follows__user=self.request.user)
+        return queryset
+
+    def get_title_with_is_ukde(self, queryset):
+        if self.request.user.is_authenticated:
+            return queryset.get_titles_with_is_ukde()
         return queryset
