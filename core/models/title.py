@@ -77,6 +77,9 @@ class TitleQuerySet(BaseModelQuery):
             )
         return self.filter()
 
+    def get_titles_with_is_ukde(self):
+        return self.filter(is_ukde=True)
+
 
 class TitleManager(BaseManager):
     def get_queryset(self):
@@ -102,6 +105,9 @@ class TitleManager(BaseManager):
 
     def get_titles_without_not_showing(self, user):
         return self.get_queryset().get_titles_without_not_showing(user)
+
+    def get_titles_with_is_ukde(self, user):
+        return self.get_queryset().get_titles_with_is_ukde(user)
 
 
 class EntryQuerySet(BaseModelQuery):
