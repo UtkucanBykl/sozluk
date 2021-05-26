@@ -27,9 +27,3 @@ class MessageListAPIView(ListCreateAPIView):
                                         Q(Q(sender_user=second_user) | Q(receiver_user=self.request.user)))
             return qs
         return
-
-    """def post(self, request, *args, **kwargs):
-        message_serializer = MessageSerializer(data=self.request.data)
-        if message_serializer.is_valid(raise_exception=True):
-            message_serializer.save()
-            return Response(status=status.HTTP_201_CREATED)"""
