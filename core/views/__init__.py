@@ -7,3 +7,4 @@ from .follow import *
 from .notification import *
 from .user import *
 from .suggested import *
+from .message import *

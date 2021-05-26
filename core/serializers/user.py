@@ -7,7 +7,8 @@ from django.core.exceptions import ValidationError
 from ..models import Block
 
 
-__all__ = ['UserSerializer', 'LoginUserSerializer', 'UserUpdateSerializer', 'ChangePasswordSerializer', "UserBlockSerializer", "UserBlockUpdateSerializer", "UserEmotionSerializer"]
+__all__ = ['UserSerializer', 'LoginUserSerializer', 'UserUpdateSerializer', 'ChangePasswordSerializer',
+           "UserBlockSerializer", "UserBlockUpdateSerializer", "UserEmotionSerializer", "UserMessageSerializer"]
 
 User = get_user_model()
 
@@ -106,3 +107,9 @@ class UserBlockUpdateSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["blocked_user"] = UserSerializer(instance.blocked_user, many=False).data
         return data
+
+
+class UserMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'profile_picture', 'username')

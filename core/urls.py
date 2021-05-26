@@ -39,5 +39,6 @@ urlpatterns = [
     path('favorites/', FavoriteListCreateAPIView.as_view(), name='favorite-list-create'),
     path('favorites/<int:entry_id>/', DeleteFavoriteAPIView.as_view(), name='favorite-delete'),
     path('titlewithentry/', TitleWithEntryCreateAPIView.as_view(), name='title-create-with-entry'),
+    path('messages/', MessageListAPIView.as_view(), name='message-list-create')
 
 ]
