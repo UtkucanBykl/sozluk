@@ -4,3 +4,4 @@ from .entry import *
 from .report import *
 from .notification import *
 from .dramatiq import *
+from .message import *
