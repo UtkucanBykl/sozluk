@@ -6,9 +6,11 @@ from rest_framework import serializers
 from ..models import Like, Dislike, Favorite
 from ..serializers import EntrySerializer, UserSerializer, UserEmotionSerializer
 
-from ..tasks import create_notification_like, update_user_points, create_notification_dislike, create_notification_favorite
+from ..tasks import create_notification_like, update_user_points, create_notification_dislike, \
+    create_notification_favorite
 
-__all__ = ['LikeSerializer', 'DislikeSerializer', 'FavoriteSerializer', 'EntryLikeSerializer', 'EntryDislikeSerializer', 'EntryFavoriteSerializer']
+__all__ = ['LikeSerializer', 'DislikeSerializer', 'FavoriteSerializer', 'EntryLikeSerializer', 'EntryDislikeSerializer',
+           'EntryFavoriteSerializer']
 
 
 class LikeSerializer(serializers.ModelSerializer):
@@ -27,7 +29,7 @@ class LikeSerializer(serializers.ModelSerializer):
             entry_id = entry.id
             user_id = user.id
             create_notification_like.send(user_id, entry_id)
-            update_user_points.send(entry_id, -5)
+            update_user_points.send(entry_id, 1)
             with transaction.atomic():
                 entry.last_vote_time = timezone.now()
                 entry.save()
@@ -50,7 +52,7 @@ class DislikeSerializer(serializers.ModelSerializer):
             entry_id = entry.id
             user_id = user.id
             create_notification_dislike.send(user_id, entry_id)
-            update_user_points.send(entry_id, -5)
+            update_user_points.send(entry_id, -1)
             with transaction.atomic():
                 entry.last_vote_time = timezone.now()
                 entry.save()
@@ -73,26 +75,32 @@ class FavoriteSerializer(serializers.ModelSerializer):
             entry_id = entry.id
             user_id = user.id
             create_notification_favorite(user_id, entry_id)
-            update_user_points.send(entry_id, 5)
+            update_user_points.send(entry_id, 3)
             with transaction.atomic():
                 entry.last_vote_time = timezone.now()
                 entry.save()
         return save_return
 
+
 class EntryLikeSerializer(serializers.ModelSerializer):
     user = UserEmotionSerializer()
+
     class Meta:
         model = Like
         fields = ('user', 'entry')
 
+
 class EntryDislikeSerializer(serializers.ModelSerializer):
     user = UserEmotionSerializer()
+
     class Meta:
         model = Dislike
         fields = ('user', 'entry')
 
+
 class EntryFavoriteSerializer(serializers.ModelSerializer):
     user = UserEmotionSerializer()
+
     class Meta:
         model = Favorite
         fields = ('user', 'entry')

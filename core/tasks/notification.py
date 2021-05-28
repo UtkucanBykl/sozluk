@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from ..models import Notification, Entry, Title
 
 __all__ = ['create_notification_like', 'create_notification_info', 'create_notification_dislike',
-           'create_notification_favorite']
+           'create_notification_favorite', 'create_notification_title_with_username']
 
 User = get_user_model()
 

@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from ..models import Title, Category, NotShowTitle, User
 from ..serializers import UserSerializer
-from ..tasks.notification import create_notification_title_with_username
+from ..tasks import create_notification_title_with_username, update_user_points_follow_or_title_create
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -28,8 +28,11 @@ class TitleSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         save_return = super().save(**kwargs)
-        title = self.validated_data.get('title')
         user = self.context['request'].user
+        if hasattr(user, 'id'):
+            update_user_points_follow_or_title_create.send(user.id, 5)
+
+        title = self.validated_data.get('title')
         is_username = User.objects.filter(username=title).first()
         if is_username and hasattr(is_username, 'id'):
             create_notification_title_with_username.send(user.id, title, is_username.id)
