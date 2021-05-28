@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 
 from ..models import Entry, Like, Dislike
 from ..serializers import TitleSerializer, UserSerializer
-from ..tasks import create_notification_info
+from ..tasks import create_notification_info, update_user_points
 
 __all__ = ['EntrySerializer', 'EntryUpdateSerializer']
 
@@ -43,7 +43,6 @@ class EntrySerializer(serializers.ModelSerializer):
     dislike_count = serializers.IntegerField(default=0, read_only=True)
     favorite_count = serializers.IntegerField(default=0, read_only=True)
 
-
     class Meta:
         model = Entry
         fields = (
@@ -68,6 +67,7 @@ class EntrySerializer(serializers.ModelSerializer):
         if hasattr(title, 'id') and hasattr(user, 'id'):
             title_id = title.id
             user_id = user.id
+            update_user_points.send(save_return.id, 2)
             create_notification_info.send(title_id, user_id)
         return save_return
 

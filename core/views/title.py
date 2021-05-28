@@ -13,6 +13,7 @@ from ..serializers import TitleSerializer, CategorySerializer, NotShowTitleSeria
 from ..permissions import IsOwnerOrReadOnly
 from ..models import Title, Category, NotShowTitle, User
 from ..filters import TitleFilter
+from ..tasks import update_user_points_follow_or_title_create, update_user_points
 
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
 from rest_framework.viewsets import GenericViewSet
@@ -70,11 +71,13 @@ class TitleWithEntryCreateAPIView(ListCreateAPIView):
         title_serializer = TitleSerializer(data=ast.literal_eval(title_data), context=self.get_serializer_context())
         if title_serializer.is_valid(raise_exception=True):
             title = title_serializer.save()
+            update_user_points_follow_or_title_create.send(self.request.user.id, 5)
             entry_data = ast.literal_eval(self.request.data.get('entry'))
             entry_data['title'] = title.id
             entry_serializer = EntrySerializer(data=entry_data, context=self.get_serializer_context())
             if entry_serializer.is_valid(raise_exception=True):
-                entry_serializer.save()
+                entry = entry_serializer.save()
+                update_user_points.send(entry.id, 2)
                 title.is_ukde = False
                 title_serializer.save(data=title)
                 return Response(status=status.HTTP_201_CREATED)
