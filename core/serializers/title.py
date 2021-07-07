@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import Title, Category, NotShowTitle, User
+from ..models import Title, Category, NotShowTitle, User, Entry
 from ..serializers import UserSerializer
 from ..tasks import create_notification_title_with_username, update_user_points_follow_or_title_create
 
@@ -14,12 +14,19 @@ class TitleSerializer(serializers.ModelSerializer):
     total_entry_count = serializers.IntegerField(read_only=True, default=0)
     today_entry_count = serializers.IntegerField(read_only=True, default=0)
     user = UserSerializer(many=False, read_only=True)
+    first_entry_of_title = serializers.SerializerMethodField()
 
     class Meta:
         model = Title
         fields = (
             'id', 'title', 'updated_at', 'is_bold', 'can_write', 'category', 'total_entry_count', 'today_entry_count',
-            'created_at', 'user', 'is_ukde')
+            'created_at', 'user', 'is_ukde', 'first_entry_of_title')
+
+    def get_first_entry_of_title(self, title):
+        entry = Entry.objects.filter(title=title.id).first()
+        if entry:
+            return {"username": entry.user.username, "created_at": entry.created_at}
+        return
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
