@@ -27,7 +27,6 @@ import ast
 __all__ = ['TitleRetrieveUpdateDestroyAPIView', 'TitleListCreateAPIView', 'CategoryListAPIView',
            'NotShowTitleCreateAPIView', 'TitleWithEntryCreateAPIView']
 
-#rstret
 class TitleRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsOwnerOrReadOnly,)
     authentication_classes = (TokenAuthentication,)
