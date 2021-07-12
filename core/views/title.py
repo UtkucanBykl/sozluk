@@ -6,7 +6,6 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-
 from ..pagination import StandardTitlePagination
 from ..serializers import TitleSerializer, CategorySerializer, NotShowTitleSerializer, EntrySerializer
 
@@ -25,7 +24,8 @@ import random
 import ast
 
 __all__ = ['TitleRetrieveUpdateDestroyAPIView', 'TitleListCreateAPIView', 'CategoryListAPIView',
-           'NotShowTitleCreateAPIView', 'TitleWithEntryCreateAPIView']
+           'NotShowTitleCreateAPIView', 'TitleWithEntryCreateAPIView', 'SimilarTitleListAPIView']
+
 
 class TitleRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsOwnerOrReadOnly,)
@@ -98,9 +98,25 @@ class CategoryListAPIView(ListAPIView):
 
 class NotShowTitleCreateAPIView(DestroyModelMixin, CreateModelMixin, GenericViewSet):
     serializer_class = NotShowTitleSerializer
-    permission_classes = (IsAuthenticated&IsOwnerOrReadOnly,)
+    permission_classes = (IsAuthenticated & IsOwnerOrReadOnly,)
     lookup_field = "title_id"
     lookup_url_kwarg = "title_id"
 
     def get_queryset(self):
         return NotShowTitle.objects.filter(user=self.request.user).actives()
+
+
+class SimilarTitleListAPIView(ListAPIView):
+    serializer_class = TitleSerializer
+
+    def list(self, request, *args, **kwargs):
+        title = self.request.query_params.get('title')
+        split_title = title.split()
+        similar_titles = []
+        for i in split_title:
+            titles = Title.objects.filter(title__icontains=i)
+            for k in titles:
+                similar_titles.append({"title": k.title, "title_id": k.id})
+        if len(similar_titles) > 10:
+            similar_titles = random.sample(similar_titles, 10)
+        return Response(similar_titles, status=status.HTTP_200_OK)
