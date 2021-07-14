@@ -3,6 +3,7 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIV
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.filters import SearchFilter, OrderingFilter
+from django.contrib.postgres.search import TrigramSimilarity
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -109,14 +110,8 @@ class NotShowTitleCreateAPIView(DestroyModelMixin, CreateModelMixin, GenericView
 class SimilarTitleListAPIView(ListAPIView):
     serializer_class = TitleSerializer
 
-    def list(self, request, *args, **kwargs):
+    def get_queryset(self):
         title = self.request.query_params.get('title')
-        split_title = title.split()
-        similar_titles = []
-        for i in split_title:
-            titles = Title.objects.filter(title__icontains=i)
-            for k in titles:
-                similar_titles.append({"title": k.title, "title_id": k.id})
-        if len(similar_titles) > 10:
-            similar_titles = random.sample(similar_titles, 10)
-        return Response(similar_titles, status=status.HTTP_200_OK)
+        qs = Title.objects.annotate(similarity=TrigramSimilarity('title', title),)\
+            .filter(similarity__gt=0.1).order_by('-similarity')
+        return qs
