@@ -40,6 +40,5 @@ urlpatterns = [
     path('favorites/<int:entry_id>/', DeleteFavoriteAPIView.as_view(), name='favorite-delete'),
     path('titlewithentry/', TitleWithEntryCreateAPIView.as_view(), name='title-create-with-entry'),
     path('messages/', MessageListAPIView.as_view(), name='message-list-create'),
-    path('similartitles/', SimilarTitleListAPIView.as_view(), name="similar-titles")
-
+    path('similartitles/', SimilarTitleListAPIView.as_view(), name="similar-titles"),
 ]
