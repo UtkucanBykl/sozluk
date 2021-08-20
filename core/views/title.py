@@ -7,7 +7,7 @@ from django.contrib.postgres.search import TrigramSimilarity
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from ..pagination import StandardTitlePagination
+from ..pagination import StandardTitlePagination, StandardPagination
 from ..serializers import TitleSerializer, CategorySerializer, NotShowTitleSerializer, EntrySerializer
 
 from ..permissions import IsOwnerOrReadOnly
@@ -109,6 +109,7 @@ class NotShowTitleCreateAPIView(DestroyModelMixin, CreateModelMixin, GenericView
 
 class SimilarTitleListAPIView(ListAPIView):
     serializer_class = TitleSerializer
+    pagination_class = StandardPagination
 
     def get_queryset(self):
         title = self.request.query_params.get('title')

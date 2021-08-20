@@ -24,7 +24,7 @@ class TitleSerializer(serializers.ModelSerializer):
 
     def get_first_entry_of_title(self, title):
         entry = Entry.objects.filter(title=title.id).first()
-        if entry:
+        if entry and entry.user:
             return {"username": entry.user.username, "created_at": entry.created_at}
         return
 
