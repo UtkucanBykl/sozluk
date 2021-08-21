@@ -57,8 +57,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('bio', 'first_name', 'last_name', 'profile_picture', 'city', 'is_show_city', 'birth_day',
-                  'is_show_birth_day', 'gender', 'is_show_gender', 'twitter_username', 'facebook_profile',
-                  'account_type')
+                  'is_show_birth_day', 'gender', 'is_show_gender', 'twitter_username', 'facebook_profile')
 
 
 class ChangePasswordSerializer(serializers.Serializer):
