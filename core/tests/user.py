@@ -25,7 +25,7 @@ class UserTest(APITestCase):
             username='utku1', password=make_password('1234'), email='d1dd@ddd.com', bio="TEST", show_bio=False
         )
         self.user2 = User.objects.create(
-            username='utku2', password=make_password('1234'), email='dddd@ddd.com', bio="TEST"
+            username='utku2', password=make_password('1234'), email='dddd@ddd.com', bio="TEST", account_type="normal",
         )
         self.token = Token.objects.get(user=self.user).key
         self.token2 = Token.objects.get(user=self.user1).key
@@ -118,7 +118,7 @@ class UserTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.get(url)
         self.assertEqual(response.data.get("bio"), "")
-
+    """
     def test_update_user_without_correct_url(self):
         url = reverse_lazy("core:user-detail", kwargs={"id": self.user1.id})
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
@@ -127,6 +127,17 @@ class UserTest(APITestCase):
         }
         response = self.client.patch(url, patch_data)
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+    """
+
+    def test_update_user_account_type(self):
+        url = reverse_lazy("core:user-detail", kwargs={"id": self.user2.id})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        patch_data = {
+            "account_type": "mod"
+        }
+        response = self.client.patch(url, patch_data)
+        print(response.data.get('account_type'))
+        self.assertEqual(response.data.get('account_type'), "mod")
 
     def test_update_user(self):
         url = reverse_lazy("core:user-update")
