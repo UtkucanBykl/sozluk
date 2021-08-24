@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from ..models import Report
+from ..models import Report, Entry, Title
 
 
 User = get_user_model()
@@ -25,6 +25,12 @@ class ReportTest(APITestCase):
         self.user1 = User.objects.create(
             username='utku1', password=make_password('1234'), email='dddd@ddd.com'
         )
+        self.title = Title.objects.create(
+            title='Test'
+        )
+        self.entry = Entry.objects.create(
+            title=self.title, user=self.user, content='aaaaaa'
+        )
         self.token = Token.objects.get(user=self.user).key
 
     def test_create_report(self):
@@ -33,7 +39,7 @@ class ReportTest(APITestCase):
             'to_user': self.user1.id,
             'content': 'bad words',
             'report_type': 'toxic',
-            'entry': ''
+            'entry': self.entry.pk
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.post(url, data)
