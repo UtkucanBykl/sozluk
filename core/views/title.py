@@ -110,6 +110,7 @@ class NotShowTitleCreateAPIView(DestroyModelMixin, CreateModelMixin, GenericView
 class SimilarTitleListAPIView(ListAPIView):
     serializer_class = TitleSerializer
     pagination_class = StandardPagination
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         title = self.request.query_params.get('title')
