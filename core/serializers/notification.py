@@ -4,8 +4,7 @@ from rest_framework import serializers
 from ..models import Notification, Entry, Title
 from ..serializers import UserSerializer, EntrySerializer
 
-
-__all__ = ['NotificationSerializer']
+__all__ = ['NotificationSerializer', 'NotificationGetSerializer']
 
 User = get_user_model()
 
@@ -22,5 +21,11 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = (
             'entry', 'title', 'created_at', 'entry_detail', 'sender_user', 'receiver_user_detail', 'message',
-            'notification_type', 'receiver_user'
+            'notification_type', 'receiver_user', 'is_deleted', 'is_seen', 'id'
         )
+
+
+class NotificationGetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ('id', 'message', 'created_at', 'is_seen', 'is_deleted')

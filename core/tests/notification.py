@@ -8,9 +8,7 @@ from rest_framework.test import APITestCase
 
 from ..models import Notification
 
-
 User = get_user_model()
-
 
 __all__ = ['NotificationTest']
 
@@ -33,5 +31,16 @@ class NotificationTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.get(url)
         self.assertEqual(
-            response.data['results'][0]['receiver_user_detail']['username'], 'utku'
+            response.data['results'][0]['message'], 'Hello'
         )
+
+    def test_update_is_seen(self):
+        base_url = f'/api/notifications/' + str(self.notification.pk) + '/'
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        data = {
+            'is_seen': True,
+            'is_deleted': True
+        }
+        response = self.client.patch(base_url, data)
+        self.assertEqual(response.data['is_deleted'], True)
+        self.assertEqual(response.data['is_seen'], True)

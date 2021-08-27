@@ -15,18 +15,20 @@ User = get_user_model()
 
 class EntryTestCase(APITestCase):
     def setUp(self):
-        self.title1 = Title.objects.create(
-            title='Test'
-        )
-        self.title_cant_write = Title.objects.create(
-            title='Testttt',
-            can_write=False
-        )
         self.user = User.objects.create(
             username='Utku', email='utku@can.com', password=make_password('1234')
         )
         self.superuser = User.objects.create(
             username='tugay', email='tugay@can.com', password=make_password('1234'), is_superuser=True
+        )
+
+        self.title1 = Title.objects.create(
+            title='Test',
+            user=self.superuser
+        )
+        self.title_cant_write = Title.objects.create(
+            title='Testttt',
+            can_write=False
         )
         self.token = Token.objects.get(user=self.user).key
         self.token_superuser = Token.objects.get(user=self.superuser).key

@@ -7,11 +7,12 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, DjangoModelPermissions
 
-from ..models import Entry, Like, Dislike, Favorite
+from ..models import Entry, Like, Dislike, Favorite, Title
 from ..pagination import StandardEntryPagination
 from ..serializers import EntrySerializer, EntryUpdateSerializer
 from ..filters import EntryFilter
 from ..permissions import IsOwnerOrReadOnly, OwnModelPermission
+from ..tasks import create_notification_entry_create_info_to_title_user
 
 import random
 
@@ -48,6 +49,11 @@ class EntryListCreateAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.user = self.request.user
+        if self.request.data['title']:
+            title = Title.objects.get(id=self.request.data['title'])
+            if title and title.user:
+                if self.request.user.pk != title.user.pk:
+                    create_notification_entry_create_info_to_title_user.send(self.request.user.pk, title.title, title.user.username)
         serializer.save()
 
 

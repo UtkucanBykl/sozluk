@@ -8,6 +8,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 from PIL import Image
 
+from ..models import Title, Entry, UserFollow
+
 import io
 import datetime
 
@@ -26,6 +28,20 @@ class UserTest(APITestCase):
         )
         self.user2 = User.objects.create(
             username='utku2', password=make_password('1234'), email='dddd@ddd.com', bio="TEST", account_type="normal",
+        )
+
+        self.follow = UserFollow.objects.create(
+            follower_user=self.user2, following_user=self.user1
+        )
+
+        self.title = Title.objects.create(
+            title="Deneme", user=self.user1
+        )
+
+        self.entry = Entry.objects.create(
+            title=self.title,
+            content="asdasdasd",
+            user=self.user1
         )
         self.token = Token.objects.get(user=self.user).key
         self.token2 = Token.objects.get(user=self.user1).key
