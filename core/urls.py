@@ -20,6 +20,7 @@ urlpatterns = [
     path('notifications/<int:id>/', NotificationListAPIView.as_view({"patch": "partial_update"}), name='notification-update'),
     path('users/follows/', UserFollowListCreateAPIView.as_view(), name='user-follow-list-create'),
     path('users/follows/<int:following_user_id>/', UserFollowDeleteAPIView.as_view(), name='user-follow-delete'),
+    path('users/following/<int:following_user_id>/', UserFollowRetrieveAPIView.as_view(), name='user-follow-get'),
     path('dislikes/', DislikeListCreateAPIView.as_view(), name='dislike-list-create'),
     path('dislikes/<int:entry_id>/', DeleteDislikeAPIView.as_view(), name='dislike-delete'),
     path('likes/<int:entry_id>/', DeleteLikeAPIView.as_view(), name='like-delete'),

@@ -32,7 +32,7 @@ class LikeAdmin(admin.ModelAdmin):
 
 @admin.register(Notification)
 class NotoficationAdmin(admin.ModelAdmin):
-    list_display = ('sender_user', 'title', 'receiver_user', 'entry', 'is_open')
+    list_display = ('sender_user', 'title', 'receiver_user', 'entry', 'is_open', 'message')
     actions = [clone]
 
 
