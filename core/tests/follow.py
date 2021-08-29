@@ -39,3 +39,12 @@ class FollowTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.get(url)
         self.assertEqual(response.data['is_following'], True)
+
+    def test_create_follow(self):
+        url = reverse_lazy('core:user-follow-list-create')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        data = {
+            'following_user': self.user2.id
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.data['error_message'], 'Bu kullanıcıyı zaten takip ediyorsunuz.')

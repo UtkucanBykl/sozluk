@@ -28,5 +28,4 @@ class NotificationListAPIView(ListModelMixin, UpdateModelMixin, GenericViewSet):
 
     def get_queryset(self):
         qs = Notification.objects.filter(is_deleted=False, receiver_user=self.request.user)
-        # return self.request.user.notifications.actives()
         return qs
