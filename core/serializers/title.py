@@ -2,10 +2,6 @@ from rest_framework import serializers
 
 from ..models import Title, Category, NotShowTitle, User, Entry
 from ..serializers import UserSerializer
-from ..tasks import create_notification_title_with_username, update_user_points_follow_or_title_create
-
-from rest_framework import status
-from rest_framework.response import Response
 
 __all__ = ['TitleSerializer', 'CategorySerializer', 'NotShowTitleSerializer']
 
@@ -13,14 +9,18 @@ __all__ = ['TitleSerializer', 'CategorySerializer', 'NotShowTitleSerializer']
 class TitleSerializer(serializers.ModelSerializer):
     total_entry_count = serializers.IntegerField(read_only=True, default=0)
     today_entry_count = serializers.IntegerField(read_only=True, default=0)
-    user = UserSerializer(many=False, read_only=True)
+    user_detail = UserSerializer(source='user', read_only=True)
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.filter(),
+        default=serializers.CurrentUserDefault()
+    )
     first_entry_of_title = serializers.SerializerMethodField()
 
     class Meta:
         model = Title
         fields = (
             'id', 'title', 'updated_at', 'is_bold', 'can_write', 'category', 'total_entry_count', 'today_entry_count',
-            'created_at', 'user', 'is_ukde', 'first_entry_of_title')
+            'created_at', 'user', 'is_ukde', 'first_entry_of_title', 'user_detail')
 
     def get_first_entry_of_title(self, title):
         entry = Entry.objects.filter(title=title.id).first()
@@ -32,18 +32,6 @@ class TitleSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data['category'] = CategorySerializer(instance.category, read_only=True, many=False).data
         return data
-
-    def save(self, **kwargs):
-        save_return = super().save(**kwargs)
-        user = self.context['request'].user
-        if hasattr(user, 'id'):
-            update_user_points_follow_or_title_create.send(user.id, 5)
-
-        title = self.validated_data.get('title')
-        is_username = User.objects.filter(username=title).first()
-        if is_username and hasattr(is_username, 'id'):
-            create_notification_title_with_username.send(user.id, title, is_username.id)
-        return save_return
 
 
 class CategorySerializer(serializers.ModelSerializer):

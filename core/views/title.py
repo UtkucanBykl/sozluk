@@ -13,7 +13,8 @@ from ..serializers import TitleSerializer, CategorySerializer, NotShowTitleSeria
 from ..permissions import IsOwnerOrReadOnly
 from ..models import Title, Category, NotShowTitle, User
 from ..filters import TitleFilter
-from ..tasks import update_user_points_follow_or_title_create, update_user_points
+from ..tasks import update_user_points_follow_or_title_create, update_user_points, \
+    create_notification_title_with_username
 
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
 from rest_framework.viewsets import GenericViewSet
@@ -57,6 +58,21 @@ class TitleListCreateAPIView(ListCreateAPIView):
             self.permission_classes = (AllowAny,)
         return super().get_permissions()
 
+    def perform_create(self, serializer):
+        serializer.user = self.request.user
+        serializer.save()
+        if hasattr(self.request.user, 'id'):
+            update_user_points_follow_or_title_create.send(self.request.user.id, 5)
+
+        title = self.request.data['title']
+        is_username = User.objects.filter(username=title).first()
+
+        if is_username and hasattr(is_username, 'id'):
+            create_notification_title_with_username.send(self.request.user.id, title, is_username.id)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
     def get_queryset(self):
         qs = super().get_queryset()
         if self.request.query_params.get('random'):
@@ -64,6 +80,11 @@ class TitleListCreateAPIView(ListCreateAPIView):
             random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 33))
             qs = Title.objects.filter(id__in=random_profiles_id_list)
             return qs
+        elif self.request.query_params.get('user_id') and self.request.query_params.get('is_ukde'):
+            qs = Title.objects.filter(
+                user=self.request.query_params.get('user_id'), is_ukde=self.request.query_params.get('is_ukde')
+            )
+            return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
         return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
 
 
