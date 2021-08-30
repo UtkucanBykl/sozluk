@@ -52,6 +52,8 @@ class EntryListCreateAPIView(ListCreateAPIView):
         if self.request.data['title']:
             title = Title.objects.get(id=self.request.data['title'])
             if title and title.user:
+                title.is_ukde = False
+                title.save()
                 if self.request.user.pk != title.user.pk:
                     create_notification_entry_create_info_to_title_user.send(self.request.user.pk, title.title, title.user.username)
         serializer.save()

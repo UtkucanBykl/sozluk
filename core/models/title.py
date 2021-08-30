@@ -226,7 +226,7 @@ class Title(BaseModel):
         related_name="redirects",
         on_delete=models.SET_NULL
     )
-    is_ukde = models.BooleanField(default=False)
+    is_ukde = models.BooleanField(default=True)
 
     objects = TitleManager()
 
