@@ -1,15 +1,17 @@
-from rest_framework.generics import ListAPIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from ..serializers import NotificationSerializer, NotificationGetSerializer
 from ..pagination import StandardPagination
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import UpdateModelMixin, ListModelMixin
+from rest_framework.mixins import UpdateModelMixin, ListModelMixin, CreateModelMixin
+from rest_framework.response import Response
+
+from ..tasks import seen_all_notification_for_user, delete_all_notification_for_user
 
 from ..models import Notification
 
-__all__ = ['NotificationListAPIView']
+__all__ = ['NotificationListAPIView', 'NotificationDeleteAllAPIView', 'NotificationSeenAllAPIView']
 
 
 class NotificationListAPIView(ListModelMixin, UpdateModelMixin, GenericViewSet):
@@ -29,3 +31,21 @@ class NotificationListAPIView(ListModelMixin, UpdateModelMixin, GenericViewSet):
     def get_queryset(self):
         qs = Notification.objects.filter(is_deleted=False, receiver_user=self.request.user)
         return qs
+
+
+class NotificationDeleteAllAPIView(CreateModelMixin, GenericViewSet):
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    def create(self, request, *args, **kwargs):
+        delete_all_notification_for_user.send(self.request.user.pk)
+        return Response({"system_info": "Tüm bildirimlerinin silme işlemi başlatılmıştır."})
+
+
+class NotificationSeenAllAPIView(CreateModelMixin, GenericViewSet):
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    def create(self, request, *args, **kwargs):
+        seen_all_notification_for_user.send(self.request.user.pk)
+        return Response({"system_info": "Tüm bildirimlerinin görüldü işlemi başlatılmıştır."})

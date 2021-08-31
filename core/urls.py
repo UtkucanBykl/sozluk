@@ -43,4 +43,6 @@ urlpatterns = [
     path('titlewithentry/', TitleWithEntryCreateAPIView.as_view(), name='title-create-with-entry'),
     path('messages/', MessageListAPIView.as_view(), name='message-list-create'),
     path('similartitles/', SimilarTitleListAPIView.as_view(), name="similar-titles"),
+    path('notifications/deleteall/', NotificationDeleteAllAPIView.as_view({"post": "create"}), name="delete-all-notification"),
+    path('notifications/seenall/', NotificationSeenAllAPIView.as_view({"post": "create"}), name="seen-all-notification"),
 ]

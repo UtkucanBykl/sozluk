@@ -26,12 +26,19 @@ class NotificationTest(APITestCase):
             sender_user=self.user1, receiver_user=self.user, message='Hello', notification_type='info'
         )
 
+        self.notification1 = Notification.objects.create(
+            receiver_user=self.user, message='Hello', notification_type='info'
+        )
+        self.notification2 = Notification.objects.create(
+            receiver_user=self.user, message='Hello2', notification_type='info'
+        )
+
     def test_get_notification(self):
         url = reverse_lazy('core:notification-list')
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.get(url)
         self.assertEqual(
-            response.data['results'][0]['message'], 'Hello'
+            response.data['results'][0]['message'], 'Hello2'
         )
 
     def test_update_is_seen(self):
@@ -44,3 +51,15 @@ class NotificationTest(APITestCase):
         response = self.client.patch(base_url, data)
         self.assertEqual(response.data['is_deleted'], True)
         self.assertEqual(response.data['is_seen'], True)
+
+    def test_delete_all_notifications(self):
+        url = reverse_lazy('core:delete-all-notification')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.post(url)
+        self.assertEqual(response.data['system_info'], "Tüm bildirimlerinin silme işlemi başlatılmıştır.")
+
+    def test_seen_all_notifications(self):
+        url = reverse_lazy('core:seen-all-notification')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.post(url)
+        self.assertEqual(response.data['system_info'], "Tüm bildirimlerinin görüldü işlemi başlatılmıştır.")
