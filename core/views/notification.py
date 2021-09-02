@@ -10,6 +10,8 @@ from rest_framework.response import Response
 from ..tasks import seen_all_notification_for_user, delete_all_notification_for_user
 
 from ..models import Notification
+from rest_framework.filters import OrderingFilter
+
 
 __all__ = ['NotificationListAPIView', 'NotificationDeleteAllAPIView', 'NotificationSeenAllAPIView']
 
@@ -18,6 +20,8 @@ class NotificationListAPIView(ListModelMixin, UpdateModelMixin, GenericViewSet):
     serializer_class = NotificationSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    filter_backends = (OrderingFilter,)
+    ordering_fields = ['created_at']
     pagination_class = StandardPagination
     lookup_url_kwarg = "id"
     lookup_field = "id"
