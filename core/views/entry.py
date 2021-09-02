@@ -24,7 +24,7 @@ class EntryListCreateAPIView(ListCreateAPIView):
     authentication_classes = (TokenAuthentication,)
     serializer_class = EntrySerializer
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    search_fields = ['title']
+    search_fields = ['content']
     ordering_fields = ['like_count', 'dislike_count', 'favorite_count', 'created_at']
     filterset_class = EntryFilter
     pagination_class = StandardEntryPagination
