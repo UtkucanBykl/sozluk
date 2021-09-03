@@ -45,4 +45,5 @@ urlpatterns = [
     path('similartitles/', SimilarTitleListAPIView.as_view(), name="similar-titles"),
     path('notifications/deleteall/', NotificationDeleteAllAPIView.as_view({"post": "create"}), name="delete-all-notification"),
     path('notifications/seenall/', NotificationSeenAllAPIView.as_view({"post": "create"}), name="seen-all-notification"),
+    path('users/search/', UserSearchAPIView.as_view({"get": "list"}), name="user-search"),
 ]

@@ -1,20 +1,23 @@
 from django.contrib.auth import get_user_model
 from rest_framework.authentication import TokenAuthentication
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin, CreateModelMixin, DestroyModelMixin, ListModelMixin
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import views
 from rest_framework.response import Response
 from rest_framework import status
 
-from ..serializers import UserSerializer, UserUpdateSerializer, ChangePasswordSerializer, UserBlockSerializer, UserBlockUpdateSerializer
+from ..serializers import UserSerializer, UserUpdateSerializer, ChangePasswordSerializer, \
+    UserBlockSerializer, UserBlockUpdateSerializer, UserEmotionSerializer
 from ..models import Block
 
 
 User = get_user_model()
 
-__all__ = ["UserRetrieveUpdateViewSet", "ChangeUserPasswordView", "BlockUserViewSet"]
+__all__ = ["UserRetrieveUpdateViewSet", "ChangeUserPasswordView", "BlockUserViewSet", "UserSearchAPIView"]
 
 
 class UserRetrieveUpdateViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
@@ -72,3 +75,18 @@ class BlockUserViewSet(DestroyModelMixin, UpdateModelMixin, CreateModelMixin, Li
         if self.action == "partial_update":
             return UserBlockUpdateSerializer
         return UserBlockSerializer
+
+
+class UserSearchAPIView(ListModelMixin, GenericViewSet):
+    serializer_class = UserEmotionSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    authentication_classes = (TokenAuthentication,)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    search_fields = ['username']
+
+    def get_queryset(self):
+        if self.request.query_params.get('search'):
+            qs = User.objects.all()
+            return qs
+        else:
+            return User.objects.none()
