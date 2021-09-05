@@ -77,7 +77,7 @@ class TitleListCreateAPIView(ListCreateAPIView):
         qs = super().get_queryset()
         if self.request.query_params.get('random'):
             id_list = Title.objects.all().values_list('id', flat=True)
-            random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 33))
+            random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 330))
             qs = Title.objects.filter(id__in=random_profiles_id_list)
             return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
         elif self.request.query_params.get('user_id') and self.request.query_params.get('is_ukde'):

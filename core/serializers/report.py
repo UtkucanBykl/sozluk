@@ -20,5 +20,5 @@ class ReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Report
         fields = (
-            'entry', 'created_at', 'entry_detail', 'to_user', 'to_user_detail', 'content', 'report_type', 'from_user'
+            'entry', 'created_at', 'entry_detail', 'to_user', 'to_user_detail', 'report_type', 'from_user'
         )
