@@ -47,17 +47,6 @@ class EntryListCreateAPIView(ListCreateAPIView):
             self.request.user).is_user_favorite(self.request.user).count_like_and_dislike_and_favorite(). \
             get_without_block_user(self.request.user).select_related('title')
 
-    def perform_create(self, serializer):
-        serializer.user = self.request.user
-        if self.request.data['title']:
-            title = Title.objects.get(id=self.request.data['title'])
-            if title and title.user:
-                title.is_ukde = False
-                title.save()
-                if self.request.user.pk != title.user.pk:
-                    create_notification_entry_create_info_to_title_user.send(self.request.user.pk, title.title, title.user.username)
-        serializer.save()
-
 
 class EntryRetrieveUpdateDestroyAPIView(DestroyModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     permission_classes = [OwnModelPermission | IsOwnerOrReadOnly]
