@@ -8,3 +8,4 @@ from .notification import *
 from .user import *
 from .suggested import *
 from .message import *
+from .activities import *
