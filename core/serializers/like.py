@@ -3,7 +3,7 @@ from django.db import transaction
 
 from rest_framework import serializers
 
-from ..models import Like, Dislike, Favorite
+from ..models import Like, Dislike, Favorite, Entry, UserEmotionActivities
 from ..serializers import EntrySerializer, UserSerializer, UserEmotionSerializer
 
 from ..tasks import create_notification_like, update_user_points, create_notification_dislike, \
@@ -26,6 +26,7 @@ class LikeSerializer(serializers.ModelSerializer):
         entry = self.validated_data.get('entry')
         user = self.context['request'].user
         if hasattr(entry, 'id') and hasattr(user, 'id'):
+            UserEmotionActivities.objects.create(user=user, entry=entry)
             entry_id = entry.id
             user_id = user.id
             create_notification_like.send(user_id, entry_id)
@@ -49,6 +50,7 @@ class DislikeSerializer(serializers.ModelSerializer):
         entry = self.validated_data.get('entry')
         user = self.context['request'].user
         if hasattr(entry, 'id') and hasattr(user, 'id'):
+            UserEmotionActivities.objects.create(user=user, entry=entry)
             entry_id = entry.id
             user_id = user.id
             create_notification_dislike.send(user_id, entry_id)
@@ -72,6 +74,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         entry = self.validated_data.get('entry')
         user = self.context['request'].user
         if hasattr(entry, 'id') and hasattr(user, 'id'):
+            UserEmotionActivities.objects.create(user=user, entry=entry)
             entry_id = entry.id
             user_id = user.id
             create_notification_favorite(user_id, entry_id)

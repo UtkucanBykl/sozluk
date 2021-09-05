@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 
 from ..models import Entry, Like, Dislike
 from ..serializers import TitleSerializer, UserSerializer
-from ..tasks import create_notification_info, update_user_points
+from ..tasks import create_notification_info, update_user_points, create_notification_entry_create_info_to_title_user
 
 __all__ = ['EntrySerializer', 'EntryUpdateSerializer']
 
@@ -69,6 +69,11 @@ class EntrySerializer(serializers.ModelSerializer):
             user_id = user.id
             update_user_points.send(save_return.id, 2)
             create_notification_info.send(title_id, user_id)
+            title.is_ukde = False
+            title.save()
+            if user.id != title.user.id:
+                create_notification_entry_create_info_to_title_user.send(user_id, title.title,
+                                                                         title.user.username)
         return save_return
 
     def validate(self, attrs):

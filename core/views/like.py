@@ -32,16 +32,6 @@ class LikeListCreateAPIView(ListCreateAPIView):
             return EntryLikeSerializer
         return LikeSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        entry = Entry.objects.get(id=request.data['entry'])
-        if entry:
-            UserEmotionActivities.objects.create(user=self.request.user, entry=entry)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
 
 class DeleteLikeAPIView(DestroyAPIView):
     serializer_class = LikeSerializer
@@ -85,16 +75,6 @@ class DislikeListCreateAPIView(ListCreateAPIView):
             return EntryDislikeSerializer
         return DislikeSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        entry = Entry.objects.get(id=request.data['entry'])
-        if entry:
-            UserEmotionActivities.objects.create(user=self.request.user, entry=entry)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
 
 class FavoriteListCreateAPIView(ListCreateAPIView):
     serializer_class = FavoriteSerializer
@@ -115,16 +95,6 @@ class FavoriteListCreateAPIView(ListCreateAPIView):
         if self.request.query_params.get('entry_id') and self.request.user.is_authenticated:
             return EntryFavoriteSerializer
         return FavoriteSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        entry = Entry.objects.get(id=request.data['entry'])
-        if entry:
-            UserEmotionActivities.objects.create(user=self.request.user, entry=entry)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class DeleteFavoriteAPIView(DestroyAPIView):
