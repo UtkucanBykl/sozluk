@@ -37,7 +37,6 @@ class ReportTest(APITestCase):
         url = reverse_lazy('core:report-list-create')
         data = {
             'to_user': self.user1.id,
-            'content': 'bad words',
             'report_type': 'toxic',
             'entry': self.entry.pk
         }
@@ -50,7 +49,6 @@ class ReportTest(APITestCase):
         data = {
             'from_user': self.user,
             'to_user': self.user1,
-            'content': 'bad words',
             'report_type': 'toxic',
         }
         url = reverse_lazy('core:report-list-create')

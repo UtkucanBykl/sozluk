@@ -38,7 +38,7 @@ class EntryListCreateAPIView(ListCreateAPIView):
             qs = Entry.objects.filter(user_id=self.request.query_params.get('user_id'), status='publish')
         elif self.request.query_params.get('random'):
             id_list = Entry.objects.all().values_list('id', flat=True)
-            random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 33))
+            random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 250))
             qs = Entry.objects.filter(id__in=random_profiles_id_list)
         else:
             qs = Entry.objects.actives()
