@@ -46,4 +46,5 @@ urlpatterns = [
     path('notifications/deleteall/', NotificationDeleteAllAPIView.as_view({"post": "create"}), name="delete-all-notification"),
     path('notifications/seenall/', NotificationSeenAllAPIView.as_view({"post": "create"}), name="seen-all-notification"),
     path('users/search/', UserSearchAPIView.as_view({"get": "list"}), name="user-search"),
+    path('user/lastactivities/', UserEmotionActivitiesAPIView.as_view({"get": "list"}), name="user-last-activities"),
 ]

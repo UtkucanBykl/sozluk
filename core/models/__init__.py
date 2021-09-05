@@ -6,3 +6,4 @@ from .follow import *
 from .notification import *
 from .suggested import *
 from .message import *
+from .activities import *
