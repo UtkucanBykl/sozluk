@@ -2,9 +2,11 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import ListCreateAPIView, DestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from ..serializers import DislikeSerializer, LikeSerializer, FavoriteSerializer, EntryLikeSerializer, EntryDislikeSerializer, EntryFavoriteSerializer
+from ..serializers import DislikeSerializer, LikeSerializer, FavoriteSerializer, EntryLikeSerializer, \
+    EntryDislikeSerializer, EntryFavoriteSerializer
 from ..models import Dislike, Like, Favorite, Entry, User, UserEmotionActivities
 from ..pagination import StandardPagination
+from ..tasks import decrement_like_dislike_favorite
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -43,6 +45,12 @@ class DeleteLikeAPIView(DestroyAPIView):
     def get_queryset(self):
         return Like.objects.filter(user=self.request.user).select_related('entry', 'user')
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        decrement_like_dislike_favorite.send("like", self.kwargs.get(self.lookup_field))
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class DeleteDislikeAPIView(DestroyAPIView):
     serializer_class = DislikeSerializer
@@ -53,6 +61,12 @@ class DeleteDislikeAPIView(DestroyAPIView):
 
     def get_queryset(self):
         return Dislike.objects.filter(user=self.request.user).select_related('entry', 'user')
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        decrement_like_dislike_favorite.send("dislike", self.kwargs.get(self.lookup_field))
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class DislikeListCreateAPIView(ListCreateAPIView):
@@ -106,3 +120,9 @@ class DeleteFavoriteAPIView(DestroyAPIView):
 
     def get_queryset(self):
         return Favorite.objects.filter(user=self.request.user).select_related('entry', 'user')
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        decrement_like_dislike_favorite.send("favorite", self.kwargs.get(self.lookup_field))
+        return Response(status=status.HTTP_204_NO_CONTENT)
