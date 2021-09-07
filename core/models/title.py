@@ -272,6 +272,9 @@ class Entry(BaseModel):
     is_important = models.BooleanField(default=False)
     is_tematik = models.BooleanField(default=False)
     last_vote_time = models.DateTimeField(default=timezone.now)
+    count_like = models.IntegerField(default=0)
+    count_dislike = models.IntegerField(default=0)
+    count_favorite = models.IntegerField(default=0)
 
     objects = EntryManager()
 
