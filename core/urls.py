@@ -10,6 +10,7 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='user-register'),
     path('login/', LoginView.as_view(), name='user-login'),
     path('titles/', TitleListCreateAPIView.as_view(), name='title-list-create'),
+    path('titles/<int:id>/', TitleUpdateDestroyAPIView.as_view({"patch": "partial_update", "delete": "destroy"}), name='title-update-delete'),
     path('entries/', EntryListCreateAPIView.as_view(), name='entry-list-create'),
     path('entries/<int:id>/', EntryRetrieveUpdateDestroyAPIView.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}), name='entry-retrieve-update-delete'),
     path('likes/', LikeListCreateAPIView.as_view(), name='like-list-create'),

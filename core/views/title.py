@@ -16,7 +16,7 @@ from ..filters import TitleFilter
 from ..tasks import update_user_points_follow_or_title_create, update_user_points, \
     create_notification_title_with_username
 
-from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin
 from rest_framework.viewsets import GenericViewSet
 
 from rest_framework import status
@@ -25,19 +25,28 @@ from rest_framework.response import Response
 import random
 import ast
 
-__all__ = ['TitleRetrieveUpdateDestroyAPIView', 'TitleListCreateAPIView', 'CategoryListAPIView',
+__all__ = ['TitleUpdateDestroyAPIView', 'TitleListCreateAPIView', 'CategoryListAPIView',
            'NotShowTitleCreateAPIView', 'TitleWithEntryCreateAPIView', 'SimilarTitleListAPIView']
 
 
-class TitleRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsOwnerOrReadOnly,)
+class TitleUpdateDestroyAPIView(UpdateModelMixin, DestroyModelMixin, GenericViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     authentication_classes = (TokenAuthentication,)
     serializer_class = TitleSerializer
     queryset = Title.objects.actives()
+    lookup_field = 'id'
 
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        if self.request.user.is_superuser:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"error_message": "Bu başlığı silmeye yetkiniz yok."})
 
 
 class TitleListCreateAPIView(ListCreateAPIView):
@@ -76,7 +85,7 @@ class TitleListCreateAPIView(ListCreateAPIView):
     def get_queryset(self):
         qs = super().get_queryset()
         if self.request.query_params.get('random'):
-            id_list = Title.objects.all().values_list('id', flat=True)
+            id_list = Title.objects.filter(is_deleted=False).all().values_list('id', flat=True)
             random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 330))
             qs = Title.objects.filter(id__in=random_profiles_id_list)
             return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
