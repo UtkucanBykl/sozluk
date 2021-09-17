@@ -52,7 +52,7 @@ class LikeListCreateAPIView(ListCreateAPIView):
                 serializer.is_valid(raise_exception=True)
                 self.perform_create(serializer)
 
-                UserEmotionActivities.objects.create(user=self.request.user, entry=entry)
+                UserEmotionActivities.objects.create(user=self.request.user, entry=entry, activity_type='like')
                 create_notification_like.send(self.request.user.pk, entry.pk)
                 update_user_points.send(entry.pk, 1)
                 increment_like_dislike_favorite.send("like", entry.pk)
@@ -133,7 +133,7 @@ class DislikeListCreateAPIView(ListCreateAPIView):
                 serializer.is_valid(raise_exception=True)
                 self.perform_create(serializer)
 
-                UserEmotionActivities.objects.create(user=self.request.user, entry=entry)
+                UserEmotionActivities.objects.create(user=self.request.user, entry=entry, activity_type='dislike')
                 create_notification_dislike.send(self.request.user.pk, entry.pk)
                 update_user_points.send(entry.pk, -1)
                 increment_like_dislike_favorite.send("dislike", entry.pk)
@@ -179,7 +179,7 @@ class FavoriteListCreateAPIView(ListCreateAPIView):
                 serializer.is_valid(raise_exception=True)
                 self.perform_create(serializer)
 
-                UserEmotionActivities.objects.create(user=self.request.user, entry=entry)
+                UserEmotionActivities.objects.create(user=self.request.user, entry=entry, activity_type='favorite')
                 create_notification_favorite(self.request.user.pk, entry.pk)
                 update_user_points.send(entry.pk, 3)
                 increment_like_dislike_favorite.send("favorite", entry.pk)

@@ -16,4 +16,4 @@ class UserEmotionActivitiesAPIView(ListModelMixin, GenericViewSet):
     pagination_class = StandardPagination
     serializer_class = UserEmotionLastActivitiesGet
     http_method_names = ['get']
-    queryset = UserEmotionActivities.objects.actives()
+    queryset = UserEmotionActivities.objects.actives().order_by('-created_at')

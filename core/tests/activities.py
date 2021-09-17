@@ -29,7 +29,11 @@ class Activities(APITestCase):
         )
 
         self.activity1 = UserEmotionActivities.objects.create(
-            user=self.user, entry=self.entry
+            user=self.user, entry=self.entry, activity_type='like'
+        )
+
+        self.activity2 = UserEmotionActivities.objects.create(
+            user=self.user, entry=self.entry, activity_type='favorite'
         )
 
     def test_create_activity(self):
