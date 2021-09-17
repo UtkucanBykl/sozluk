@@ -22,4 +22,4 @@ class UserEmotionLastActivitiesGet(serializers.ModelSerializer):
 
     class Meta:
         model = UserEmotionActivities
-        fields = ('entry_detail', 'created_at', 'user_detail')
+        fields = ('entry_detail', 'created_at', 'user_detail', 'activity_type')
