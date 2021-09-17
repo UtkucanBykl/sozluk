@@ -7,6 +7,8 @@ from ..pagination import StandardPagination
 from ..models import UserEmotionActivities
 from ..serializers import UserEmotionLastActivitiesGet
 
+from rest_framework.response import Response
+
 __all__ = ['UserEmotionActivitiesAPIView']
 
 
@@ -16,4 +18,9 @@ class UserEmotionActivitiesAPIView(ListModelMixin, GenericViewSet):
     pagination_class = StandardPagination
     serializer_class = UserEmotionLastActivitiesGet
     http_method_names = ['get']
-    queryset = UserEmotionActivities.objects.actives().order_by('-created_at')
+
+    def get_queryset(self):
+        if self.request.query_params.get('user_id'):
+            qs = UserEmotionActivities.objects.filter(user=self.request.query_params.get('user_id')).order_by('-created_at')
+            return qs
+        return UserEmotionActivities.objects.none()
