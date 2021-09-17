@@ -18,6 +18,10 @@ class Activities(APITestCase):
             username='pal', email='utku@can.com', password=make_password('1234')
         )
 
+        self.user2 = User.objects.create(
+            username="tugay", email="tugay@test.com", password=make_password('1234')
+        )
+
         self.token = Token.objects.get(user=self.user).key
 
         self.title = Title.objects.create(
@@ -36,8 +40,13 @@ class Activities(APITestCase):
             user=self.user, entry=self.entry, activity_type='favorite'
         )
 
+        self.activity3 = UserEmotionActivities.objects.create(
+            user=self.user2, entry=self.entry, activity_type='dislike'
+        )
+
     def test_create_activity(self):
         url = reverse_lazy('core:user-last-activities')
+        base_url = f'{url}?user_id={self.user.pk}'
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
-        response = self.client.get(url)
+        response = self.client.get(base_url)
         self.assertEqual(response.status_code, 200)
