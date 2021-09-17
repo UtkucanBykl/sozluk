@@ -19,12 +19,13 @@ class TitleTestCase(APITestCase):
             category=self.category
         )
         self.user = User.objects.create(
-            username='Utku', email='utku@can.com', password=make_password('1234')
+            username='Utku', email='utku@can.com', password=make_password('1234'), is_superuser=True
         )
         self.user2 = User.objects.create(
             username='Utku2', email='ut2ku@can.com', password=make_password('12234')
         )
         self.token = Token.objects.get(user=self.user).key
+        self.token2 = Token.objects.get(user=self.user2).key
 
     def test_get_all_active_title(self):
         url = reverse_lazy('core:title-list-create')
@@ -125,3 +126,26 @@ class TitleTestCase(APITestCase):
         url = reverse_lazy('core:title-list-create')
         response = self.client.get(url)
         self.assertEqual(response.data.get('results'), [])
+
+    def test_fake_delete(self):
+        url = reverse_lazy('core:title-update-delete', kwargs={"id": self.title1.id})
+        data = {
+            "is_deleted": True,
+            "title": "Denememememememe",
+            "is_bold": True
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_destroy_title_with_superuser(self):
+        url = reverse_lazy('core:title-update-delete', kwargs={"id": self.title1.id})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
+
+    def test_destroy_title_with_normaluser(self):
+        url = reverse_lazy('core:title-update-delete', kwargs={"id": self.title1.id})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2)
+        response = self.client.delete(url)
+        self.assertEqual(response.data['error_message'], 'Bu başlığı silmeye yetkiniz yok.')
