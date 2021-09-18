@@ -14,7 +14,7 @@ from ..permissions import IsOwnerOrReadOnly
 from ..models import Title, Category, NotShowTitle, User
 from ..filters import TitleFilter
 from ..tasks import update_user_points_follow_or_title_create, update_user_points, \
-    create_notification_title_with_username, combine_two_titles
+    create_notification_title_with_username, combine_two_titles, change_tematik_entries_in_title
 
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin
 from rest_framework.viewsets import GenericViewSet
@@ -27,7 +27,7 @@ import ast
 
 __all__ = ['TitleUpdateDestroyAPIView', 'TitleListCreateAPIView', 'CategoryListAPIView',
            'NotShowTitleCreateAPIView', 'TitleWithEntryCreateAPIView', 'SimilarTitleListAPIView',
-           'CombineTwoTitles']
+           'CombineTwoTitles', 'ChangeAllTematikEntriesInTitle']
 
 
 class TitleUpdateDestroyAPIView(UpdateModelMixin, DestroyModelMixin, GenericViewSet):
@@ -44,6 +44,7 @@ class TitleUpdateDestroyAPIView(UpdateModelMixin, DestroyModelMixin, GenericView
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         if self.request.user.is_superuser or (self.request.user == instance.user):
+            # TODO: Buraya eğer superuser silme işlemini yaptıysa title sahibine notification verilmesi gerekir.
             self.perform_destroy(instance)
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
@@ -99,8 +100,8 @@ class TitleListCreateAPIView(ListCreateAPIView):
 
 
 class TitleWithEntryCreateAPIView(ListCreateAPIView):
-    permission_classes = (IsAuthenticated, )
-    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
 
     def post(self, request, *args, **kwargs):
         title_data = self.request.data.get('title', {})
@@ -145,7 +146,7 @@ class SimilarTitleListAPIView(ListAPIView):
 
     def get_queryset(self):
         title = self.request.query_params.get('title')
-        qs = Title.objects.annotate(similarity=TrigramSimilarity('title', title),)\
+        qs = Title.objects.annotate(similarity=TrigramSimilarity('title', title), ) \
             .filter(similarity__gt=0.1).order_by('-similarity')
         return qs
 
@@ -156,8 +157,23 @@ class CombineTwoTitles(CreateModelMixin, GenericViewSet):
     authentication_classes = (TokenAuthentication,)
 
     def create(self, request, *args, **kwargs):
+        # TODO: Buraya hem from_title'ın sahibi hemde to_title'ın sahibine notification verilmesi gerekir.
         if self.request.user.is_superuser or self.request.user.account_type == 'mod':
-            combine_two_titles.send(self.request.data['from_title'], self.request.data['to_title'], self.request.user.pk)
-            return Response({"system_message": "İşlem başlatıldı."})
+            combine_two_titles.send(self.request.data['from_title'], self.request.data['to_title'],
+                                    self.request.user.pk)
+            return Response({"system_message": "Başlıkları birleştirme işlemi başlatıldı."})
+        else:
+            return Response({"error_message": "Bu işlemi yapmak için yetkiniz yok."})
+
+
+class ChangeAllTematikEntriesInTitle(CreateModelMixin, GenericViewSet):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+    lookup_field = 'id'
+
+    def create(self, request, *args, **kwargs):
+        if self.request.user.is_superuser or self.request.user.account_type == 'mod':
+            change_tematik_entries_in_title.send(self.kwargs.get('id'), self.request.user.pk)
+            return Response({"system_message": "Tematik tanımları normale çevirme işlemi başlatıldı."})
         else:
             return Response({"error_message": "Bu işlemi yapmak için yetkiniz yok."})

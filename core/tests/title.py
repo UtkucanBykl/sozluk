@@ -168,4 +168,16 @@ class TitleTestCase(APITestCase):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.post(url, data)
-        self.assertEqual(response.data['system_message'], 'İşlem başlatıldı.')
+        self.assertEqual(response.data['system_message'], 'Başlıkları birleştirme işlemi başlatıldı.')
+
+    def test_change_tematik_entries_in_title(self):
+        url = reverse_lazy('core:change-all-tematik-entries-in-title', kwargs={"id": self.title1.id})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.post(url)
+        self.assertEqual(response.data['system_message'], 'Tematik tanımları normale çevirme işlemi başlatıldı.')
+
+    def test_change_tematik_entries_in_title_with_normal_user(self):
+        url = reverse_lazy('core:change-all-tematik-entries-in-title', kwargs={"id": self.title1.id})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2)
+        response = self.client.post(url)
+        self.assertEqual(response.data['error_message'], 'Bu işlemi yapmak için yetkiniz yok.')
