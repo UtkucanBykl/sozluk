@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 
 from ..models import Notification, Entry, Title
 
-__all__ = ['combine_two_titles']
+__all__ = ['combine_two_titles', 'change_tematik_entries_in_title']
 
 User = get_user_model()
 
@@ -35,6 +35,36 @@ def combine_two_titles(from_title_id, to_title_id, user_id):
             Notification.objects.create(
                 sender_user=None,
                 receiver_user=receiver_user,
+                message=message,
+                notification_type='info'
+            )
+    except BaseException as e:
+        print(str(e))
+
+
+@dramatiq.actor
+def change_tematik_entries_in_title(title_id, user_id):
+    try:
+        title = Title.objects.get(id=title_id)
+        user = User.objects.get(id=user_id)
+        if title and user:
+            from_title_entries = Entry.objects.filter(title=title_id, is_tematik=True)
+            for entry in from_title_entries:
+                entry.is_tematik = False
+                entry.save()
+
+            message = f'{title.title} başlığındaki tematik tanımlar normale çevirilmiştir.'
+            Notification.objects.create(
+                sender_user=None,
+                receiver_user=user,
+                message=message,
+                notification_type='info'
+            )
+        else:
+            message = f'{title.title} başlığındaki tematik tanımlar normale çevirilememiştir.Lütfen tekrar deneyiniz.'
+            Notification.objects.create(
+                sender_user=None,
+                receiver_user=user,
                 message=message,
                 notification_type='info'
             )
