@@ -203,7 +203,6 @@ class Title(BaseModel):
     display_order = models.IntegerField(default=0)
     is_bold = models.BooleanField(default=False)
     can_write = models.BooleanField(default=True)
-    is_deleted = models.BooleanField(default=False)
     category = models.ForeignKey(
         "core.Category",
         null=True,
