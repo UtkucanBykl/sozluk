@@ -20,7 +20,7 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = (
             'id', 'title', 'updated_at', 'is_bold', 'can_write', 'category', 'total_entry_count', 'today_entry_count',
-            'created_at', 'user', 'is_ukde', 'first_entry_of_title', 'user_detail', 'is_deleted')
+            'created_at', 'user', 'is_ukde', 'first_entry_of_title', 'user_detail', 'status')
 
     def get_first_entry_of_title(self, title):
         entry = Entry.objects.filter(title=title.id).first()

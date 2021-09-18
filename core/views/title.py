@@ -14,7 +14,7 @@ from ..permissions import IsOwnerOrReadOnly
 from ..models import Title, Category, NotShowTitle, User
 from ..filters import TitleFilter
 from ..tasks import update_user_points_follow_or_title_create, update_user_points, \
-    create_notification_title_with_username
+    create_notification_title_with_username, combine_two_titles
 
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin
 from rest_framework.viewsets import GenericViewSet
@@ -26,7 +26,8 @@ import random
 import ast
 
 __all__ = ['TitleUpdateDestroyAPIView', 'TitleListCreateAPIView', 'CategoryListAPIView',
-           'NotShowTitleCreateAPIView', 'TitleWithEntryCreateAPIView', 'SimilarTitleListAPIView']
+           'NotShowTitleCreateAPIView', 'TitleWithEntryCreateAPIView', 'SimilarTitleListAPIView',
+           'CombineTwoTitles']
 
 
 class TitleUpdateDestroyAPIView(UpdateModelMixin, DestroyModelMixin, GenericViewSet):
@@ -41,8 +42,8 @@ class TitleUpdateDestroyAPIView(UpdateModelMixin, DestroyModelMixin, GenericView
         return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
 
     def destroy(self, request, *args, **kwargs):
-        if self.request.user.is_superuser:
-            instance = self.get_object()
+        instance = self.get_object()
+        if self.request.user.is_superuser or (self.request.user == instance.user):
             self.perform_destroy(instance)
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
@@ -85,7 +86,7 @@ class TitleListCreateAPIView(ListCreateAPIView):
     def get_queryset(self):
         qs = super().get_queryset()
         if self.request.query_params.get('random'):
-            id_list = Title.objects.filter(is_deleted=False).all().values_list('id', flat=True)
+            id_list = Title.objects.filter(status='publish').all().values_list('id', flat=True)
             random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 330))
             qs = Title.objects.filter(id__in=random_profiles_id_list)
             return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
@@ -147,3 +148,16 @@ class SimilarTitleListAPIView(ListAPIView):
         qs = Title.objects.annotate(similarity=TrigramSimilarity('title', title),)\
             .filter(similarity__gt=0.1).order_by('-similarity')
         return qs
+
+
+class CombineTwoTitles(CreateModelMixin, GenericViewSet):
+    serializer_class = TitleSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    def create(self, request, *args, **kwargs):
+        if self.request.user.is_superuser or self.request.user.account_type == 'mod':
+            combine_two_titles.send(self.request.data['from_title'], self.request.data['to_title'], self.request.user.pk)
+            return Response({"system_message": "İşlem başlatıldı."})
+        else:
+            return Response({"error_message": "Bu işlemi yapmak için yetkiniz yok."})
