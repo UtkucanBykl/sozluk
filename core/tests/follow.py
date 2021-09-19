@@ -48,3 +48,9 @@ class FollowTestCase(APITestCase):
         }
         response = self.client.post(url, data)
         self.assertEqual(response.data['error_message'], 'Bu kullanıcıyı zaten takip ediyorsunuz.')
+
+    def test_delete_follow(self):
+        url = reverse_lazy('core:user-follow-delete', kwargs={'following_user_id': self.user2.pk})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)

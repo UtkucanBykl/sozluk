@@ -36,4 +36,4 @@ class NotShowTitleAdmin(BaseAdmin):
 
 @admin.register(UserFollow)
 class UserFollowAdmin(BaseAdmin):
-    pass
+    list_display = ('follower_user', 'following_user', 'status', 'created_at')
