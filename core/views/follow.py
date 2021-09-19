@@ -84,7 +84,7 @@ class UserFollowRetrieveAPIView(RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         is_following = UserFollow.objects.filter(follower_user=self.request.user.pk,
-                                                 following_user=self.kwargs.get(self.lookup_field))
+                                                 following_user=self.kwargs.get(self.lookup_field), status='active')
         if is_following:
             return Response({"is_following": True})
         else:
