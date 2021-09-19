@@ -44,6 +44,11 @@ class UserFollowDeleteAPIView(DestroyAPIView):
     def get_queryset(self):
         return self.request.user.followings.actives()
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def perform_destroy(self, instance):
         instance.delete(hard=True)
 
