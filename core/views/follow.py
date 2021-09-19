@@ -44,6 +44,9 @@ class UserFollowDeleteAPIView(DestroyAPIView):
     def get_queryset(self):
         return self.request.user.followings.actives()
 
+    def perform_destroy(self, instance):
+        instance.delete(hard=True)
+
 
 class UserFollowListCreateAPIView(ListCreateAPIView):
     serializer_class = UserFollowSerializer
