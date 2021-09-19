@@ -38,7 +38,7 @@ class FollowTestCase(APITestCase):
         url = reverse_lazy('core:user-follow-get', kwargs={'following_user_id': self.user2.pk})
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.get(url)
-        self.assertEqual(response.data['is_following'], True)
+        self.assertEqual(response.data['is_following'], False)
 
     def test_create_follow(self):
         url = reverse_lazy('core:user-follow-list-create')

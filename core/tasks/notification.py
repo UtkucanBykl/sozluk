@@ -1,7 +1,7 @@
 import dramatiq
 from django.contrib.auth import get_user_model
 
-from ..models import Notification, Entry, Title
+from ..models import Notification, Entry, Title, UserEmotionActivities
 
 __all__ = ['create_notification_like', 'create_notification_info', 'create_notification_dislike',
            'create_notification_favorite', 'create_notification_title_with_username',
@@ -17,6 +17,7 @@ def create_notification_like(from_user_id, entry_id):
         sender_user = User.objects.get(id=from_user_id)
         entry = Entry.objects.get(id=entry_id)
         receiver_user = entry.user
+        UserEmotionActivities.objects.create(user=receiver_user, entry=entry, activity_type='like')
         message = f'<i class="fa fa-info-circle"></i><a href="/author/{sender_user.id}">{sender_user.username}</a> adlı kullanıcı {entry.id} numaralı entrynizi ' \
                   f'beğendi. '
         Notification.objects.create(
@@ -37,6 +38,7 @@ def create_notification_dislike(from_user_id, entry_id):
         sender_user = User.objects.get(id=from_user_id)
         entry = Entry.objects.get(id=entry_id)
         receiver_user = entry.user
+        UserEmotionActivities.objects.create(user=receiver_user, entry=entry, activity_type='dislike')
         message = f'<i class="fa fa-info-circle"></i><a href="/author/{sender_user.id}">{sender_user.username}</a> {entry.id} numaralı entrynizi ' \
                   f'beğenmedi. '
         Notification.objects.create(
@@ -73,6 +75,7 @@ def create_notification_favorite(from_user_id, entry_id):
         sender_user = User.objects.get(id=from_user_id)
         entry = Entry.objects.get(id=entry_id)
         receiver_user = entry.user
+        UserEmotionActivities.objects.create(user=receiver_user, entry=entry, activity_type='favorite')
         message = f'<i class="fa fa-info-circle"></i><a href="/author/{sender_user.id}">{sender_user.username}</a> adlı kullanıcı {entry.id} numaralı ' \
                   f'entrynizi favoriledi. '
         Notification.objects.create(

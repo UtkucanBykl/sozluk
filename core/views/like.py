@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from ..serializers import DislikeSerializer, LikeSerializer, FavoriteSerializer, EntryLikeSerializer, \
     EntryDislikeSerializer, EntryFavoriteSerializer
-from ..models import Dislike, Like, Favorite, Entry, UserEmotionActivities
+from ..models import Dislike, Like, Favorite, Entry
 from ..pagination import StandardPagination
 from ..tasks import decrement_like_dislike_favorite, increment_like_dislike_favorite, \
     create_notification_like, update_user_points, create_notification_dislike, create_notification_favorite
@@ -52,7 +52,6 @@ class LikeListCreateAPIView(ListCreateAPIView):
                 serializer.is_valid(raise_exception=True)
                 self.perform_create(serializer)
 
-                UserEmotionActivities.objects.create(user=self.request.user, entry=entry, activity_type='like')
                 create_notification_like.send(self.request.user.pk, entry.pk)
                 update_user_points.send(entry.pk, 1)
                 increment_like_dislike_favorite.send("like", entry.pk)
@@ -133,7 +132,6 @@ class DislikeListCreateAPIView(ListCreateAPIView):
                 serializer.is_valid(raise_exception=True)
                 self.perform_create(serializer)
 
-                UserEmotionActivities.objects.create(user=self.request.user, entry=entry, activity_type='dislike')
                 create_notification_dislike.send(self.request.user.pk, entry.pk)
                 update_user_points.send(entry.pk, -1)
                 increment_like_dislike_favorite.send("dislike", entry.pk)
@@ -179,7 +177,6 @@ class FavoriteListCreateAPIView(ListCreateAPIView):
                 serializer.is_valid(raise_exception=True)
                 self.perform_create(serializer)
 
-                UserEmotionActivities.objects.create(user=self.request.user, entry=entry, activity_type='favorite')
                 create_notification_favorite(self.request.user.pk, entry.pk)
                 update_user_points.send(entry.pk, 3)
                 increment_like_dislike_favorite.send("favorite", entry.pk)
