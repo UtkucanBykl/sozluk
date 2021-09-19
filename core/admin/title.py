@@ -36,4 +36,4 @@ class NotShowTitleAdmin(BaseAdmin):
 
 @admin.register(UserFollow)
 class UserFollowAdmin(BaseAdmin):
-    list_display = ('follower_user', 'following_user', 'status', 'created_at')
+    list_display = ('id', 'follower_user', 'following_user', 'status', 'created_at')
