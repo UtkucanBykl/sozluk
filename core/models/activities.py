@@ -19,4 +19,4 @@ class UserEmotionActivities(BaseModel):
     activity_type = models.CharField(choices=activity_type_choices, max_length=15)
 
     def __str__(self):
-        return f'{self.entry.content}'
+        return f'{self.pk}'

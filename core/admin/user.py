@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 
 from .actions import clone, clone_user
-from ..models import TitleFollow, Like, Notification, Dislike, Block
+from ..models import TitleFollow, Like, Notification, Dislike, Block, UserEmotionActivities
 
 __all__ = ['UserAdmin']
 
@@ -39,3 +39,8 @@ class NotoficationAdmin(admin.ModelAdmin):
 @admin.register(Block)
 class BlockAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(UserEmotionActivities)
+class UserEmotionActivitiesAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'entry', 'activity_type')
