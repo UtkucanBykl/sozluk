@@ -25,21 +25,22 @@ class EntryListCreateAPIView(ListCreateAPIView):
     serializer_class = EntrySerializer
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     search_fields = ['content']
-    ordering_fields = ['like_count', 'dislike_count', 'favorite_count', 'created_at']
+    ordering_fields = ['like_count', 'dislike_count', 'favorite_count',
+                       'created_at', 'count_like', 'count_dislike', 'count_favorite']
     filterset_class = EntryFilter
     pagination_class = StandardEntryPagination
 
     def get_queryset(self):
         if self.request.query_params.get('status') and self.request.user.is_authenticated:
             qs = Entry.objects.filter(status=self.request.query_params.get('status'), user=self.request.user)
-        elif self.request.user.is_authenticated and self.request.user.is_staff:
-            qs = Entry.objects.filter(Q(status='publish') | Q(status='deleted') | Q(status="publish_by_rookie"))
         elif self.request.query_params.get('user_id'):
             qs = Entry.objects.filter(user_id=self.request.query_params.get('user_id'), status='publish')
         elif self.request.query_params.get('random'):
             id_list = Entry.objects.all().values_list('id', flat=True)
             random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 250))
             qs = Entry.objects.filter(id__in=random_profiles_id_list)
+        elif self.request.user.is_authenticated and self.request.user.is_staff:
+            qs = Entry.objects.filter(Q(status='publish') | Q(status='deleted') | Q(status="publish_by_rookie"))
         else:
             qs = Entry.objects.actives()
 
