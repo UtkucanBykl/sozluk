@@ -34,7 +34,7 @@ class EntryListCreateAPIView(ListCreateAPIView):
         if self.request.query_params.get('status') and self.request.user.is_authenticated:
             qs = Entry.objects.filter(status=self.request.query_params.get('status'), user=self.request.user)
         elif self.request.query_params.get('user_id'):
-            qs = Entry.objects.filter(user_id=self.request.query_params.get('user_id'), status='publish')
+            qs = Entry.objects.filter(user=self.request.query_params.get('user_id'), status='publish')
         elif self.request.query_params.get('random'):
             id_list = Entry.objects.all().values_list('id', flat=True)
             random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 250))
