@@ -24,6 +24,7 @@ class LikeListCreateAPIView(ListCreateAPIView):
     permission_classes = (AllowAny,)
     authentication_classes = (TokenAuthentication,)
     pagination_class = StandardPagination
+    ordering_fields = ['created_at']
     http_method_names = ['post', 'get', 'delete']
 
     def get_queryset(self):
@@ -103,6 +104,7 @@ class DislikeListCreateAPIView(ListCreateAPIView):
     permission_classes = (AllowAny,)
     authentication_classes = (TokenAuthentication,)
     pagination_class = StandardPagination
+    ordering_fields = ['created_at']
     http_method_names = ['post', 'get', 'delete']
     lookup_field = 'entry_id'
 
@@ -148,6 +150,7 @@ class FavoriteListCreateAPIView(ListCreateAPIView):
     permission_classes = (AllowAny,)
     authentication_classes = (TokenAuthentication,)
     pagination_class = StandardPagination
+    ordering_fields = ['created_at']
     http_method_names = ['post', 'get']
     lookup_field = 'entry_id'
 
