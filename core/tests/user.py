@@ -21,13 +21,18 @@ __all__ = ['UserTest']
 class UserTest(APITestCase):
     def setUp(self):
         self.user = User.objects.create(
-            username='utku', password=make_password('1234'), email='ddd@ddd.com', bio="TEST"
+            username='utku', password=make_password('1234'), email='ddd@ddd.com', bio="TEST", is_superuser=True
         )
         self.user1 = User.objects.create(
             username='utku1', password=make_password('1234'), email='d1dd@ddd.com', bio="TEST", show_bio=False
         )
         self.user2 = User.objects.create(
             username='utku2', password=make_password('1234'), email='dddd@ddd.com', bio="TEST", account_type="normal",
+        )
+
+        self.user3 = User.objects.create(
+            username='utku3', password=make_password('1234'), email='ddddd@ddd.com', bio="TEST", account_type="normal",
+            punish_finish_date='2021-12-23'
         )
 
         self.follow = UserFollow.objects.create(
@@ -221,3 +226,12 @@ class UserTest(APITestCase):
         self.assertEqual(self.user.is_show_gender, True)
         self.assertEqual(self.user.twitter_username, "@john.doe")
         self.assertEqual(self.user.facebook_profile, "https://www.facebook.com/example")
+
+    def test_update_user_punish_finish_date(self):
+        url = reverse_lazy("core:punish-user", kwargs={'id': self.user.pk})
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        data = {
+            "punish_finish_date": '2021-12-23'
+        }
+        response = self.client.patch(url, data)
+        self.assertEqual(response.data['punish_finish_date'], '2021-12-23')
