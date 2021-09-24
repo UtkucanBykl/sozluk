@@ -11,13 +11,14 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from ..serializers import UserSerializer, UserUpdateSerializer, ChangePasswordSerializer, \
-    UserBlockSerializer, UserBlockUpdateSerializer, UserEmotionSerializer
+    UserBlockSerializer, UserBlockUpdateSerializer, UserEmotionSerializer, PunishUserSerializer
 from ..models import Block
 
 
 User = get_user_model()
 
-__all__ = ["UserRetrieveUpdateViewSet", "ChangeUserPasswordView", "BlockUserViewSet", "UserSearchAPIView"]
+__all__ = ["UserRetrieveUpdateViewSet", "ChangeUserPasswordView", "BlockUserViewSet", "UserSearchAPIView",
+           "PunishUserAPIView"]
 
 
 class UserRetrieveUpdateViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
@@ -90,3 +91,33 @@ class UserSearchAPIView(ListModelMixin, GenericViewSet):
             return qs
         else:
             return User.objects.none()
+
+
+class PunishUserAPIView(UpdateModelMixin, GenericViewSet):
+    serializer_class = PunishUserSerializer
+    permission_classes = (IsAuthenticated, )
+    authentication_classes = (TokenAuthentication, )
+    http_method_names = ['patch']
+    lookup_url_kwarg = "id"
+    lookup_field = "id"
+
+    def get_queryset(self):
+        return User.objects.get(id=self.kwargs.get(self.lookup_field))
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        if self.request.user.is_superuser:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+
+            if getattr(instance, '_prefetched_objects_cache', None):
+                instance._prefetched_objects_cache = {}
+
+            return Response(serializer.data)
+        else:
+            return Response({'error_message': 'Bu işlemi yapmaya yetkiniz yok.'})

@@ -8,7 +8,8 @@ from ..models import Block, Title, Entry, UserFollow
 
 
 __all__ = ['UserSerializer', 'LoginUserSerializer', 'UserUpdateSerializer', 'ChangePasswordSerializer',
-           "UserBlockSerializer", "UserBlockUpdateSerializer", "UserEmotionSerializer", "UserMessageSerializer"]
+           "UserBlockSerializer", "UserBlockUpdateSerializer", "UserEmotionSerializer", "UserMessageSerializer",
+           "PunishUserSerializer"]
 
 User = get_user_model()
 
@@ -130,3 +131,9 @@ class UserMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'profile_picture', 'username')
+
+
+class PunishUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'punish_finish_date')

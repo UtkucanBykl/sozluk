@@ -140,6 +140,7 @@ class User(
     point = models.IntegerField(default=0)
     profile_picture = models.ImageField(max_length=500, upload_to=generate_upload_path, null=True, blank=True)
     favorites = models.ManyToManyField('core.Entry', related_name='favorite_users', through='core.Favorite', blank=True)
+    punish_finish_date = models.DateField(verbose_name="Punish date", null=True, blank=True)
 
     objects = UserManager()
 
