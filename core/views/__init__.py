@@ -9,3 +9,4 @@ from .user import *
 from .suggested import *
 from .message import *
 from .activities import *
+from .statistic import *
