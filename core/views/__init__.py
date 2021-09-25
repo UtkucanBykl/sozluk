@@ -10,3 +10,4 @@ from .suggested import *
 from .message import *
 from .activities import *
 from .statistic import *
+from .punish import *

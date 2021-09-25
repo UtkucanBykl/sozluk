@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 
 from .actions import clone, clone_user
-from ..models import TitleFollow, Like, Notification, Dislike, Block, UserEmotionActivities
+from ..models import TitleFollow, Like, Notification, Dislike, Block, UserEmotionActivities, PunishUser
 
 __all__ = ['UserAdmin']
 
@@ -44,3 +44,8 @@ class BlockAdmin(admin.ModelAdmin):
 @admin.register(UserEmotionActivities)
 class UserEmotionActivitiesAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'entry', 'activity_type')
+
+
+@admin.register(PunishUser)
+class PunishUserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'punished_user', 'punish_description', 'punish_finish_date', 'status', 'created_at')

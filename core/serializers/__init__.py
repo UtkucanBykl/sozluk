@@ -10,3 +10,5 @@ from .notification import *
 from .suggested import *
 from .message import *
 from .activities import *
+from .punish import *
+
