@@ -1,12 +1,16 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate
+from django.utils import timezone
+
+from rest_framework.response import Response
 
 from rest_framework import serializers
 
 from drf_recaptcha.fields import ReCaptchaV2Field
 
 from ..serializers import LoginUserSerializer
+from ..models import PunishUser
 
 User = get_user_model()
 
@@ -48,7 +52,10 @@ class LoginSerializer(serializers.Serializer):
     def login(self, attrs):
         user = authenticate(username=attrs.get('username'), password=attrs.get('password'))
         if user is not None:
-            return LoginUserSerializer(user, many=False).data
+            punished_user = PunishUser.objects.filter(punished_user=user.pk, status='publish').first()
+            today = timezone.now().date()
+            if punished_user and today < punished_user.punish_finish_date:
+                return Response({'error_message': str(punished_user.punish_finish_date) + ' tarihine kadar cezalısınız.'})
+            else:
+                return LoginUserSerializer(user, many=False).data
         raise serializers.ValidationError('Username or password incorrect')
-
-

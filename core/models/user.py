@@ -11,7 +11,6 @@ from django.utils.translation import ugettext_lazy as _
 from ..models import BaseModel, BaseModelWithDelete
 from ..utils import generate_upload_path
 
-
 __all__ = ['User', 'Like', 'Dislike', "Block", "Favorite"]
 
 
@@ -131,8 +130,6 @@ class User(
         ("mod", "Moderator")
     )
     account_type = models.CharField(choices=account_types, default="rookie", max_length=25)
-
-
     likes = models.ManyToManyField('core.Entry', related_name='like_users', through='core.Like', blank=True)
     title_follows = models.ManyToManyField('core.Title', related_name='followers', through='core.TitleFollow', blank=True)
     user_follows = models.ManyToManyField('self', symmetrical=False, through='core.UserFollow', blank=True)
@@ -140,7 +137,6 @@ class User(
     point = models.IntegerField(default=0)
     profile_picture = models.ImageField(max_length=500, upload_to=generate_upload_path, null=True, blank=True)
     favorites = models.ManyToManyField('core.Entry', related_name='favorite_users', through='core.Favorite', blank=True)
-    punish_finish_date = models.DateField(verbose_name="Punish date", null=True, blank=True)
 
     objects = UserManager()
 

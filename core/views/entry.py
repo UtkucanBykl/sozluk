@@ -55,7 +55,7 @@ class EntryRetrieveUpdateDestroyAPIView(DestroyModelMixin, RetrieveModelMixin, U
     serializer_class = EntrySerializer
     lookup_url_kwarg = 'id'
     lookup_field = 'id'
-    queryset = Entry.objects.actives()
+    queryset = Entry.objects.filter(Q(status='publish') | Q(status='morning') | Q(status="draft"))
 
     def get_queryset(self):
         qs = super().get_queryset()

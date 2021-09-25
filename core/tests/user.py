@@ -8,7 +8,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 from PIL import Image
 
-from ..models import Title, Entry, UserFollow
+from ..models import Title, Entry, UserFollow, PunishUser
 
 import io
 import datetime
@@ -31,8 +31,7 @@ class UserTest(APITestCase):
         )
 
         self.user3 = User.objects.create(
-            username='utku3', password=make_password('1234'), email='ddddd@ddd.com', bio="TEST", account_type="normal",
-            punish_finish_date='2021-12-23'
+            username='utku3', password=make_password('1234'), email='ddddd@ddd.com', bio="TEST", account_type="normal"
         )
 
         self.follow = UserFollow.objects.create(
@@ -226,12 +225,3 @@ class UserTest(APITestCase):
         self.assertEqual(self.user.is_show_gender, True)
         self.assertEqual(self.user.twitter_username, "@john.doe")
         self.assertEqual(self.user.facebook_profile, "https://www.facebook.com/example")
-
-    def test_update_user_punish_finish_date(self):
-        url = reverse_lazy("core:punish-user", kwargs={'id': self.user.pk})
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
-        data = {
-            "punish_finish_date": '2021-12-23'
-        }
-        response = self.client.patch(url, data)
-        self.assertEqual(response.data['punish_finish_date'], '2021-12-23')

@@ -8,3 +8,4 @@ from .message import *
 from .follow import *
 from .activities import *
 from .statistics import *
+from .punish import *
