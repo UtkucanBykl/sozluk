@@ -8,10 +8,10 @@ from django.contrib.postgres.search import TrigramSimilarity
 from django_filters.rest_framework import DjangoFilterBackend
 
 from ..pagination import StandardTitlePagination, StandardPagination
-from ..serializers import TitleSerializer, CategorySerializer, NotShowTitleSerializer, EntrySerializer
+from ..serializers import TitleSerializer, NotShowTitleSerializer, EntrySerializer
 
 from ..permissions import IsOwnerOrReadOnly
-from ..models import Title, Category, NotShowTitle, User
+from ..models import Title, NotShowTitle, User
 from ..filters import TitleFilter
 from ..tasks import update_user_points_follow_or_title_create, update_user_points, \
     create_notification_title_with_username, combine_two_titles, change_tematik_entries_in_title
@@ -25,7 +25,7 @@ from rest_framework.response import Response
 import random
 import ast
 
-__all__ = ['TitleUpdateDestroyAPIView', 'TitleListCreateAPIView', 'CategoryListAPIView',
+__all__ = ['TitleUpdateDestroyAPIView', 'TitleListCreateAPIView',
            'NotShowTitleCreateAPIView', 'TitleWithEntryCreateAPIView', 'SimilarTitleListAPIView',
            'CombineTwoTitles', 'ChangeAllTematikEntriesInTitle']
 
@@ -56,7 +56,7 @@ class TitleListCreateAPIView(ListCreateAPIView):
     authentication_classes = (TokenAuthentication,)
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    queryset = Title.objects.actives().select_related('category')
+    queryset = Title.objects.actives()
     search_fields = ['title']
     order_fields = ['created_at', 'total_entry_count', 'today_entry_count']
     filterset_class = TitleFilter
@@ -118,15 +118,6 @@ class TitleWithEntryCreateAPIView(ListCreateAPIView):
                 title.is_ukde = False
                 title_serializer.save(data=title)
                 return Response(status=status.HTTP_201_CREATED)
-
-
-class CategoryListAPIView(ListAPIView):
-    serializer_class = CategorySerializer
-    queryset = Category.objects.actives()
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.annotate(title_count=Count('title', filter=Q(title__status='publish'), distinct=True))
 
 
 class NotShowTitleCreateAPIView(DestroyModelMixin, CreateModelMixin, GenericViewSet):

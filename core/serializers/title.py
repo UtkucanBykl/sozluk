@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from ..models import Title, Category, NotShowTitle, User, Entry
+from ..models import Title, NotShowTitle, User, Entry
 from ..serializers import UserSerializer
 
-__all__ = ['TitleSerializer', 'CategorySerializer', 'NotShowTitleSerializer']
+__all__ = ['TitleSerializer', 'NotShowTitleSerializer']
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = (
-            'id', 'title', 'updated_at', 'is_bold', 'can_write', 'category', 'total_entry_count', 'today_entry_count',
+            'id', 'title', 'updated_at', 'is_bold', 'can_write', 'total_entry_count', 'today_entry_count',
             'created_at', 'user', 'is_ukde', 'first_entry_of_title', 'user_detail', 'status')
 
     def get_first_entry_of_title(self, title):
@@ -27,19 +27,6 @@ class TitleSerializer(serializers.ModelSerializer):
         if entry and entry.user:
             return {"username": entry.user.username, "created_at": entry.created_at}
         return
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['category'] = CategorySerializer(instance.category, read_only=True, many=False).data
-        return data
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    title_count = serializers.IntegerField(default=0, read_only=True)
-
-    class Meta:
-        model = Category
-        fields = ('id', 'name', 'display_order', 'title_count')
 
 
 class NotShowTitleSerializer(serializers.ModelSerializer):

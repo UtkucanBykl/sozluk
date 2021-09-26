@@ -20,7 +20,7 @@ from django.utils.text import slugify
 from ..models import BaseModel, BaseManager, BaseModelQuery, Block
 
 
-__all__ = ["Title", "Entry", "Category", "NotShowTitle"]
+__all__ = ["Title", "Entry", "NotShowTitle"]
 
 
 User = get_user_model()
@@ -83,7 +83,7 @@ class TitleQuerySet(BaseModelQuery):
 
 class TitleManager(BaseManager):
     def get_queryset(self):
-        return TitleQuerySet(self.model, using=self._db).select_related("category")
+        return TitleQuerySet(self.model, using=self._db)
 
     def active_today(self):
         return self.get_queryset().active_today()
@@ -203,14 +203,6 @@ class Title(BaseModel):
     display_order = models.IntegerField(default=0)
     is_bold = models.BooleanField(default=False)
     can_write = models.BooleanField(default=True)
-    category = models.ForeignKey(
-        "core.Category",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="titles",
-        related_query_name="title",
-    )
     user = models.ForeignKey(
         User,
         null=True,
@@ -326,14 +318,3 @@ class NotShowTitle(BaseModel):
 
     def __str__(self):
         return self.title.title + " " + self.user.username
-
-
-class Category(BaseModel):
-    name = models.CharField(max_length=100)
-    display_order = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        ordering = ["-display_order"]

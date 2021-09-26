@@ -1,10 +1,10 @@
 from django.contrib import admin
 from .base import BaseAdmin
 
-from ..models import Title, Entry, Category, Suggested, NotShowTitle, UserFollow
+from ..models import Title, Entry, Suggested, NotShowTitle, UserFollow
 from .actions import clone_title
 
-__all__ = ['TitleAdmin', 'EntryAdmin', 'CategoryAdmin', 'SuggestedAdmin', 'NotShowTitleAdmin']
+__all__ = ['TitleAdmin', 'EntryAdmin', 'SuggestedAdmin', 'NotShowTitleAdmin']
 
 
 @admin.register(Title)
@@ -14,11 +14,6 @@ class TitleAdmin(BaseAdmin):
 
 @admin.register(Entry)
 class EntryAdmin(BaseAdmin):
-    pass
-
-
-@admin.register(Category)
-class CategoryAdmin(BaseAdmin):
     pass
 
 
