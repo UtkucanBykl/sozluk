@@ -7,7 +7,6 @@ __all__ = ['TitleFilter']
 
 
 class TitleFilter(rest_framework.FilterSet):
-    category = rest_framework.CharFilter(field_name='category__name', lookup_expr='iexact')
     title = rest_framework.CharFilter(field_name='title', lookup_expr='iexact')
     entry_username = rest_framework.CharFilter(method='filter_by_username')
     today = rest_framework.BooleanFilter(method='get_today')
@@ -16,7 +15,7 @@ class TitleFilter(rest_framework.FilterSet):
 
     class Meta:
         model = Title
-        fields = ('category', 'title', 'today', 'full_text', "followed", 'is_ukde')
+        fields = ('title', 'today', 'full_text', "followed", 'is_ukde')
 
     def filter_by_username(self, queryset, name, value):
         return queryset.filter(entry__user__username=value, entry__status='publish').distinct()

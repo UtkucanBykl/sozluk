@@ -10,7 +10,6 @@ User = get_user_model()
 
 class Suggested(BaseModel):
     class SuggestedType(models.TextChoices):
-        CATEGORY = "category", "category"
         TITLE = "title", "title"
         general = "general", "general"
 

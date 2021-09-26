@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import make_password
 from django.urls import reverse_lazy
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
-from ..models import Title, Category, Entry, TitleFollow, UserFollow, NotShowTitle
+from ..models import Title, Entry, TitleFollow, UserFollow, NotShowTitle
 from ..serializers import TitleSerializer
 
 __all__ = ['TitleTestCase']
@@ -26,28 +26,18 @@ class TitleTestCase(APITestCase):
         self.token2 = Token.objects.get(user=self.user2).key
         self.token3 = Token.objects.get(user=self.user3).key
 
-        self.category = Category.objects.create(name='Category')
         self.title1 = Title.objects.create(
             title='Testtttt',
-            category=self.category,
             user=self.user2
         )
         self.title2 = Title.objects.create(
             title="Denememee",
-            category=self.category
         )
 
     def test_get_all_active_title(self):
         url = reverse_lazy('core:title-list-create')
         response = self.client.get(url)
         serializer = TitleSerializer(Title.objects.actives(), many=True)
-        self.assertEqual(response.data['results'], serializer.data)
-
-    def test_get_title_with_query(self):
-        base_url = reverse_lazy('core:title-list-create')
-        url = f'{base_url}?category=Cat'
-        response = self.client.get(url)
-        serializer = TitleSerializer(Title.objects.filter(category__name__iexact='Cat'), many=True)
         self.assertEqual(response.data['results'], serializer.data)
 
     def test_get_title_with_full_text(self):
