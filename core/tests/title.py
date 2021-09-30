@@ -171,3 +171,10 @@ class TitleTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2)
         response = self.client.post(url)
         self.assertEqual(response.data['error_message'], 'Bu işlemi yapmak için yetkiniz yok.')
+
+    def test_get_last_24_hour_titles(self):
+        url = reverse_lazy('core:title-list-create')
+        base_url = f'{url}?last24hour=true'
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.get(base_url)
+        self.assertEqual(response.status_code, 200)

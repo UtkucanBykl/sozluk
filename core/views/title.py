@@ -6,12 +6,13 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from django.contrib.postgres.search import TrigramSimilarity
 
 from django_filters.rest_framework import DjangoFilterBackend
+from django.utils import timezone
 
 from ..pagination import StandardTitlePagination, StandardPagination
 from ..serializers import TitleSerializer, NotShowTitleSerializer, EntrySerializer
 
 from ..permissions import IsOwnerOrReadOnly
-from ..models import Title, NotShowTitle, User
+from ..models import Title, NotShowTitle, User, Entry
 from ..filters import TitleFilter
 from ..tasks import update_user_points_follow_or_title_create, update_user_points, \
     create_notification_title_with_username, combine_two_titles, change_tematik_entries_in_title
@@ -86,9 +87,11 @@ class TitleListCreateAPIView(ListCreateAPIView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if self.request.query_params.get('random'):
+        if self.request.query_params.get('last24hour'):
+            return qs.active_today_created_date()
+        elif self.request.query_params.get('random'):
             id_list = Title.objects.filter(status='publish').all().values_list('id', flat=True)
-            random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 330))
+            random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 33))
             qs = Title.objects.filter(id__in=random_profiles_id_list)
             return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
         elif self.request.query_params.get('user_id') and self.request.query_params.get('is_ukde'):

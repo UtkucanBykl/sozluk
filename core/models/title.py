@@ -36,6 +36,15 @@ class TitleQuerySet(BaseModelQuery):
             entry__status="publish",
         ).distinct()
 
+    def active_today_created_date(self):
+        t = timezone.localtime(timezone.now())
+        return self.filter(
+            entry__created_at__day=t.day,
+            entry__created_at__year=t.year,
+            entry__created_at__month=t.month,
+            entry__status="publish",
+        ).distinct()
+
     def order_points(self):
         return self.today_entry_counts().order_by("-is_bold", "-today_entry_counts")
 
@@ -87,6 +96,9 @@ class TitleManager(BaseManager):
 
     def active_today(self):
         return self.get_queryset().active_today()
+
+    def active_today_created_date(self):
+        return self.get_queryset().active_today_created_date()
 
     def today_entry_counts(self):
         return self.get_queryset().today_entry_counts()
