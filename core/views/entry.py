@@ -14,6 +14,8 @@ from ..filters import EntryFilter
 from ..permissions import IsOwnerOrReadOnly, OwnModelPermission
 from ..tasks import create_notification_entry_create_info_to_title_user
 
+from django.utils import timezone
+
 import random
 
 __all__ = ['EntryListCreateAPIView', 'EntryRetrieveUpdateDestroyAPIView']
@@ -31,7 +33,10 @@ class EntryListCreateAPIView(ListCreateAPIView):
     pagination_class = StandardEntryPagination
 
     def get_queryset(self):
-        if self.request.query_params.get('status') and self.request.user.is_authenticated:
+        if self.request.query_params.get('last24hour'):
+            t = timezone.localtime(timezone.now())
+            qs = Entry.objects.filter(Q(created_at__day=t.day) | Q(created_at__day=t.day - 1)).filter(status='publish').order_by('-count_like')
+        elif self.request.query_params.get('status') and self.request.user.is_authenticated:
             qs = Entry.objects.filter(status=self.request.query_params.get('status'), user=self.request.user)
         elif self.request.query_params.get('user_id'):
             qs = Entry.objects.filter(user=self.request.query_params.get('user_id'), status='publish')
