@@ -45,7 +45,7 @@ class EntryListCreateAPIView(ListCreateAPIView):
             random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 250))
             qs = Entry.objects.filter(id__in=random_profiles_id_list)
         elif self.request.query_params.get('likecountgte'):
-            id_list = Entry.objects.filter(count_like__gte=10).all().values_list('id', flat=True)
+            id_list = Entry.objects.filter(count_like__gte=10).values_list('id', flat=True)
             random_id_list = random.sample(list(id_list), min(len(id_list), 15))
             qs = Entry.objects.filter(id__in=random_id_list)
         elif self.request.user.is_authenticated and self.request.user.is_staff:
