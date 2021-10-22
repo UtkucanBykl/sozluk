@@ -60,7 +60,7 @@ class UserStatistics(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self):
+    def get(self, request):
         user_total_like_count = Like.objects.filter(user=self.request.user).count()
         user_total_dislike_count = Dislike.objects.filter(user=self.request.user).count()
         user_total_favorite_count = Favorite.objects.filter(user=self.request.user).count()
