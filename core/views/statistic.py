@@ -1,13 +1,15 @@
 from rest_framework.views import APIView
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from django.db.models import Q
 from rest_framework.response import Response
 
-from ..models import Entry, Title, User, Like, Dislike
+from ..models import Entry, Title, User, Like, Dislike, Favorite, UserFollow
 
 from django.utils import timezone
 
-__all__ = ['SozlukStatistics']
+__all__ = ['SozlukStatistics', 'UserStatistics']
 
 
 class SozlukStatistics(APIView):
@@ -50,6 +52,34 @@ class SozlukStatistics(APIView):
                 "avg_user_entry": avg_user_entry,
                 "number_of_descriptions_per_author": number_of_descriptions_per_author,
                 "superusers_and_mods": superusers_and_mods
+            }
+        )
+
+
+class UserStatistics(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self):
+        user_total_like_count = Like.objects.filter(user=self.request.user).count()
+        user_total_dislike_count = Dislike.objects.filter(user=self.request.user).count()
+        user_total_favorite_count = Favorite.objects.filter(user=self.request.user).count()
+        user_title_count = Title.objects.filter(user=self.request.user).count()
+        user_entry_count = Entry.objects.filter(user=self.request.user).count()
+        user_following_count = UserFollow.objects.filter(follower_user=self.request.user).count()
+        user_follows_count = UserFollow.objects.filter(following_user=self.request.user).count()
+        user_ukde_title_count = Title.objects.filter(is_ukde=True, user=self.request.user).count()
+
+        return Response(
+            {
+                "user_total_like_count": user_total_like_count,
+                "user_total_dislike_count": user_total_dislike_count,
+                "user_total_favorite_count": user_total_favorite_count,
+                "user_title_count": user_title_count,
+                "user_ukde_title_count": user_ukde_title_count,
+                "user_entry_count": user_entry_count,
+                "user_following_count": user_following_count,
+                "user_follows_count": user_follows_count,
             }
         )
 
