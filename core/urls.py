@@ -50,5 +50,6 @@ urlpatterns = [
     path('titles/combine/', CombineTwoTitles.as_view({"post": "create"}), name="combine-titles"),
     path('titles/<int:id>/changeTematik', ChangeAllTematikEntriesInTitle.as_view({"post": "create"}), name="change-all-tematik-entries-in-title"),
     path('statistics/', SozlukStatistics.as_view(), name="statistics"),
+    path('user/statistics/', UserStatistics.as_view(), name="user-statistics"),
     path('penalties/', PunishListCreateAPIView.as_view(), name="user-penalties"),
 ]
