@@ -12,12 +12,12 @@ from rest_framework import status
 
 from ..serializers import UserSerializer, UserUpdateSerializer, ChangePasswordSerializer, \
     UserBlockSerializer, UserBlockUpdateSerializer, UserEmotionSerializer
-from ..models import Block
+from ..models import Block, Entry
 
 
 User = get_user_model()
 
-__all__ = ["UserRetrieveUpdateViewSet", "ChangeUserPasswordView", "BlockUserViewSet", "UserSearchAPIView"]
+__all__ = ["UserRetrieveUpdateViewSet", "ChangeUserPasswordView", "BlockUserViewSet", "UserSearchAPIView", "UserPermissionsAPIView"]
 
 
 class UserRetrieveUpdateViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
@@ -90,3 +90,23 @@ class UserSearchAPIView(ListModelMixin, GenericViewSet):
             return qs
         else:
             return User.objects.none()
+
+
+class UserPermissionsAPIView(views.APIView):
+    http_method_names = ['post']
+    permission_classes = (IsAuthenticated, )
+    authentication_classes = (TokenAuthentication, )
+
+    def post(self, request, *args, **kwargs):
+        splited_url = request.data['url'].split('/')
+        if splited_url[0] == 'entry':
+            if self.request.user.has_perm('entry.can_edit_entry'):
+                entry = Entry.objects.get(id=splited_url[1])
+                if entry.user == self.request.user:
+                    return Response({"access": True})
+                else:
+                    return Response({"access": False})
+            else:
+                return Response({"access": False})
+        else:
+            return Response({"message": "Hatalı deneme"})

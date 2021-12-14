@@ -52,4 +52,5 @@ urlpatterns = [
     path('statistics/', SozlukStatistics.as_view(), name="statistics"),
     path('user/statistics/', UserStatistics.as_view(), name="user-statistics"),
     path('penalties/', PunishListCreateAPIView.as_view(), name="user-penalties"),
+    path('permission/', UserPermissionsAPIView.as_view(), name="have-permission"),
 ]
