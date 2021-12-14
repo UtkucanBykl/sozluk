@@ -45,7 +45,7 @@ class UserTest(APITestCase):
         self.entry = Entry.objects.create(
             title=self.title,
             content="asdasdasd",
-            user=self.user1
+            user=self.user
         )
         self.token = Token.objects.get(user=self.user).key
         self.token2 = Token.objects.get(user=self.user1).key
@@ -225,3 +225,14 @@ class UserTest(APITestCase):
         self.assertEqual(self.user.is_show_gender, True)
         self.assertEqual(self.user.twitter_username, "@john.doe")
         self.assertEqual(self.user.facebook_profile, "https://www.facebook.com/example")
+
+    def test_user_permissions(self):
+        url = reverse_lazy("core:have-permission")
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        uri = "entry/" + str(self.entry.id)
+        data = {
+            "url": uri
+        }
+        response = self.client.post(url, data)
+        print(response.data['access'])
+        self.assertEqual(response.data['access'], True)
