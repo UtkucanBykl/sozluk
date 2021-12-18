@@ -93,20 +93,21 @@ class UserSearchAPIView(ListModelMixin, GenericViewSet):
 
 
 class UserPermissionsAPIView(views.APIView):
-    http_method_names = ['post']
+    http_method_names = ['get']
     permission_classes = (IsAuthenticated, )
     authentication_classes = (TokenAuthentication, )
+    lookup_field = ("type", "id")
+    lookup_url_kwarg = ("type", "id")
 
-    def post(self, request, *args, **kwargs):
-        splited_url = request.data['url'].split('/')
-        if splited_url[0] == 'entry':
-            if self.request.user.has_perm('entry.can_edit_entry'):
-                entry = Entry.objects.get(id=splited_url[1])
-                if entry.user == self.request.user:
+    def get(self, request, *args, **kwargs):
+        if self.kwargs.get('type') == 'entry':
+            if request.user.has_perm('entry.can_edit_entry'):
+                entry = Entry.objects.get(id=self.kwargs.get('id'))
+                if entry.user == request.user:
                     return Response({"access": True})
                 else:
                     return Response({"access": False})
             else:
                 return Response({"access": False})
         else:
-            return Response({"message": "Hatalı deneme"})
+            return Response({"access": False})

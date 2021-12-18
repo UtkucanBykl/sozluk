@@ -227,12 +227,7 @@ class UserTest(APITestCase):
         self.assertEqual(self.user.facebook_profile, "https://www.facebook.com/example")
 
     def test_user_permissions(self):
-        url = reverse_lazy("core:have-permission")
+        url = reverse_lazy("core:have-permission", kwargs={'type': 'entry', 'id': self.entry.id})
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
-        uri = "entry/" + str(self.entry.id)
-        data = {
-            "url": uri
-        }
-        response = self.client.post(url, data)
-        print(response.data['access'])
+        response = self.client.get(url)
         self.assertEqual(response.data['access'], True)
