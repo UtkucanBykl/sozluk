@@ -59,7 +59,7 @@ class TitleListCreateAPIView(ListCreateAPIView):
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     queryset = Title.objects.actives()
     search_fields = ['title']
-    order_fields = ['created_at', 'total_entry_count', 'today_entry_count']
+    ordering_fields = ['created_at', 'total_entry_count', 'today_entry_count']
     filterset_class = TitleFilter
     pagination_class = StandardTitlePagination
 
