@@ -1,3 +1,5 @@
+from django.db.models import Q
+from django.utils import timezone
 from rest_framework import serializers
 
 from ..models import Title, NotShowTitle, User, Entry
@@ -7,8 +9,8 @@ __all__ = ['TitleSerializer', 'NotShowTitleSerializer']
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    total_entry_count = serializers.IntegerField(read_only=True, default=0)
-    today_entry_count = serializers.IntegerField(read_only=True, default=0)
+    total_entry_count = serializers.SerializerMethodField()
+    today_entry_count = serializers.SerializerMethodField()
     user_detail = UserSerializer(source='user', read_only=True)
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.filter(),
@@ -21,6 +23,20 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'title', 'updated_at', 'is_bold', 'can_write', 'total_entry_count', 'today_entry_count',
             'created_at', 'user', 'is_ukde', 'first_entry_of_title', 'user_detail', 'status')
+
+    def get_today_entry_count(self, title):
+        t = timezone.localtime(timezone.now())
+        count = Entry.objects.filter(Q(
+                status="publish",
+                updated_at__day=t.day,
+                updated_at__year=t.year,
+                updated_at__month=t.month,
+            ), title=title.id).count()
+        return count
+
+    def get_total_entry_count(self, title):
+        count = Entry.objects.filter(status="publish", title=title.id).count()
+        return count
 
     def get_first_entry_of_title(self, title):
         entry = Entry.objects.filter(title=title.id).first()
