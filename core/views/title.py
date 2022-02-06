@@ -1,13 +1,10 @@
-from django.db.models import Count, Q
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, ListAPIView
+from rest_framework.generics import ListCreateAPIView, ListAPIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.contrib.postgres.search import TrigramSimilarity
 
 from django_filters.rest_framework import DjangoFilterBackend
-from django.utils import timezone
-
 from ..pagination import StandardTitlePagination, StandardPagination
 from ..serializers import TitleSerializer, NotShowTitleSerializer, EntrySerializer
 
@@ -93,13 +90,13 @@ class TitleListCreateAPIView(ListCreateAPIView):
             id_list = Title.objects.filter(status='publish').all().values_list('id', flat=True)
             random_profiles_id_list = random.sample(list(id_list), min(len(id_list), 33))
             qs = Title.objects.filter(id__in=random_profiles_id_list)
-            return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
+            return qs.get_titles_without_not_showing(self.request.user)
         elif self.request.query_params.get('user_id') and self.request.query_params.get('is_ukde'):
             qs = Title.objects.filter(
                 user=self.request.query_params.get('user_id'), is_ukde=self.request.query_params.get('is_ukde')
             )
-            return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
-        return qs.today_entry_counts().total_entry_counts().get_titles_without_not_showing(self.request.user)
+            return qs.get_titles_without_not_showing(self.request.user)
+        return qs.get_titles_without_not_showing(self.request.user)
 
 
 class TitleWithEntryCreateAPIView(ListCreateAPIView):
