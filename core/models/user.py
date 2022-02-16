@@ -77,10 +77,10 @@ class User(
 
     old_id = models.PositiveIntegerField(verbose_name="Old ID", blank=True, null=True)
     username = models.CharField(
-        max_length=140, unique=True
+        max_length=140, unique=True, verbose_name="Kullanıcı Adı"
     )
     email = models.EmailField(
-        verbose_name=_('email address')
+        verbose_name=_('Email Adresi')
     )
     first_name = models.CharField(
         max_length=255, verbose_name=_('first name'), default="", blank=True
@@ -125,11 +125,11 @@ class User(
     facebook_profile = models.CharField(max_length=500, default="")
 
     account_types = (
-        ("rookie", "Rookie"),
+        ("rookie", "Çaylak"),
         ("normal", "Normal"),
         ("mod", "Moderator")
     )
-    account_type = models.CharField(choices=account_types, default="rookie", max_length=25)
+    account_type = models.CharField(choices=account_types, default="rookie", max_length=25, verbose_name="Kullanıcı Tipi")
     likes = models.ManyToManyField('core.Entry', related_name='like_users', through='core.Like', blank=True)
     title_follows = models.ManyToManyField('core.Title', related_name='followers', through='core.TitleFollow', blank=True)
     user_follows = models.ManyToManyField('self', symmetrical=False, through='core.UserFollow', blank=True)
@@ -182,10 +182,10 @@ class Dislike(BaseModelWithDelete):
 
 
 class Block(BaseModelWithDelete):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="block_list")
-    blocked_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    is_message = models.BooleanField(default=True)
-    is_entry = models.BooleanField(default=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="block_list", verbose_name="Bloklayan Kullanıcı")
+    blocked_user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Bloklanan Kullanıcı")
+    is_message = models.BooleanField(default=True, verbose_name="Mesaj")
+    is_entry = models.BooleanField(default=True, verbose_name="Girdi")
 
     def __str__(self):
         return self.user.username + " " + self.blocked_user.username

@@ -25,8 +25,9 @@ class LoginUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'is_active', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name', 'token',
-                  'groups', 'profile_picture', "account_type", 'point', 'created_at')
+        fields = ('id', 'username', 'email', 'is_active', 'bio', 'account_type',
+                  'is_superuser', 'is_staff', 'first_name', 'last_name', 'token',
+                  'groups', 'profile_picture', 'account_type', 'point', 'created_at')
 
     def get_token(self, obj):
         return Token.objects.filter(user=obj).first().key
@@ -40,9 +41,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name', 'profile_picture', 'city',
-                  'is_show_city', 'birth_day', 'is_show_birth_day', 'gender', 'is_show_gender', 'twitter_username',
-                  'facebook_profile', 'account_type', 'point', 'created_at', 'title_count', 'entry_count', 'follower_count')
+        fields = ('id', 'username', 'email', 'bio', 'is_superuser', 'is_staff', 'first_name', 'last_name',
+                  'profile_picture', 'city', 'is_show_city', 'birth_day', 'is_show_birth_day', 'gender',
+                  'is_show_gender', 'twitter_username', 'facebook_profile', 'account_type', 'point',
+                  'created_at', 'title_count', 'entry_count', 'follower_count')
 
     def get_title_count(self, user):
         title_count = Title.objects.filter(user=user).count()

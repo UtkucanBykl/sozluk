@@ -1,18 +1,17 @@
-from django.db.models import Prefetch, Q
+from django.db.models import Q
 from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
 from rest_framework.viewsets import GenericViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, DjangoModelPermissions
+from rest_framework.generics import ListCreateAPIView
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from ..models import Entry, Like, Dislike, Favorite, Title
+from ..models import Entry
 from ..pagination import StandardEntryPagination
 from ..serializers import EntrySerializer, EntryUpdateSerializer
 from ..filters import EntryFilter
 from ..permissions import IsOwnerOrReadOnly, OwnModelPermission
-from ..tasks import create_notification_entry_create_info_to_title_user
 
 from django.utils import timezone
 

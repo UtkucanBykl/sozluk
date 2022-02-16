@@ -48,9 +48,9 @@ class BaseModel(models.Model):
     )
 
     status = models.CharField(choices=stages, default='publish', max_length=25)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    deleted_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Oluşturma Tarihi")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Güncelleme Tarihi")
+    deleted_at = models.DateTimeField(blank=True, null=True, verbose_name="Silme Tarihi")
 
     objects = BaseManager()
 

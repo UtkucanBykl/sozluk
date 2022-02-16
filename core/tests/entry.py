@@ -121,7 +121,6 @@ class EntryTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.get(f'{url}?entry_id={self.entry2.id}')
         self.assertEqual(response.status_code, 200)
-        
 
     def test_dislike(self):
         url = reverse_lazy('core:dislike-list-create')

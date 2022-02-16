@@ -1,13 +1,13 @@
-from django.contrib import  admin
-from django.contrib.admin import SimpleListFilter, AllValuesFieldListFilter
+from django.contrib import admin
 
+from .base import BaseAdmin
 from ..models import Report
 
 __all__ = ['ReportAdmin']
 
 
 @admin.register(Report)
-class ReportAdmin(admin.ModelAdmin):
+class ReportAdmin(BaseAdmin):
     list_display = ('status', 'from_user', 'to_user', 'entry', 'report_type')
     list_select_related = ('from_user', 'to_user', 'entry')
     search_fields = (
