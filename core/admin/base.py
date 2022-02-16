@@ -14,4 +14,7 @@ class BaseAdmin(admin.ModelAdmin):
             return qs.actives()
         return qs
 
+    def has_change_permission(self, request, obj=None):
+        return False
+
 

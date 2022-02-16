@@ -209,7 +209,7 @@ class EntryManager(BaseManager):
 
 
 class Title(BaseModel):
-    title = models.CharField(max_length=400, unique=True)
+    title = models.CharField(max_length=400, unique=True, verbose_name="Başlık")
     slug = models.SlugField(max_length=140)
     old_id = models.PositiveIntegerField(null=True, blank=True)
     display_order = models.IntegerField(default=0)
@@ -230,7 +230,7 @@ class Title(BaseModel):
         related_name="redirects",
         on_delete=models.SET_NULL
     )
-    is_ukde = models.BooleanField(default=True)
+    is_ukde = models.BooleanField(default=True, verbose_name="Ukde mi?")
 
     objects = TitleManager()
 
@@ -262,7 +262,7 @@ class Entry(BaseModel):
         ("deleted_by_admin", "deleted by admin"),
     )
     old_id = models.PositiveIntegerField(null=True, blank=True)
-    status = models.CharField(choices=stages, default="publish", max_length=25)
+    status = models.CharField(choices=stages, default="publish", max_length=25, verbose_name="Statüs")
     title = models.ForeignKey(
         "core.Title",
         related_name="entries",
@@ -272,7 +272,7 @@ class Entry(BaseModel):
     user = models.ForeignKey(
         User, related_name="entries", on_delete=models.CASCADE, blank=True, null=True
     )
-    content = models.TextField(max_length=500)
+    content = models.TextField(max_length=500, verbose_name="İçerik")
     is_important = models.BooleanField(default=False)
     is_tematik = models.BooleanField(default=False)
     last_vote_time = models.DateTimeField(default=timezone.now)

@@ -10,11 +10,14 @@ __all__ = ['TitleAdmin', 'EntryAdmin', 'SuggestedAdmin', 'NotShowTitleAdmin']
 @admin.register(Title)
 class TitleAdmin(BaseAdmin):
     actions = [clone_title]
+    search_fields = ['title']
+    list_display = ('id', 'title', 'is_ukde', 'created_at')
 
 
 @admin.register(Entry)
 class EntryAdmin(BaseAdmin):
-    pass
+    search_fields = ['content']
+    list_display = ('id', 'content', 'status', 'created_at')
 
 
 @admin.register(Suggested)
