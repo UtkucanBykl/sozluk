@@ -10,11 +10,4 @@ class BaseAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if hasattr(qs, 'actives'):
-            return qs.actives()
         return qs
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-
