@@ -9,4 +9,4 @@ class PunishSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PunishUser
-        fields = ('punished_user', 'punish_description', 'punish_finish_date', 'status', 'created_at')
+        fields = ('id', 'punished_user', 'punish_description', 'punish_finish_date', 'status', 'created_at')
