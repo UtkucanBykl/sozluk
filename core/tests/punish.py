@@ -44,7 +44,7 @@ class PunishTest(APITestCase):
 
         self.punish2 = PunishUser.objects.create(
             punished_user=self.user3, punish_description='Sen ne güzel tweetler atıyorsun öyle.',
-            punish_finish_date='2021-12-23'
+            punish_finish_date='2022-02-28'
         )
 
     def test_create_punish_with_superuser_or_mod(self):
@@ -83,3 +83,12 @@ class PunishTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token4)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    def test_login_with_punished_user(self):
+        url = reverse_lazy('core:user-login')
+        data = {
+            'username': 'utku3',
+            'password': '1234'
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.data['status_code'], 401)
