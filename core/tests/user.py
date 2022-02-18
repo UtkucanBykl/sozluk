@@ -72,7 +72,7 @@ class UserTest(APITestCase):
             'password': '1234'
         }
         response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['status_code'], 200)
 
     def test_register_fail(self):
         url = reverse_lazy('core:user-register')
@@ -93,7 +93,7 @@ class UserTest(APITestCase):
             'password': '12344'
         }
         response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['status_code'], 400)
 
     def test_follow_create_and_get_following_users(self):
         url = reverse_lazy('core:user-follow-list-create')

@@ -48,14 +48,3 @@ class RegisterSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=140)
     password = serializers.CharField(max_length=140)
-
-    def login(self, attrs):
-        user = authenticate(username=attrs.get('username'), password=attrs.get('password'))
-        if user is not None:
-            punished_user = PunishUser.objects.filter(punished_user=user.pk, status='publish').first()
-            today = timezone.now().date()
-            if punished_user and today < punished_user.punish_finish_date:
-                return Response({'error_message': str(punished_user.punish_finish_date) + ' tarihine kadar cezalısınız.'})
-            else:
-                return LoginUserSerializer(user, many=False).data
-        raise serializers.ValidationError('Username or password incorrect')
