@@ -8,7 +8,7 @@ from rest_framework.authentication import authenticate
 from django.utils import timezone
 
 from ..serializers import RegisterSerializer, LoginSerializer, LoginUserSerializer
-from ..models import PunishUser
+from ..models import PunishUser, User
 
 __all__ = ['RegisterView', 'LoginView']
 
@@ -19,9 +19,21 @@ class RegisterView(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        data = serializer.create(request.data)
-        return Response(data, status=status.HTTP_201_CREATED)
+
+        if serializer.is_valid():
+            user = User.objects.filter(username=self.request.data.get('username'))
+            if user:
+                return Response({"error_message": "Bu kullanıcı adı alınmış."}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                user = User.objects.filter(email=self.request.data.get('email'))
+                if user:
+                    return Response({"error_message": "Bu email zaten kullanımda."}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    data = serializer.create(request.data)
+                    return Response(data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class LoginView(APIView):
