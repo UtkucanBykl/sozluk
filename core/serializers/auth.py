@@ -10,7 +10,7 @@ from rest_framework import serializers
 from drf_recaptcha.fields import ReCaptchaV2Field
 
 from ..serializers import LoginUserSerializer
-from ..models import PunishUser
+from ..models import User
 
 User = get_user_model()
 
@@ -29,6 +29,18 @@ class RegisterSerializer(serializers.Serializer):
         if attrs.get('confirm_password') != attrs.get('password'):
             raise serializers.ValidationError('Passwords does not match')
         return attrs
+
+    def validate_username(self, username):
+        user = User.objects.filter(username=username)
+        if user:
+            raise serializers.ValidationError('Bu kullanıcı adı alınmış.')
+        return username
+
+    def validate_email(self, email):
+        user = User.objects.filter(email=email)
+        if user:
+            raise serializers.ValidationError('Bu email adresi kullanımda.')
+        return email
 
     def validate_kvkk(self, attr):
         if attr is not True:
