@@ -19,21 +19,9 @@ class RegisterView(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-
-        if serializer.is_valid():
-            user = User.objects.filter(username=self.request.data.get('username'))
-            if user:
-                return Response({"error_message": "Bu kullanıcı adı alınmış."}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                user = User.objects.filter(email=self.request.data.get('email'))
-                if user:
-                    return Response({"error_message": "Bu email zaten kullanımda."}, status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    data = serializer.create(request.data)
-                    return Response(data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
+        serializer.is_valid(raise_exception=True)
+        data = serializer.create(request.data)
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class LoginView(APIView):
